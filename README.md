@@ -36,3 +36,14 @@ nix develop
 # Evaluate `repl.nix` and enter repl. `flake` variable will be available
 nix repl repl.nix
 ```
+
+To use `pkgs` from `nixpkgs` imported in `flake.nix`:
+
+```
+Welcome to Nix 2.8.0. Type :? for help.
+
+Loading 'repl.nix'...
+Added 1 variables.
+
+nix-repl> pkgs = flake.inputs.nixpkgs.legacyPackages.x86_64-linux
+```
