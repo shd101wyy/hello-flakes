@@ -96,11 +96,11 @@
 
   # Steam for gaming
   # As downloading steam will cause SSL error in China,
-  # after we `sudo su` as root user, we have to run the following to set proxy
-  #   $ export HTTP_PROXY=
-  #   $ export HTTPS_PROXY=
-  #   $ export http_proxy=
-  #   $ export https_proxy=
+  # after we `sudo su` as root user, we have to run the following to set proxy, eg:
+  #   $ export HTTP_PROXY=http://127.0.0.1:8889
+  #   $ export HTTPS_PROXY=http://127.0.0.1:8889
+  #   $ export http_proxy=http://127.0.0.1:8889
+  #   $ export https_proxy=http://127.0.0.1:8889
   programs.steam = {
     enable = true;
     remotePlay.openFirewall =
