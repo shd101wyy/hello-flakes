@@ -2,6 +2,8 @@
 # Run the following commands:
 #  $ ln -s $PWD/home.nix $HOME/.config/nixpkgs/home.nix
 #
+# To switch to this configuration, run:
+#  $ home-manager switch
 {
   programs.zsh = {
     enable = true;

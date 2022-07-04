@@ -84,18 +84,30 @@
     # wpsoffice # Failed to download
     vlc
     anbox
-    slack
     xournal
+    filezilla
+    dbeaver
+
+    # Communication
+    skypeforlinux
+    slack
+    tdesktop
   ];
 
   # Steam for gaming
-  # programs.steam = {
-  #   enable = true;
-  #   remotePlay.openFirewall =
-  #     true; # Open ports in the firewall for Steam Remote Play
-  #   dedicatedServer.openFirewall =
-  #     true; # Open ports in the firewall for Source Dedicated Server
-  # };
+  # As downloading steam will cause SSL error in China,
+  # after we `sudo su` as root user, we have to run the following to set proxy
+  #   $ export HTTP_PROXY=
+  #   $ export HTTPS_PROXY=
+  #   $ export http_proxy=
+  #   $ export https_proxy=
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall =
+      true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall =
+      true; # Open ports in the firewall for Source Dedicated Server
+  };
 
   # Enable ZSH
   programs.zsh.enable = true;
@@ -115,7 +127,7 @@
     defaultLocale = "en_US.UTF-8"; # "zh_CN.UTF-8";
     inputMethod = {
       enabled = "ibus";
-      ibus.engines = with pkgs.ibus-engines; [ rime ];
+      ibus.engines = with pkgs.ibus-engines; [ libpinyin ];
     };
   };
   fonts = {
