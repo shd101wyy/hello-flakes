@@ -101,6 +101,8 @@
   #   $ export HTTPS_PROXY=http://127.0.0.1:8889
   #   $ export http_proxy=http://127.0.0.1:8889
   #   $ export https_proxy=http://127.0.0.1:8889
+  # After installation, we have to start Steam from the command line with the proxy env set as well:
+  #   $ steam
   programs.steam = {
     enable = true;
     remotePlay.openFirewall =
