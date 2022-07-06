@@ -54,6 +54,7 @@
     wget
     vscode-fhs
     direnv
+    nix-direnv
 
     # V2ray
     qv2ray
@@ -94,6 +95,7 @@
     skypeforlinux
     slack
     tdesktop
+    discord
   ];
 
   # Steam for gaming

@@ -2,11 +2,14 @@
 # Run the following commands:
 #  $ ln -s $PWD/home.nix $HOME/.config/nixpkgs/home.nix
 #
-# To switch to this configuration, run:
+# To switch to this configuration, run (no need to sudo):
 #  $ home-manager switch
 {
   programs.zsh = {
     enable = true;
+    initExtra = ''
+      export PATH=$PATH:/usr/local/bin:$HOME/.local/bin
+    '';
 
     oh-my-zsh = {
       enable = true;
