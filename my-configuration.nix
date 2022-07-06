@@ -146,7 +146,15 @@
       source-code-pro
       hack-font
       jetbrains-mono
+      ubuntu_font_family
     ];
+    fontconfig = {
+      defaultFonts = {
+        serif = [ "Ubuntu Regular" ];
+        sansSerif = [ "Sans Regular" ];
+        monospace = [ "Ubuntu Mono Regular" ];
+      };
+    };
     # fontconfig = {
     #  defaultFonts = {
     #    emoji = [ "Noto Color Emoji" ];
