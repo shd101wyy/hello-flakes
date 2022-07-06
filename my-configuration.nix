@@ -72,6 +72,8 @@
     gnome.adwaita-icon-theme
     gnomeExtensions.lunar-calendar
     gnomeExtensions.proxy-switcher
+    gnomeExtensions.dash-to-dock
+    gnomeExtensions.custom-hot-corners-extended
 
     # System
     etcher
@@ -79,9 +81,9 @@
 
     # Tools
     ## libsForQt514.kolourpaint # Broken
-    krita # Broken
+    krita
     gimp
-    # wpsoffice # Failed to download
+    wpsoffice
     vlc
     anbox
     xournal
