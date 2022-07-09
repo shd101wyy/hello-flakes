@@ -99,11 +99,13 @@
   # Enable touchpad support (enabled default in most desktopManager).
   services.xserver.libinput.enable = true;
 
+  # Environment variables
+  environment.variables.EDITOR = "nvim";
+
   # Packages to install
   environment.systemPackages = with pkgs; [
     # Software development
     git
-    vim
     wget
     vscode-fhs
     direnv
@@ -129,6 +131,7 @@
     gnomeExtensions.lunar-calendar
     gnomeExtensions.proxy-switcher
     gnomeExtensions.dash-to-dock
+    gnomeExtensions.dash-to-panel
     gnomeExtensions.custom-hot-corners-extended
     ## Install Flat Remix GNOME/GDM  https://www.gnome-look.org/p/1013030 
     gnomeExtensions.user-themes
@@ -156,6 +159,13 @@
     tdesktop
     discord
   ];
+
+  # Enable neovim
+  programs.neovim = {
+    enable = true;
+    viAlias = true;
+    vimAlias = true;
+  };
 
   # Steam for gaming
   # As downloading steam will cause SSL error in China,
