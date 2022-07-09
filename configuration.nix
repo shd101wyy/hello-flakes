@@ -124,16 +124,20 @@
 
     # Gnome related
     gnome.gnome-shell
+    gnome.gnome-tweaks
     gnome.adwaita-icon-theme
     gnomeExtensions.lunar-calendar
     gnomeExtensions.proxy-switcher
     gnomeExtensions.dash-to-dock
     gnomeExtensions.custom-hot-corners-extended
+    ## Install Flat Remix GNOME/GDM  https://www.gnome-look.org/p/1013030 
+    gnomeExtensions.user-themes
 
     # System
     etcher
     gparted
     font-manager
+    libinput-gestures
 
     # Tools
     ## libsForQt514.kolourpaint # Broken
