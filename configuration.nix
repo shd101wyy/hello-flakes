@@ -48,8 +48,7 @@
   };
 
   networking.hostName = "yiyiwang-thinkpad"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true; # Enable wireless support via wpa_supplicant.
+  # Run `sudo nmtui` to activate connection to Wifi
   networking.networkmanager.enable =
     true; # Easiest to use and most distros use this by default.
 
@@ -65,7 +64,14 @@
 
   # Enable the GNOME Desktop Environment
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.desktopManager.gnome = {
+    enable = true;
+    extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+    extraGSettingsOverrides = ''
+      [org.gnome.mutter]
+      experimental-features=['scale-monitor-framebuffer']
+    '';
+  };
   programs.dconf.enable = true;
 
   # https://nixos.wiki/wiki/Xorg
@@ -73,10 +79,10 @@
   # bigger tty fonts
   hardware.video.hidpi.enable = true;
   console.font = "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
-  services.xserver.dpi = 180;
+  # services.xserver.dpi = 180;
   environment.variables = {
-    GDK_SCALE = "2";
-    GDK_DPI_SCALE = "0.5";
+    # GDK_SCALE = "2";
+    # GDK_DPI_SCALE = "0.5";
     _JAVA_OPTIONS = "-Dsun.java2d.uiScale=2";
   };
 
@@ -86,6 +92,9 @@
   # Enable sound
   sound.enable = true;
   # hardware.pulseaudio.enable = true;
+
+  # Enable bluetooth
+  hardware.bluetooth.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.xserver.libinput.enable = true;
@@ -107,6 +116,7 @@
 
     # Browser
     google-chrome
+    firefox
 
     # Nix related
     home-manager
@@ -114,7 +124,6 @@
 
     # Gnome related
     gnome.gnome-shell
-    gnome.gnome-tweaks
     gnome.adwaita-icon-theme
     gnomeExtensions.lunar-calendar
     gnomeExtensions.proxy-switcher
@@ -124,6 +133,7 @@
     # System
     etcher
     gparted
+    font-manager
 
     # Tools
     ## libsForQt514.kolourpaint # Broken
@@ -134,6 +144,7 @@
     xournal
     filezilla
     dbeaver
+    peek
 
     # Communication
     skypeforlinux
@@ -190,10 +201,12 @@
   };
   fonts = {
     fontDir.enable = true;
+    enableDefaultFonts = true;
     fonts = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
+      noto-fonts-emoji
       sarasa-gothic # 更纱黑体
       source-code-pro
       hack-font
@@ -201,20 +214,17 @@
       ubuntu_font_family
     ];
     fontconfig = {
+      # 测试字体 👹
       defaultFonts = {
+        emoji = [ "Noto Color Emoji" ];
         serif = [ "Ubuntu Regular" ];
         sansSerif = [ "Sans Regular" ];
         monospace = [ "Ubuntu Mono Regular" ];
       };
+      antialias = true;
+      hinting.enable = true;
+      hinting.style = "hintslight";
     };
-    # fontconfig = {
-    #  defaultFonts = {
-    #    emoji = [ "Noto Color Emoji" ];
-    #    monospace = [ "Noto Sans Mono CJK SC" "DejaVu Sans Mono" ];
-    #    sansSerif = [ "Noto Sans CJK SC" "Source Han Sans SC" ];
-    #    serif = [ "Noto Serif CJK SC" "Source Han Serif SC" ];
-    #  };
-    # };
   };
 
   # Virtualization

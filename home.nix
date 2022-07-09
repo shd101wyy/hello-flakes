@@ -24,11 +24,10 @@
     userEmail = "shd101wyy@gmail.com";
   };
 
-  home.packages = with pkgs; [ ];
-
-  dconf.settings = {
-    "org/gnome/mutter" = {
-      experimental-features = [ "scale-monitor-framebuffer" ];
-    };
-  };
+  # home.packages = with pkgs; [ ];
+  # dconf.settings = {
+  #   "org/gnome/mutter" = {
+  #     experimental-features = [ "scale-monitor-framebuffer" ];
+  #   };
+  # };
 }
