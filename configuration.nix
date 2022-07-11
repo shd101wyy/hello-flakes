@@ -140,18 +140,19 @@
     etcher
     gparted
     font-manager
-    libinput-gestures
 
     # Tools
     ## libsForQt514.kolourpaint # Broken
     krita
     gimp
-    wpsoffice
     vlc
+    wpsoffice
+    okular
     xournal
     filezilla
     dbeaver
     peek
+    pgadmin4
 
     # Communication
     skypeforlinux

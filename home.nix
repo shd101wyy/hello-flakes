@@ -9,6 +9,7 @@
     enable = true;
     initExtra = ''
       export PATH=$PATH:/usr/local/bin:$HOME/.local/bin
+      eval "$(direnv hook zsh)"
     '';
 
     oh-my-zsh = {
@@ -24,10 +25,10 @@
     userEmail = "shd101wyy@gmail.com";
   };
 
-  # home.packages = with pkgs; [ ];
-  # dconf.settings = {
-  #   "org/gnome/mutter" = {
-  #     experimental-features = [ "scale-monitor-framebuffer" ];
-  #   };
-  # };
+  home.packages = with pkgs; [ ];
+  dconf.settings = {
+    "org/gnome/mutter" = {
+      experimental-features = [ "scale-monitor-framebuffer" ];
+    };
+  };
 }
