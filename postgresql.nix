@@ -11,9 +11,9 @@
       host all all ::1/128 trust
     '';
     initialScript = pkgs.writeText "backend-initScript" ''
-      CREATE ROLE nixcloud WITH LOGIN PASSWORD 'nixcloud' CREATEDB;
-      CREATE DATABASE nixcloud;
-      GRANT ALL PRIVILEGES ON DATABASE nixcloud TO nixcloud;
+      CREATE ROLE monitoring WITH LOGIN PASSWORD 'monitoring' CREATEDB;
+      CREATE DATABASE monitoring;
+      GRANT ALL PRIVILEGES ON DATABASE monitoring TO monitoring;
     '';
   };
 }

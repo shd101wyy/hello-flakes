@@ -6,12 +6,12 @@
     "instance1" = {
       enable = true;
       port = 6379;
-      requirePassFile = "/home/yiyiwang/redis-password";
+      requirePassFile = "/home/yiyiwang/.credentials/redis-password";
     };
     "instance2" = {
       enable = true;
       port = 6380;
-      requirePassFile = "/home/yiyiwang/redis-password";
+      requirePassFile = "/home/yiyiwang/.credentials/redis-password";
     };
   };
 }
