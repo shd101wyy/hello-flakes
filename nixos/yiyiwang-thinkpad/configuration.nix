@@ -1,7 +1,6 @@
 { config, lib, pkgs,
 # From flake.nix
-# nixpkgs,
-... }:
+nur, ... }:
 # Run the following command to build the NixOS configuration:
 #  $ sudo nixos-rebuild switch --flake '.#yiyiwang-thinkpad'
 # 
@@ -168,6 +167,9 @@
     slack
     tdesktop
     discord
+
+    # Nur
+    pkgs.nur.repos.mic92.hello-nur
   ];
 
   # Enable neovim
@@ -278,6 +280,7 @@
   };
 
   # Nixpkgs settings
+  nixpkgs.overlays = [ nur.overlay ];
   nixpkgs.config = {
     allowUnfree = true;
     # allowBroken = true;

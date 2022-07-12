@@ -4,9 +4,10 @@
   inputs = {
     nixpkgs = { url = "github:NixOS/nixpkgs/nixos-22.05"; };
     flake-utils = { url = "github:numtide/flake-utils"; };
+    nur = { url = "github:nix-community/NUR/master"; };
   };
 
-  outputs = { self, nixpkgs, flake-utils }@attrs:
+  outputs = { self, nixpkgs, flake-utils, nur }@attrs:
     flake-utils.lib.eachDefaultSystem (system:
       let pkgs = nixpkgs.legacyPackages.${system};
       in (rec {
@@ -31,9 +32,8 @@
       in {
         nixosConfigurations.yiyiwang-thinkpad = nixpkgs.lib.nixosSystem (rec {
           inherit system;
-          modules = [
-            ./nixos/yiyiwang-thinkpad/configuration.nix
-          ];
+          specialArgs = { inherit nur; };
+          modules = [ ./nixos/yiyiwang-thinkpad/configuration.nix ];
         });
       });
 }
