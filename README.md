@@ -2,7 +2,7 @@
 
 https://nixos.wiki/wiki/Flakes
 
-## Build
+## Build package
 
 ```bash
 # Build all
@@ -13,7 +13,13 @@ nix build .#hello
 nix build .#test
 ```
 
-## Update
+# Build NixOS Configuration
+
+```bash
+sudo nixos-rebuild switch --flake .#yiyiwang-thinkpad -v
+```
+
+## Update dependencies
 
 ```bash
 # Update all

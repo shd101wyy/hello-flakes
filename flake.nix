@@ -6,10 +6,10 @@
     flake-utils = { url = "github:numtide/flake-utils"; };
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils }@attrs:
     flake-utils.lib.eachDefaultSystem (system:
       let pkgs = nixpkgs.legacyPackages.${system};
-      in rec {
+      in (rec {
         packages = {
           hello = pkgs.stdenv.mkDerivation {
             name = "hello";
@@ -26,6 +26,14 @@
         };
         defaultPackage = packages.hello;
         devShell = import ./shell.nix { inherit pkgs; };
+      })) // (let
+        system = "x86_64-linux";
+      in {
+        nixosConfigurations.yiyiwang-thinkpad = nixpkgs.lib.nixosSystem (rec {
+          inherit system;
+          modules = [
+            ./nixos/yiyiwang-thinkpad/configuration.nix
+          ];
+        });
       });
-
 }
