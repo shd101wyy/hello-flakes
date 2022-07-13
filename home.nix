@@ -23,6 +23,12 @@
     enable = true;
     userName = "shd101wyy";
     userEmail = "shd101wyy@gmail.com";
+    extraConfig = {
+      pull = {
+        rebase = false;
+        # ff = "only";
+      };
+    };
   };
 
   home.packages = with pkgs; [ ];
