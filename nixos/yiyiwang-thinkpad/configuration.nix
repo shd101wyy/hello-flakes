@@ -161,6 +161,8 @@ nur, ... }:
     dbeaver
     peek
     pgadmin4
+    calibre
+    pandoc
 
     # Communication
     skypeforlinux
