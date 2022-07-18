@@ -148,6 +148,8 @@ nur, ... }:
     etcher
     gparted
     font-manager
+    bind
+    htop
 
     # Tools
     ## libsForQt514.kolourpaint # Broken
