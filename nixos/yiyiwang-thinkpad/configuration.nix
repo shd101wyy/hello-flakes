@@ -150,6 +150,8 @@ nur, ... }:
     font-manager
     bind
     htop
+    zip
+    niv
 
     # Tools
     ## libsForQt514.kolourpaint # Broken
