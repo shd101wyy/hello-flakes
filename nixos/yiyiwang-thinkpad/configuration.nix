@@ -133,6 +133,7 @@ nur, ... }:
     # Nix related
     nixfmt
     niv
+    nix-prefetch
 
     # Gnome related
     gnome.gnome-shell

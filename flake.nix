@@ -5,8 +5,10 @@
     nixpkgs = { url = "github:NixOS/nixpkgs/nixos-unstable"; };
     flake-utils = { url = "github:numtide/flake-utils"; };
     nur = { url = "github:nix-community/NUR/master"; };
-    home-manager = { url = "github:nix-community/home-manager"; };
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, nur, home-manager }@attrs:
@@ -47,9 +49,13 @@
         # Home configurations
         # Run the following command to build the home-manager configuration
         # $ nix build .\#homeConfigurations.yiyiwang-home.activationPackage
+        # $ "$(nix path-info .\#homeConfigurations.yiyiwang-home.activationPackage)"/activate 
         homeConfigurations.yiyiwang-home = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [ ./home.nix ];
+          
+          # Optionally use extraSpecialArgs
+          # to pass through arguments to home.nix
         };
       });
 }

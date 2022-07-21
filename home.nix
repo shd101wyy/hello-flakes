@@ -2,7 +2,9 @@
 # This module is managed by Flakes
 # Run the following commands build the configuration:
 # $ nix build .\#homeConfigurations.yiyiwang-home.activationPackage
-# 
+# $ "$(nix path-info .\#homeConfigurations.yiyiwang-home.activationPackage)"/activate 
+# To get the SHA256
+# nix-prefetch fetchFromGitHub --owner owner --repo repo --rev 65bb66d364e0d10d00bd848a3d35e2755654655b
 {
   home.stateVersion = "22.05";
   home.username = "yiyiwang";
@@ -39,7 +41,7 @@
     enable = true;
     coc = {
       enable = true;
-      settings = {};
+      settings = { };
     };
     plugins = with pkgs.vimPlugins; [
       YouCompleteMe
@@ -63,14 +65,18 @@
       rainbow
       syntastic
       vim-airline
+      vim-codefmt
       vim-fugitive
       vim-gitgutter
       vim-lsp
       vim-nix
       vim-plug
     ];
-    extraPackages = with pkgs;
-        [ git (python3.withPackages (ps: with ps; [ black isort pylint ])) ];
+    extraPackages = with pkgs; [
+      git
+      (python3.withPackages (ps: with ps; [ black isort pylint ]))
+      nixpkgs-fmt
+    ];
     # settings = { ignorecase = true; };
     viAlias = true;
     vimAlias = true;
@@ -78,14 +84,18 @@
     withNodeJs = true;
     withPython3 = true;
     extraConfig = ''
-" ~/.vimrc configuration
+      " ~/.vimrc configuration
 
-" Enable NERDTree on start
-" autocmd VimEnter * NERDTree
+      " Enable NERDTree on start
+      " autocmd VimEnter * NERDTree
 
-" Enable line number
-:set number
-'';
+      " Enable line number
+      :set number
+    '';
+  };
+
+  programs.alacritty = {
+    enable = true;
   };
 
   home.packages = with pkgs; [ ];
