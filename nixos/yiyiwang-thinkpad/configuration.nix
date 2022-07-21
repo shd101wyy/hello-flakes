@@ -131,7 +131,6 @@ nur, ... }:
     firefox
 
     # Nix related
-    home-manager
     nixfmt
     niv
 

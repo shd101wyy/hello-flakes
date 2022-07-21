@@ -1,10 +1,13 @@
 { pkgs, ... }:
-# Run the following commands:
-#  $ ln -s $PWD/home.nix $HOME/.config/nixpkgs/home.nix
-#
-# To switch to this configuration, run (no need to sudo):
-#  $ home-manager switch
+# This module is managed by Flakes
+# Run the following commands build the configuration:
+# $ nix build .\#homeConfigurations.yiyiwang-home.activationPackage
+# 
 {
+  home.stateVersion = "22.05";
+  home.username = "yiyiwang";
+  home.homeDirectory = "/home/yiyiwang";
+
   programs.zsh = {
     enable = true;
     initExtra = ''
@@ -37,18 +40,6 @@
     coc = {
       enable = true;
       settings = {};
-      # This is a bug in coc.nvim, so we have to manually set it for now
-      package = pkgs.vimUtils.buildVimPluginFrom2Nix {
-        pname = "coc.nvim";
-        version = "2022-06-14";
-        src = pkgs.fetchFromGitHub {
-          owner = "neoclide";
-          repo = "coc.nvim";
-          rev = "87e5dd692ec8ed7be25b15449fd0ab15a48bfb30";
-          sha256 = "sha256-bsrCvgQqIA4jD62PIcLwYdcBM+YLLKLI/x2H5c/bR50=";
-        };
-        meta.homepage = "https://github.com/neoclide/coc.nvim/";
-      };
     };
     plugins = with pkgs.vimPlugins; [
       YouCompleteMe
