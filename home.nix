@@ -91,6 +91,9 @@
 
       " Enable line number
       :set number
+
+      " Keymaps
+      map <silent> <C-b> :NERDTreeToggle<CR>
     '';
   };
 

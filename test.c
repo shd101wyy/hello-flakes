@@ -1,1 +1,4 @@
-int main() { printf("This is test!"); }
+int main() { 
+  printf("This is test!");
+  return 0;
+}
