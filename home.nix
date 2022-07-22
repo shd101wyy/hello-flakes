@@ -45,6 +45,7 @@
     };
     plugins = with pkgs.vimPlugins; [
       YouCompleteMe
+      awesome-vim-colorschemes
       coc-css
       coc-emmet
       coc-go
@@ -65,6 +66,7 @@
       rainbow
       syntastic
       vim-airline
+      vim-airline-themes
       vim-codefmt
       vim-fugitive
       vim-gitgutter
@@ -90,10 +92,15 @@
       " autocmd VimEnter * NERDTree
 
       " Enable line number
-      :set number
+      set number
 
       " Keymaps
       map <silent> <C-b> :NERDTreeToggle<CR>
+
+      " Airline theme
+      let g:airline_theme='papercolor'
+      set background=dark
+      colorscheme PaperColor
     '';
   };
 
