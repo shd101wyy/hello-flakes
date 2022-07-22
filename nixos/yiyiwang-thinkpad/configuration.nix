@@ -121,6 +121,7 @@ nur, ... }:
     nix-direnv
     flatpak
     vim
+    tmux
 
     # V2ray
     qv2ray
