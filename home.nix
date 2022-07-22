@@ -71,6 +71,7 @@
       vim-fugitive
       vim-gitgutter
       vim-lsp
+      vim-multiple-cursors
       vim-nix
       vim-plug
     ];
