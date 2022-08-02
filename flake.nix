@@ -2,7 +2,11 @@
   description = "A very basic flake";
 
   inputs = {
-    nixpkgs = { url = "github:NixOS/nixpkgs/nixos-unstable"; };
+    nixpkgs = {
+      url =
+#       "github:NixOS/nixpkgs/nixos-unstable";
+        "github:NixOS/nixpkgs?rev=f53389628215da2945a413a79ce08bcfbce4420e";
+    };
     flake-utils = { url = "github:numtide/flake-utils"; };
     nur = { url = "github:nix-community/NUR/master"; };
     home-manager = {
@@ -50,12 +54,13 @@
         # Run the following command to build the home-manager configuration
         # $ nix build .\#homeConfigurations.yiyiwang-home.activationPackage
         # $ "$(nix path-info .\#homeConfigurations.yiyiwang-home.activationPackage)"/activate 
-        homeConfigurations.yiyiwang-home = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [ ./home.nix ];
-          
-          # Optionally use extraSpecialArgs
-          # to pass through arguments to home.nix
-        };
+        homeConfigurations.yiyiwang-home =
+          home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [ ./home.nix ];
+
+            # Optionally use extraSpecialArgs
+            # to pass through arguments to home.nix
+          };
       });
 }

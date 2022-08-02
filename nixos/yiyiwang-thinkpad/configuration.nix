@@ -122,6 +122,10 @@ nur, ... }:
     flatpak
     vim
     tmux
+    python310
+    python310Packages.pip
+    lzip
+    sqlite
 
     # V2ray
     qv2ray
@@ -183,6 +187,10 @@ nur, ... }:
 
     # Gnome app
     evince # document viewer
+
+
+    # AWS
+    awscli2
   ];
 
   # Steam for gaming
