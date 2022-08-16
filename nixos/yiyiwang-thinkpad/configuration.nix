@@ -175,6 +175,7 @@ nur, ... }:
     calibre
     foliate
     pandoc
+    wkhtmltopdf
 
     # Communication
     skypeforlinux
