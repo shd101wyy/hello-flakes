@@ -3,9 +3,8 @@
 
   inputs = {
     nixpkgs = {
-      url =
-#       "github:NixOS/nixpkgs/nixos-unstable";
-        "github:NixOS/nixpkgs?rev=f53389628215da2945a413a79ce08bcfbce4420e";
+      url = "github:NixOS/nixpkgs/nixos-unstable";
+      #        "github:NixOS/nixpkgs?rev=f53389628215da2945a413a79ce08bcfbce4420e";
     };
     flake-utils = { url = "github:numtide/flake-utils"; };
     nur = { url = "github:nix-community/NUR/master"; };

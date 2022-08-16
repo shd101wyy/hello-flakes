@@ -116,7 +116,6 @@ nur, ... }:
     # Software development
     git
     wget
-    vscode-fhs
     direnv
     nix-direnv
     flatpak
@@ -159,6 +158,7 @@ nur, ... }:
     bind
     htop
     zip
+    xsel
 
     # Tools/Apps
     ## libsForQt514.kolourpaint # Broken
