@@ -69,7 +69,6 @@ nur, ... }:
 
   # Intel
   services.xserver.videoDrivers = [ "modesetting" ];
-  services.xserver.useGlamor = true;
 
   # Enable the GNOME Desktop Environment
   services.xserver.displayManager.gdm.enable = true;
