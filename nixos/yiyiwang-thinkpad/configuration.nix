@@ -19,6 +19,8 @@ nur, ... }:
     ../../services/redis.nix
     # Postgresql configuration
     ../../services/postgresql.nix
+    # Neo4j configuration
+    ../../services/neo4j.nix
   ];
 
   # Use the GRUB 2 boot loader
@@ -122,6 +124,7 @@ nur, ... }:
     tmux
     python310
     python310Packages.pip
+    nodejs-16_x
     lzip
     sqlite
 
@@ -188,7 +191,6 @@ nur, ... }:
     # Gnome app
     evince # document viewer
 
-
     # AWS
     awscli2
   ];
@@ -217,7 +219,10 @@ nur, ... }:
   # Define a user account.
   users.users.yiyiwang = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable 'sudo' for the user;
+    extraGroups = [
+      "wheel" # Enable 'sudo' for the user;
+      "docker" # Adding users to the `docker` group will provide them access to the socket:
+    ];
   };
 
   # Some programs need SUID wrappers, can be configured further or are
