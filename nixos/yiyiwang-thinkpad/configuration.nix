@@ -222,6 +222,7 @@ nur, ... }:
     extraGroups = [
       "wheel" # Enable 'sudo' for the user;
       "docker" # Adding users to the `docker` group will provide them access to the socket:
+      "neo4j"
     ];
   };
 
