@@ -173,6 +173,7 @@ nur, ... }:
     filezilla
     dbeaver
     peek
+    kooha
     pgadmin4
     calibre
     foliate
