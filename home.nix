@@ -84,7 +84,7 @@
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
-    withNodeJs = true;
+    # withNodeJs = true;
     withPython3 = true;
     extraConfig = ''
       " ~/.vimrc configuration
@@ -105,7 +105,7 @@
     '';
   };
 
-  programs.alacritty = { enable = true; };
+  # programs.alacritty = { enable = true; };
 
   programs.vscode = {
     enable = true;

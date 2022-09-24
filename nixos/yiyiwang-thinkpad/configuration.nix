@@ -122,8 +122,10 @@ nur, ... }:
     flatpak
     vim
     tmux
-    python310
-    python310Packages.pip
+    # python310
+    # python310Packages.pip
+    # python310Packages.ansible
+    python3Full
     nodejs-16_x
     lzip
     sqlite
@@ -161,6 +163,8 @@ nur, ... }:
     htop
     zip
     xsel
+    ansible
+    sshpass
 
     # Tools/Apps
     ## libsForQt514.kolourpaint # Broken
@@ -174,7 +178,7 @@ nur, ... }:
     dbeaver
     peek
     kooha
-    pgadmin4
+    # pgadmin4
     calibre
     foliate
     pandoc
