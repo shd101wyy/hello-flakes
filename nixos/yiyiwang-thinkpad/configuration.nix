@@ -130,7 +130,7 @@ nur, ... }:
     lzip
     sqlite
     cargo
-    rustup
+    rustc
 
     # V2ray
     qv2ray

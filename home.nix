@@ -13,7 +13,7 @@
   programs.zsh = {
     enable = true;
     initExtra = ''
-      export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.foundry/bin
+      export PATH=$PATH:/usr/local/bin:$HOME/.local/bin
       eval "$(direnv hook zsh)"
     '';
 
