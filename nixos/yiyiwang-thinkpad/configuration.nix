@@ -122,10 +122,10 @@ nur, ... }:
     flatpak
     vim
     tmux
-    # python310
-    # python310Packages.pip
-    # python310Packages.ansible
     python3Full
+    python310Packages.pip
+    python310Packages.ansible
+    python310Packages.virtualenv
     nodejs-16_x
     lzip
     sqlite
@@ -168,16 +168,16 @@ nur, ... }:
 
     # Tools/Apps
     ## libsForQt514.kolourpaint # Broken
-    krita
+    krita ## Painting tool
     gimp
     vlc
-    wpsoffice
+    # wpsoffice
     okular
     xournal
     filezilla
     dbeaver
-    peek
-    kooha
+    # peek
+    # kooha
     # pgadmin4
     calibre
     foliate
@@ -296,9 +296,10 @@ nur, ... }:
     # nixPath = [ "nixpkgs=${nixpkgs}" ];
     auto-optimise-store = true;
     substituters = lib.mkForce [
-      "https://mirror.sjtu.edu.cn/nix-channels/store"
-      "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
+      # BROKEN: "https://mirror.sjtu.edu.cn/nix-channels/store"
       "https://mirrors.ustc.edu.cn/nix-channels/store"
+      "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
+      "https://cache.nixos.org"
     ];
     trusted-users = [ "@wheel" ];
     experimental-features = [ "nix-command" "flakes" ];
