@@ -129,6 +129,8 @@ nur, ... }:
     nodejs-16_x
     lzip
     sqlite
+    cargo
+    rustup
 
     # V2ray
     qv2ray
