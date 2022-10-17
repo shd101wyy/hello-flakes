@@ -44,7 +44,7 @@
         defaultPackage = packages.hello;
         
         # If you want to enable the dev shell, you need to add the following line: 
-        # devShell = import ./shell.nix { inherit pkgs; };
+        devShell = import ./shell.nix { inherit pkgs; };
       })) // (let
         system = "x86_64-linux";
         pkgs = nixpkgs.legacyPackages.${system};
