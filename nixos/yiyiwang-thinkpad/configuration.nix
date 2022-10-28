@@ -131,6 +131,7 @@ nur, ... }:
     sqlite
     cargo
     rustc
+    tree
 
     # V2ray
     qv2ray
@@ -300,7 +301,7 @@ nur, ... }:
     substituters = lib.mkForce [
       # BROKEN: "https://mirror.sjtu.edu.cn/nix-channels/store"
       "https://mirrors.ustc.edu.cn/nix-channels/store"
-      "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
+      "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store" # <- This is very slow
       "https://cache.nixos.org"
     ];
     trusted-users = [ "@wheel" ];
