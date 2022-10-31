@@ -10,6 +10,8 @@
   home.username = "yiyiwang";
   home.homeDirectory = "/home/yiyiwang";
 
+  manual.manpages.enable = false;
+
   programs.zsh = {
     enable = true;
     initExtra = ''
