@@ -7,12 +7,16 @@
   services.neo4j.bolt.enable = true;
   services.neo4j.bolt.tlsLevel = "DISABLED";
   services.neo4j.https.enable = false;
-  services.neo4j.directories.home = "/home/yiyiwang/.local/neo4j";
+
+  # NOTE: Setting this below will cause the service to fail to start
+  # services.neo4j.directories.home = "/home/yiyiwang/.local/neo4j";
 
   # For my case, run the following:
+  # NOTE: Probably don't need to export NEO4j_CONF
   # $ export NEO4J_CONF=/home/yiyiwang/.local/neo4j/conf/
   # $ neo4j-admin set-initial-password XXXXXX
   # $ neo4j start
+  # $ cypher-shell
   # 
   # Then visit http://127.0.0.1:7474/browser/
   # * Host is neo4j://localhost:7687

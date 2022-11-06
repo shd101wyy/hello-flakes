@@ -201,6 +201,11 @@ nur, ... }:
 
     # AWS
     awscli2
+
+    # Game engine
+    godot
+    godot-export-templates
+    pixelorama
   ];
 
   # Steam for gaming
