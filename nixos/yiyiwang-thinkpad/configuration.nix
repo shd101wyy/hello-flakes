@@ -187,6 +187,10 @@ nur, ... }:
     pandoc
     wkhtmltopdf
 
+    # Java
+    jetbrains.idea-community
+    maven
+
     # Communication
     skypeforlinux
     slack
