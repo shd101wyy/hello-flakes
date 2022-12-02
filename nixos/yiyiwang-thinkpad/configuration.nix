@@ -32,6 +32,8 @@ nur, ... }:
     efiInstallAsRemovable = true;
     # Define on which hard drive you want to install Grub.
     device = "nodev";
+    # Only allow maximum 6 boot entries
+    configurationLimit = 6;
     # set $FS_UUID to the UUID of the EFI partition
     # Run `sudo blkid` to see the UUID
     # https://nixos.wiki/wiki/Dual_Booting_NixOS_and_Windows
@@ -171,11 +173,11 @@ nur, ... }:
 
     # Tools/Apps
     ## libsForQt514.kolourpaint # Broken
-    krita ## Painting tool
+    ## krita ## Painting tool
     gimp
     vlc
     # wpsoffice
-    okular
+    ## okular
     xournal
     filezilla
     dbeaver
@@ -323,7 +325,7 @@ nur, ... }:
     allowUnfree = true;
     # allowBroken = true;
     # allowUnsupportedSystem = true;
-    permittedInsecurePackages = [ "electron-12.2.3" ];
+    permittedInsecurePackages = [ "electron-12.2.3" "qtwebkit-5.212.0-alpha4" ];
   };
 
 }
