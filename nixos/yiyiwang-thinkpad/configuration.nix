@@ -56,7 +56,7 @@ nur, ... }:
   };
   # Disable the ipv6. 
   # This is necessary to be used together with the `networking.enableIPv6` option.
-  boot.kernelParams = [ "ipv6.disable=1" ];
+  ## boot.kernelParams = [ "ipv6.disable=1" ];
 
   system = {
     copySystemConfiguration = false;
@@ -67,7 +67,7 @@ nur, ... }:
   # Run `sudo nmtui` to activate connection to Wifi
   networking.networkmanager.enable =
     true; # Easiest to use and most distros use this by default.
-  networking.enableIPv6 = false; # Disable IPv6
+  ## networking.enableIPv6 = false; # Disable IPv6
 
   # Set my time zone
   time.timeZone = "Asia/Shanghai";

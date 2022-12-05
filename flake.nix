@@ -3,9 +3,6 @@
 
   inputs = {
     nixpkgs = {
-      # url = "github:NixOS/nixpkgs/nixos-unstable";
-      #        "github:NixOS/nixpkgs?rev=f53389628215da2945a413a79ce08bcfbce4420e";
-      #
       # https://status.nixos.org/ Use this website to check the binary cache status,
       # sometimes the latest commit of the nixos-unstable channel is not cached yet.
       #
@@ -13,7 +10,10 @@
       # So we might want to roll back to some previous commit.
       #
       # Below is the unixos-unstable
-      url = "github:NixOS/nixpkgs?rev=61a8a98e6d557e6dd7ed0cdb54c3a3e3bbc5e25c";
+      # url = "github:NixOS/nixpkgs?rev=61a8a98e6d557e6dd7ed0cdb54c3a3e3bbc5e25c";
+      #
+      # Below is the nixos-22.11
+      url = "github:NixOS/nixpkgs/nixos-22.11";
     };
     flake-utils = { url = "github:numtide/flake-utils"; };
     nur = { url = "github:nix-community/NUR/master"; };
@@ -42,7 +42,7 @@
           };
         };
         defaultPackage = packages.hello;
-        
+
         # If you want to enable the dev shell, you need to add the following line: 
         devShell = import ./shell.nix { inherit pkgs; };
       })) // (let
