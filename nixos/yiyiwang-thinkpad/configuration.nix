@@ -54,6 +54,9 @@ nur, ... }:
     efiSysMountPoint = "/boot";
     # canTouchEfiVariables = true;
   };
+  # Disable the ipv6. 
+  # This is necessary to be used together with the `networking.enableIPv6` option.
+  boot.kernelParams = [ "ipv6.disable=1" ];
 
   system = {
     copySystemConfiguration = false;
