@@ -13,7 +13,7 @@
       # So we might want to roll back to some previous commit.
       #
       # Below is the unixos-unstable
-      url = "github:NixOS/nixpkgs?rev=a115bb9bd56831941be3776c8a94005867f316a7";
+      url = "github:NixOS/nixpkgs?rev=61a8a98e6d557e6dd7ed0cdb54c3a3e3bbc5e25c";
     };
     flake-utils = { url = "github:numtide/flake-utils"; };
     nur = { url = "github:nix-community/NUR/master"; };

@@ -64,6 +64,7 @@ nur, ... }:
   # Run `sudo nmtui` to activate connection to Wifi
   networking.networkmanager.enable =
     true; # Easiest to use and most distros use this by default.
+  networking.enableIPv6 = false; # Disable IPv6
 
   # Set my time zone
   time.timeZone = "Asia/Shanghai";
@@ -190,8 +191,8 @@ nur, ... }:
     wkhtmltopdf
 
     # Java
-    jetbrains.idea-community
-    maven
+    # jetbrains.idea-community
+    # maven
 
     # Communication
     skypeforlinux
