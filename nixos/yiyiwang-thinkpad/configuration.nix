@@ -140,8 +140,8 @@ nur, ... }:
     tree
 
     # V2ray
-    qv2ray
-    ## v2ray # Needs to download from 
+    qv2ray # Has to use vcore V4 instead of V5 as V5 is causing exit code 2 bug
+    ## v2ray
 
     # Browser
     google-chrome
@@ -218,6 +218,12 @@ nur, ... }:
     godot-export-templates
     pixelorama
   ];
+
+  # V2ray
+  ## services.v2ray = {
+  ##   enable = true;
+  ##   configFile = "/home/yiyiwang/.config/v2ray/vmess4.json";
+  ## };
 
   # Steam for gaming
   # As downloading steam will cause SSL error in China,
