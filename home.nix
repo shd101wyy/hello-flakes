@@ -17,24 +17,6 @@
     initExtra = ''
       export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin
       eval "$(direnv hook zsh)"
-
-      NIX_LINK=$HOME/.nix-profile
-
-      # Set $NIX_SSL_CERT_FILE so that Nixpkgs applications like curl work.
-      if [ -e /etc/ssl/certs/ca-certificates.crt ]; then # NixOS, Ubuntu, Debian, Gentoo, Arch
-          export NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
-      elif [ -e /etc/ssl/ca-bundle.pem ]; then # openSUSE Tumbleweed
-          export NIX_SSL_CERT_FILE=/etc/ssl/ca-bundle.pem
-      elif [ -e /etc/ssl/certs/ca-bundle.crt ]; then # Old NixOS
-          export NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt
-      elif [ -e /etc/pki/tls/certs/ca-bundle.crt ]; then # Fedora, CentOS
-          export NIX_SSL_CERT_FILE=/etc/pki/tls/certs/ca-bundle.crt
-      elif [ -e "$NIX_LINK/etc/ssl/certs/ca-bundle.crt" ]; then # fall back to cacert in Nix profile
-          export NIX_SSL_CERT_FILE="$NIX_LINK/etc/ssl/certs/ca-bundle.crt"
-      elif [ -e "$NIX_LINK/etc/ca-bundle.crt" ]; then # old cacert in Nix profile
-          export NIX_SSL_CERT_FILE="$NIX_LINK/etc/ca-bundle.crt"
-      fi
-
     '';
 
     oh-my-zsh = {

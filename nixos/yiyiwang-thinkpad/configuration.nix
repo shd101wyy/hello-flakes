@@ -205,6 +205,7 @@ nur, ... }:
 
     # Nur
     pkgs.nur.repos.mic92.hello-nur
+    pkgs.nur.repos.yes.electronic-wechat
 
     # Gnome app
     evince # document viewer
