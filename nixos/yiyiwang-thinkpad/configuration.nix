@@ -174,6 +174,7 @@ nur, ... }:
     xsel
     ansible
     sshpass
+    lsof
 
     # Tools/Apps
     ## libsForQt514.kolourpaint # Broken
@@ -202,6 +203,7 @@ nur, ... }:
     slack
     tdesktop
     discord
+    # teams
 
     # Nur
     pkgs.nur.repos.mic92.hello-nur
@@ -336,7 +338,10 @@ nur, ... }:
     allowUnfree = true;
     # allowBroken = true;
     # allowUnsupportedSystem = true;
-    permittedInsecurePackages = [ "electron-12.2.3" "qtwebkit-5.212.0-alpha4" ];
+    permittedInsecurePackages = [
+      "electron-12.2.3"
+      "qtwebkit-5.212.0-alpha4" 
+    ];
   };
 
 }
