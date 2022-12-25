@@ -9,6 +9,7 @@ set -xeu
 export NIXPKGS_ALLOW_UNFREE=1
 nix build  --impure .\#homeConfigurations.yiyiwang-home.activationPackage \
   --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store" \
-  --option substituters "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
+  --option substituters "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store" \
+  --option substituters "https://cache.nixos.org"
 "$(nix path-info --impure .\#homeConfigurations.yiyiwang-home.activationPackage)"/activate
 

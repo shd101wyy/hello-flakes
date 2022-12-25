@@ -182,6 +182,7 @@ nur, ... }:
     gimp
     vlc
     # wpsoffice
+    wpsoffice-cn
     ## okular
     xournal
     filezilla
@@ -192,7 +193,7 @@ nur, ... }:
     calibre
     foliate
     pandoc
-    wkhtmltopdf
+    # wkhtmltopdf # NOTE: This will build qtwebkit-5.212.0-alpha4 and will take long time.
 
     # Java
     # jetbrains.idea-community
@@ -338,10 +339,7 @@ nur, ... }:
     allowUnfree = true;
     # allowBroken = true;
     # allowUnsupportedSystem = true;
-    permittedInsecurePackages = [
-      "electron-12.2.3"
-      "qtwebkit-5.212.0-alpha4" 
-    ];
+    permittedInsecurePackages = [ "electron-12.2.3" "qtwebkit-5.212.0-alpha4" ];
   };
 
 }
