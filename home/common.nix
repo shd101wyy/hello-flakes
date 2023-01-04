@@ -1,17 +1,10 @@
 { pkgs, ... }:
-# This module is managed by Flakes
-# Run the following commands build the configuration:
-# $ nix build .\#homeConfigurations.yiyiwang-home.activationPackage
-# $ "$(nix path-info .\#homeConfigurations.yiyiwang-home.activationPackage)"/activate 
-# To get the SHA256
-# nix-prefetch fetchFromGitHub --owner owner --repo repo --rev 65bb66d364e0d10d00bd848a3d35e2755654655b
+# This file includes some common
 {
-  home.stateVersion = "22.05";
-  home.username = "yiyiwang";
-  home.homeDirectory = "/home/yiyiwang";
-
-  manual.manpages.enable = false;
-
+  home.packages = with pkgs; [
+    sl # An funny command
+    crawl # Dungeon crawl stone soup
+  ];
   programs.zsh = {
     enable = true;
     initExtra = ''
@@ -112,12 +105,5 @@
   programs.vscode = {
     enable = true;
     package = pkgs.vscode.fhsWithPackages (ps: with ps; [ rustup zlib glibc ]);
-  };
-
-  home.packages = with pkgs; [ ];
-  dconf.settings = {
-    "org/gnome/mutter" = {
-      experimental-features = [ "scale-monitor-framebuffer" ];
-    };
   };
 }

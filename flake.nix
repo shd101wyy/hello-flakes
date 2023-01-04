@@ -62,12 +62,15 @@
 
         # Home configurations
         # Run the following command to build the home-manager configuration
-        # $ nix build .\#homeConfigurations.yiyiwang-home.activationPackage
-        # $ "$(nix path-info .\#homeConfigurations.yiyiwang-home.activationPackage)"/activate 
-        homeConfigurations.yiyiwang-home =
+        # $ nix build .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage
+        # $ "$(nix path-info .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage)"/activate 
+        homeConfigurations.yiyiwang-thinkpad-home =
           home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ ./home.nix ];
+            modules = [ 
+              ./home/yiyiwang-thinkpad-home.nix
+              ./home/common.nix
+            ];
 
             # Optionally use extraSpecialArgs
             # to pass through arguments to home.nix
