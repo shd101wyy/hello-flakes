@@ -53,3 +53,7 @@ Added 1 variables.
 
 nix-repl> pkgs = flake.inputs.nixpkgs.legacyPackages.x86_64-linux
 ```
+
+## Install Nix on Steam Deck
+
+Follow https://determinate.systems/posts/nix-on-the-steam-deck
