@@ -75,5 +75,17 @@
             # Optionally use extraSpecialArgs
             # to pass through arguments to home.nix
           };
+        
+        homeConfigurations.yiyiwang-steamdeck-home =
+          home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [ 
+              ./home/yiyiwang-steamdeck-home.nix
+              ./home/common.nix
+            ];
+
+            # Optionally use extraSpecialArgs
+            # to pass through arguments to home.nix
+          };
       });
 }

@@ -17,4 +17,9 @@
       experimental-features = [ "scale-monitor-framebuffer" ];
     };
   };
+
+  home.packages = with pkgs; [
+    sl # An funny command
+    crawl # Dungeon crawl stone soup
+  ];
 }
