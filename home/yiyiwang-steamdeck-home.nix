@@ -5,6 +5,9 @@
   home.stateVersion = "22.11";
   home.username = "deck";
   home.homeDirectory = "/home/deck";
+
+  manual.manpages.enable = false;
+
   home.packages = with pkgs; [
     hello # Hello, world
     
