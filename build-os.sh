@@ -15,9 +15,7 @@ export https_proxy=http://127.0.0.1:8889
 rm -rf /home/yiyiwang/.local/neo4j/logs/debug.log
 
 nixos-rebuild switch --flake .#yiyiwang-thinkpad -v \
-  --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store" \
-  --option substituters "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store" \
-  --option substituters "https://cache.nixos.org"
+  --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://cache.nixos.org"
 
 # If the substitue doesn't work, add `--option substitute false`
 # nixos-rebuild switch --flake .#yiyiwang-thinkpad -v --option substitute false

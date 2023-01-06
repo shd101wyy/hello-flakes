@@ -18,6 +18,12 @@
     };
   };
 
+  programs.vscode = {
+    enable = true;
+    package = pkgs.vscode.fhsWithPackages (ps: with ps; [ rustup zlib glibc ]);
+  };
+
+
   home.packages = with pkgs; [
     sl # An funny command
     crawl # Dungeon crawl stone soup
