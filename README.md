@@ -57,3 +57,6 @@ nix-repl> pkgs = flake.inputs.nixpkgs.legacyPackages.x86_64-linux
 ## Install Nix on Steam Deck
 
 Follow https://determinate.systems/posts/nix-on-the-steam-deck
+
+After installing applications, the application might not show in the menu.  
+We will need to open `Menu Editor` then add the executable paths of the applications manually.  
