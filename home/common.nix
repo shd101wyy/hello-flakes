@@ -5,6 +5,13 @@
     enable = true;
     initExtra = ''
       export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin
+
+      # For flatpak installed vscode, add alias of `code` command
+      if [ -f "/var/lib/flatpak/exports/bin/com.visualstudio.code" ]; then
+        alias code="/var/lib/flatpak/exports/bin/com.visualstudio.code"
+      fi 
+
+      # direnv
       eval "$(direnv hook zsh)"
     '';
 
