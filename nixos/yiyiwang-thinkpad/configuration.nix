@@ -133,6 +133,7 @@ nur, ... }:
     python310Packages.ansible
     python310Packages.virtualenv
     nodejs-16_x
+    yarn
     lzip
     sqlite
     cargo
@@ -208,7 +209,6 @@ nur, ... }:
 
     # Nur
     pkgs.nur.repos.mic92.hello-nur
-    pkgs.nur.repos.yes.electronic-wechat
 
     # Gnome app
     evince # document viewer
