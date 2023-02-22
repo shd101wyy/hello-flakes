@@ -139,6 +139,7 @@ nur, ... }:
     cargo
     rustc
     tree
+    gcc
 
     # V2ray
     qv2ray # Has to use vcore V4 instead of V5 as V5 is causing exit code 2 bug
