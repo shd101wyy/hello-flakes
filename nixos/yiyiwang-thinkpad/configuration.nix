@@ -189,7 +189,7 @@ nur, ... }:
     gimp
     vlc
     # wpsoffice
-    wpsoffice-cn
+    # wpsoffice-cn
     ## okular
     xournal
     filezilla
@@ -322,7 +322,7 @@ nur, ... }:
     # $ waydroid show-full-ui
     waydroid = { enable = true; };
     docker = { enable = true; };
-    lxd = { enable = true; };
+    # lxd = { enable = true; };
   };
 
   # Nix settings
