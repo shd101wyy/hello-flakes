@@ -21,6 +21,8 @@ nur, ... }:
     ../../services/postgresql.nix
     # Neo4j configuration
     ../../services/neo4j.nix
+    # pgadmin configuration
+    ../../services/pgadmin.nix
   ];
 
   # Use the GRUB 2 boot loader
@@ -134,12 +136,14 @@ nur, ... }:
     python310Packages.virtualenv
     nodejs-16_x
     yarn
+    ruby
     lzip
     sqlite
     cargo
     rustc
     tree
     gcc
+    jdk
 
     # V2ray
     qv2ray # Has to use vcore V4 instead of V5 as V5 is causing exit code 2 bug
@@ -177,6 +181,7 @@ nur, ... }:
     ansible
     sshpass
     lsof
+    pgloader
 
     # Tools/Apps
     ## libsForQt514.kolourpaint # Broken
