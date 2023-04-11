@@ -201,6 +201,10 @@ nur, ... }:
     foliate
     pandoc
     # wkhtmltopdf # NOTE: This will build qtwebkit-5.212.0-alpha4 and will take long time.
+    
+    ## Graphql IDEs
+    insomnia
+    altair
 
     # Java
     # jetbrains.idea-community
