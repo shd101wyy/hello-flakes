@@ -95,7 +95,7 @@ nur, ... }:
   # https://nixos.wiki/wiki/Xorg
   # Enable HiDPI
   # bigger tty fonts
-  hardware.video.hidpi.enable = true;
+  # hardware.video.hidpi.enable = true; # <= no longer has effect
   console.font = "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
   # services.xserver.dpi = 180;
   environment.variables = {
@@ -145,9 +145,8 @@ nur, ... }:
     gcc
     jdk
 
-    # V2ray
-    qv2ray # Has to use vcore V4 instead of V5 as V5 is causing exit code 2 bug
-    ## v2ray
+    # VPN
+    clash-verge
 
     # Browser
     google-chrome

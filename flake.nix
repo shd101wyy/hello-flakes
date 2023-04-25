@@ -10,10 +10,11 @@
       # So we might want to roll back to some previous commit.
       #
       # Below is the unixos-unstable
-      # url = "github:NixOS/nixpkgs?rev=61a8a98e6d557e6dd7ed0cdb54c3a3e3bbc5e25c";
+      url = "github:NixOS/nixpkgs?rev=884ac294018409e0d1adc0cae185439a44bd6b0b";
       #
       # Below is the nixos-22.11
-      url = "github:NixOS/nixpkgs?rev=ea96b4af6148114421fda90df33cf236ff5ecf1d";
+      # url = "github:NixOS/nixpkgs?rev=de66115c552acc4e0c0f92c5a5efb32e37dfa216";
+
     };
     flake-utils = { url = "github:numtide/flake-utils"; };
     nur = { url = "github:nix-community/NUR/master"; };
@@ -67,22 +68,16 @@
         homeConfigurations.yiyiwang-thinkpad-home =
           home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ 
-              ./home/yiyiwang-thinkpad-home.nix
-              ./home/common.nix
-            ];
+            modules = [ ./home/yiyiwang-thinkpad-home.nix ./home/common.nix ];
 
             # Optionally use extraSpecialArgs
             # to pass through arguments to home.nix
           };
-        
+
         homeConfigurations.yiyiwang-steamdeck-home =
           home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ 
-              ./home/yiyiwang-steamdeck-home.nix
-              ./home/common.nix
-            ];
+            modules = [ ./home/yiyiwang-steamdeck-home.nix ./home/common.nix ];
 
             # Optionally use extraSpecialArgs
             # to pass through arguments to home.nix
