@@ -13,7 +13,7 @@
       url = "github:NixOS/nixpkgs?rev=884ac294018409e0d1adc0cae185439a44bd6b0b";
       #
       # Below is the nixos-22.11
-      # url = "github:NixOS/nixpkgs?rev=de66115c552acc4e0c0f92c5a5efb32e37dfa216";
+      # url = "github:NixOS/nixpkgs?rev=60c0f762658916a4a5b5a36b3e06486f8301daf4";
 
     };
     flake-utils = { url = "github:numtide/flake-utils"; };
