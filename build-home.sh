@@ -44,5 +44,5 @@ export NIX_CURL_FLAGS="-x $http_proxy -x $https_proxy"
 
 export NIXPKGS_ALLOW_UNFREE=1
 nix build --impure .\#homeConfigurations.$HOME_CONFIG.activationPackage \
-  --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://cache.nixos.org"
+  --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://aseipp-nix-cache.global.ssl.fastly.net https://cache.nixos.org"
 "$(nix path-info --impure .\#homeConfigurations.$HOME_CONFIG.activationPackage)"/activate
