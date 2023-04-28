@@ -21,8 +21,8 @@
     netcat # `nc` command
 
     # VPN
-    # qv2ray
-    clash-verge
+    # qv2ray # Not working well
+    # clash-verge # Please download from https://github.com/zzzgydi/clash-verge/releases/
 
     # Nix related
     nixfmt
