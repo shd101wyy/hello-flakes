@@ -10,6 +10,7 @@ export HTTP_PROXY=http://127.0.0.1:8889
 export HTTPS_PROXY=http://127.0.0.1:8889
 export http_proxy=http://127.0.0.1:8889
 export https_proxy=http://127.0.0.1:8889
+export NIX_CURL_FLAGS="-x $http_proxy -x $https_proxy"
 
 # Hack for neo4j
 rm -rf /home/yiyiwang/.local/neo4j/logs/debug.log

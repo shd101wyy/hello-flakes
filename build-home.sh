@@ -13,7 +13,7 @@ while [ $# -gt 0 ]; do
     HOME_CONFIG="$2"
     shift 2
     ;;
-  --help|-h)
+  --help | -h)
     echo "Usage: $0 [options]"
     echo "Options:"
     echo "  --home <home-config>  Home configuration to use"
@@ -36,10 +36,11 @@ if [ "$HOME_CONFIG" != "yiyiwang-thinkpad-home" ] && [ "$HOME_CONFIG" != "yiyiwa
   exit 1
 fi
 
-# export HTTP_PROXY=http://127.0.0.1:8889
-# export HTTPS_PROXY=http://127.0.0.1:8889
-# export http_proxy=http://127.0.0.1:8889
-# export https_proxy=http://127.0.0.1:8889
+export HTTP_PROXY=http://127.0.0.1:8889
+export HTTPS_PROXY=http://127.0.0.1:8889
+export http_proxy=http://127.0.0.1:8889
+export https_proxy=http://127.0.0.1:8889
+export NIX_CURL_FLAGS="-x $http_proxy -x $https_proxy"
 
 export NIXPKGS_ALLOW_UNFREE=1
 nix build --impure .\#homeConfigurations.$HOME_CONFIG.activationPackage \

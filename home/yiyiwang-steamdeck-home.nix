@@ -9,10 +9,10 @@
   manual.manpages.enable = false;
 
   home.packages = with pkgs; [
-    hello # Hello, world
+    # hello # Hello, world
     
     # Software development
-    nodejs-16_x
+    nodejs
     ## gnome.gnome-terminal # <- Doesn't work
     sqlite
     tree
@@ -20,8 +20,9 @@
     # System
     netcat # `nc` command
 
-    # V2ray
-    qv2ray
+    # VPN
+    # qv2ray
+    clash-verge
 
     # Nix related
     nixfmt
@@ -29,6 +30,6 @@
     direnv
 
     # Tools/Apps
-    pandoc
+    # pandoc
   ];
 }
