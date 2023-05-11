@@ -144,6 +144,7 @@ nur, ... }:
     tree
     gcc
     jdk
+    gnumake
 
     # VPN
     clash-verge
@@ -151,6 +152,7 @@ nur, ... }:
     # Browser
     google-chrome
     firefox
+    chromium
 
     # Nix related
     nixfmt
