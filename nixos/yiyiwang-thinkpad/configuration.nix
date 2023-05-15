@@ -134,6 +134,7 @@ nur, ... }:
     python310Packages.pip
     python310Packages.ansible
     python310Packages.virtualenv
+    poetry
     nodejs-16_x
     yarn
     ruby
