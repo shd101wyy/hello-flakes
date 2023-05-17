@@ -16,6 +16,9 @@
 
       # direnv
       eval "$(direnv hook zsh)"
+
+      # rust cargo home
+      export CARGO_HOME="$HOME/.cargo"
     '';
 
     oh-my-zsh = {
