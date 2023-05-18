@@ -179,6 +179,7 @@ nur, ... }:
     bind
     htop
     zip
+    unzip
     xsel
     ansible
     sshpass
