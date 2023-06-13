@@ -28,7 +28,7 @@ nur, ... }:
   # Use the GRUB 2 boot loader
   boot.loader.grub = {
     enable = true;
-    version = 2;
+    # version = 2; # Deprecated
     useOSProber = true;
     efiSupport = true;
     efiInstallAsRemovable = true;
@@ -135,7 +135,7 @@ nur, ... }:
     python310Packages.ansible
     python310Packages.virtualenv
     poetry
-    nodejs-16_x
+    nodejs-18_x
     yarn
     ruby
     lzip
@@ -204,7 +204,8 @@ nur, ... }:
     foliate
     pandoc
     # wkhtmltopdf # NOTE: This will build qtwebkit-5.212.0-alpha4 and will take long time.
-    
+    browsh # fully-modern text-based browser
+
     ## Graphql IDEs
     insomnia
     altair
@@ -216,7 +217,7 @@ nur, ... }:
     # Communication
     skypeforlinux
     slack
-    tdesktop
+    # tdesktop
     discord
     # teams
 

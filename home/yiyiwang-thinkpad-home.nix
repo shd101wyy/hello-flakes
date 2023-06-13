@@ -27,5 +27,6 @@
   home.packages = with pkgs; [
     sl # An funny command
     crawl # Dungeon crawl stone soup
+    sops # Mozilla sops (Secrets OPerationS) is an editor of encrypted files
   ];
 }

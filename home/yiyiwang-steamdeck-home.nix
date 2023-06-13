@@ -31,5 +31,6 @@
 
     # Tools/Apps
     # pandoc
+    sops # Mozilla sops (Secrets OPerationS) is an editor of encrypted files
   ];
 }
