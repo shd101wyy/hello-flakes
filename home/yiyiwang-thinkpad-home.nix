@@ -23,10 +23,9 @@
     package = pkgs.vscode.fhsWithPackages (ps: with ps; [ rustup zlib glibc ]);
   };
 
-
-  home.packages = with pkgs; [
-    sl # An funny command
-    crawl # Dungeon crawl stone soup
-    sops # Mozilla sops (Secrets OPerationS) is an editor of encrypted files
-  ];
+  home.packages = with pkgs;
+    [
+      sl # An funny command
+      crawl # Dungeon crawl stone soup
+    ] ++ (import ./packages.nix { pkgs = pkgs; });
 }

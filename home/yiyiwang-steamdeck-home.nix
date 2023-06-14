@@ -8,29 +8,29 @@
 
   manual.manpages.enable = false;
 
-  home.packages = with pkgs; [
-    # hello # Hello, world
-    
-    # Software development
-    nodejs
-    ## gnome.gnome-terminal # <- Doesn't work
-    sqlite
-    tree
+  home.packages = with pkgs;
+    [
+      # hello # Hello, world
 
-    # System
-    netcat # `nc` command
+      # Software development
+      nodejs
+      ## gnome.gnome-terminal # <- Doesn't work
+      sqlite
+      tree
 
-    # VPN
-    # qv2ray # Not working well
-    # clash-verge # Please download from https://github.com/zzzgydi/clash-verge/releases/
+      # System
+      netcat # `nc` command
 
-    # Nix related
-    nixfmt
-    niv
-    direnv
+      # VPN
+      # qv2ray # Not working well
+      # clash-verge # Please download from https://github.com/zzzgydi/clash-verge/releases/
 
-    # Tools/Apps
-    # pandoc
-    sops # Mozilla sops (Secrets OPerationS) is an editor of encrypted files
-  ];
+      # Nix related
+      nixfmt
+      niv
+      direnv
+
+      # Tools/Apps
+      # pandoc
+    ] ++ (import ./packages.nix { pkgs = pkgs; });
 }
