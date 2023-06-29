@@ -316,7 +316,7 @@ nur, ... }:
       };
       antialias = true;
       hinting.enable = true;
-      hinting.style = "hintslight";
+      hinting.style = "slight";
     };
   };
 

@@ -10,7 +10,7 @@
       # So we might want to roll back to some previous commit.
       #
       # Below is the unixos-unstable
-      url = "github:NixOS/nixpkgs?rev=0eeebd64de89e4163f4d3cf34ffe925a5cf67a05";
+      url = "github:NixOS/nixpkgs?rev=a565059a348422af5af9026b5174dc5c0dcefdae";
       #
       # Below is the nixos-22.11
       # url = "github:NixOS/nixpkgs?rev=60c0f762658916a4a5b5a36b3e06486f8301daf4";
