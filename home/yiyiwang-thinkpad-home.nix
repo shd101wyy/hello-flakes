@@ -27,5 +27,6 @@
     [
       sl # An funny command
       crawl # Dungeon crawl stone soup
+      logseq # A note taking app
     ] ++ (import ./packages.nix { pkgs = pkgs; });
 }

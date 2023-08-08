@@ -135,7 +135,7 @@ nur, ... }:
     python310Packages.ansible
     python310Packages.virtualenv
     poetry
-    nodejs-18_x
+    nodejs_18
     yarn
     ruby
     lzip
@@ -316,7 +316,7 @@ nur, ... }:
       };
       antialias = true;
       hinting.enable = true;
-      hinting.style = "slight";
+      # hinting.style = "slight";
     };
   };
 
