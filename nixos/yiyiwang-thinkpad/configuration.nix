@@ -205,6 +205,7 @@ nur, ... }:
     pandoc
     # wkhtmltopdf # NOTE: This will build qtwebkit-5.212.0-alpha4 and will take long time.
     browsh # fully-modern text-based browser
+    podman-desktop
 
     ## Graphql IDEs
     insomnia
