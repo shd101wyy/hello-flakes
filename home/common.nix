@@ -4,7 +4,7 @@
   programs.zsh = {
     enable = true;
     initExtra = ''
-      export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin:$HOME/.local/podman/bin
+      export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin
 
       # Check if /etc/os-release exists and the name is SteamOS
       if [ -f /etc/os-release ] && grep -q 'NAME="SteamOS"' /etc/os-release; then
@@ -12,6 +12,9 @@
         if [ -f "/var/lib/flatpak/exports/bin/com.visualstudio.code" ]; then
           alias code="/var/lib/flatpak/exports/bin/com.visualstudio.code"
         fi
+
+        # podman path
+        export PATH=$PATH:$HOME/.local/podman/bin
       fi
 
       # direnv

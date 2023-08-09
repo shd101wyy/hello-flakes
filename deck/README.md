@@ -30,9 +30,9 @@ experimental-features = nix-command flakes
 ## Install podman
 
 [Guid](https://www.gamingonlinux.com/2022/09/distrobox-can-open-up-the-steam-deck-to-a-whole-new-world/)
+[Guid2](https://engineering.zeroitlab.com/2022/09/20/develop-on-deck/)
+[install_podman.sh](./install_podman.sh)
 
 ```bash
-$ curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix ~/.local
-
-$ curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/extras/install-podman | sh -s -- --prefix ~/.local
-``````
+$ ./install_podman.sh
+```
