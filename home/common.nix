@@ -4,7 +4,7 @@
   programs.zsh = {
     enable = true;
     initExtra = ''
-      export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin
+      export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin:$HOME/.local/podman/bin
 
       # Check if /etc/os-release exists and the name is SteamOS
       if [ -f /etc/os-release ] && grep -q 'NAME="SteamOS"' /etc/os-release; then
@@ -19,6 +19,10 @@
 
       # rust cargo home
       export CARGO_HOME="$HOME/.cargo"
+
+      # podman alias
+      alias docker=podman
+      alias docker-compose=podman-compose
     '';
 
     oh-my-zsh = {

@@ -26,3 +26,13 @@ Edit either `~/.config/nix/nix.conf` or `/etc/nix/nix.conf` and add:
 ```text
 experimental-features = nix-command flakes
 ```
+
+## Install podman
+
+[Guid](https://www.gamingonlinux.com/2022/09/distrobox-can-open-up-the-steam-deck-to-a-whole-new-world/)
+
+```bash
+$ curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix ~/.local
+
+$ curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/extras/install-podman | sh -s -- --prefix ~/.local
+``````
