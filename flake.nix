@@ -22,7 +22,7 @@
     flake-utils = { url = "github:numtide/flake-utils"; };
     nur = { url = "github:nix-community/NUR/master"; };
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager?ref=release-23.05"; # The version here should match `nixpkgs`
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
