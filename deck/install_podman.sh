@@ -37,4 +37,8 @@ systemctl --user start podman.socket
 echo "* Allowing podman.socket to be passed through to Flatpaks"
 flatpak override --user --filesystem=/run/user/1000/podman/podman.sock
 
+# Add ability to run X applications from container
+xhost +si:localuser:$USER
+echo 'xhost +si:localuser:$USER' > $HOME/.xinitrc
+
 echo "* Done. You may need to reboot your device."
