@@ -19,10 +19,6 @@
 
       # rust cargo home
       export CARGO_HOME="$HOME/.cargo"
-
-      # podman aliases
-      alias docker=podman
-      alias docker-compose=podman-compose
     '';
 
     oh-my-zsh = {

@@ -32,7 +32,5 @@
 
       # Tools/Apps
       # pandoc
-      podman
-      podman-compose
     ] ++ (import ./packages.nix { pkgs = pkgs; });
 }
