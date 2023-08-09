@@ -33,6 +33,14 @@ systemctl --user enable podman.socket
 echo "* Starting podman.socket"
 systemctl --user start podman.socket
 
+# Make the podman service automatically start on login:
+echo "* Enabling podman.service"
+systemctl --user enable podman.service
+
+# Start the podman service:
+echo "* Starting podman.service"
+systemctl --user start podman.service
+
 # Allow the podman socket to be passed through to Flatpaks:
 echo "* Allowing podman.socket to be passed through to Flatpaks"
 flatpak override --user --filesystem=/run/user/1000/podman/podman.sock
