@@ -127,7 +127,6 @@ nur, ... }:
     wget
     direnv
     nix-direnv
-    flatpak
     vim
     tmux
     python3Full
@@ -147,13 +146,12 @@ nur, ... }:
     jdk
     gnumake
 
+    # Flatpak
+    google-chrome
+    slack
+
     # VPN
     clash-verge
-
-    # Browser
-    google-chrome
-    firefox
-    chromium
 
     # Nix related
     nixfmt
@@ -189,27 +187,17 @@ nur, ... }:
     # Tools/Apps
     ## libsForQt514.kolourpaint # Broken
     ## krita ## Painting tool
-    gimp
-    vlc
-    # wpsoffice
-    # wpsoffice-cn
     ## okular
-    xournal
-    filezilla
-    dbeaver
+    # filezilla
     # peek
     # kooha
     # pgadmin4
-    calibre
-    foliate
+    # calibre
     pandoc
     # wkhtmltopdf # NOTE: This will build qtwebkit-5.212.0-alpha4 and will take long time.
     browsh # fully-modern text-based browser
-    podman-desktop
-    pods # A podman desktop application
 
     ## Graphql IDEs
-    insomnia
     altair
 
     # Java
@@ -217,10 +205,8 @@ nur, ... }:
     # maven
 
     # Communication
-    skypeforlinux
-    slack
     # tdesktop
-    discord
+    # discord
     # teams
 
     # Nur
@@ -233,10 +219,13 @@ nur, ... }:
     awscli2
 
     # Game engine
-    godot
-    godot-export-templates
-    pixelorama
+    # godot
+    # godot-export-templates
+    # pixelorama
   ];
+
+  # Enable flatpak
+  services.flatpak.enable = true;
 
   # V2ray
   ## services.v2ray = {
