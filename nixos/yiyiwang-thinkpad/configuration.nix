@@ -97,6 +97,9 @@
   };
   programs.dconf.enable = true;
 
+  # Enable the gnome keyring
+  services.gnome.gnome-keyring.enable = true;
+
   # https://nixos.wiki/wiki/Xorg
   # Enable HiDPI
   # bigger tty fonts
@@ -134,10 +137,13 @@
     nix-direnv
     vim
     tmux
-    python3Full
-    python310Packages.pip
-    python310Packages.ansible
-    python310Packages.virtualenv
+    python3
+    (python3.withPackages (ps: with ps; 
+      [ pip
+        ansible
+        virtualenv ]
+        )
+    )
     poetry
     nodejs_18
     yarn
@@ -198,7 +204,7 @@
     browsh # fully-modern text-based browser
 
     ## Graphql IDEs
-    altair
+    # altair
 
     # Java
     # jetbrains.idea-community
@@ -213,7 +219,7 @@
     pkgs.nur.repos.mic92.hello-nur
 
     # Gnome app
-    evince # document viewer
+    # evince # document viewer
 
     # AWS
     awscli2
@@ -285,8 +291,8 @@
   };
   fonts = {
     fontDir.enable = true;
-    enableDefaultFonts = true;
-    fonts = with pkgs; [
+    enableDefaultPackages = true;
+    packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif

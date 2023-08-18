@@ -17,6 +17,7 @@ apps=(
     com.orama_interactive.Pixelorama
     com.qq.QQ
     com.qq.QQmusic
+    com.raggesilver.BlackBox
     com.skype.Client
     com.uploadedlobster.peek
     com.wps.Office
@@ -86,18 +87,8 @@ for app in $installed_apps; do
     fi
 done
 
-if [[ $is_nixos -eq 1 ]]; then
-    # Grant google chrome access to the following folders to install or uninstall PWAs:
-    # ~/.local/share/applications
-    # ~/.local/share/icons
-    flatpak override --reset --user com.google.Chrome
-    flatpak override --user --filesystem=~/.local/share/applications com.google.Chrome
-    flatpak override --user --filesystem=~/.local/share/icons com.google.Chrome
-    flatpak override --user --filesystem=host
-
-    # Grant vscode access to the following folders
-    flatpak override --reset --user com.visualstudio.code
-    flatpak override --user --filesystem=host-etc com.visualstudio.code
-fi
+# Run configure_apps.sh
+echo "* Configuring apps..."
+$(dirname "$0")/configure_apps.sh
 
 echo "*You may need to log out then log in again to make app installed by flatpak work."
