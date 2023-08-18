@@ -9,7 +9,7 @@
 
       # For flatpak installed vscode, add alias of `code` command
       if [ -f "/var/lib/flatpak/exports/bin/com.visualstudio.code" ]; then
-        alias code="flatpak run com.visualstudio.code"
+        alias code="flatpak run com.visualstudio.code --password-store=\"gnome\""
       fi
 
       # Check if /etc/os-release exists and the name is SteamOS

@@ -26,7 +26,10 @@ apps=(
     net.codeindustry.MasterPDFEditor
     org.filezillaproject.Filezilla
     org.gimp.GIMP
+    org.gnome.seahorse.Application
+    org.kde.kwalletmanager5
     org.mozilla.firefox
+    org.sqlitebrowser.sqlitebrowser
     org.videolan.VLC
     rest.insomnia.Insomnia
 )
@@ -39,6 +42,30 @@ if [[ $is_nixos -eq 1 ]]; then
         com.google.Chrome
         com.slack.Slack
         com.visualstudio.code
+
+        # Input
+        org.fcitx.Fcitx5
+        org.gnome.font-viewer
+    )
+fi
+
+# Check if the OS is SteamOS. If yes then install some extra apps
+if [ -f /etc/os-release ] && grep -q 'NAME="SteamOS"' /etc/os-release; then
+    echo "* Detected SteamOS"
+    apps+=(
+        # Game emulator
+        app.xemu.xemu
+        io.github.shiiion.primehack
+        io.mgba.mGBA
+        net.davidotek.pupgui2
+        net.kuribo64.melonDS
+        net.rpcs3.RPCS3
+        org.citra_emu.citra
+        org.DolphinEmu.dolphin-emu
+        org.duckstation.DuckStation
+        org.libretro.RetroArch
+        org.ppsspp.PPSSPP
+        org.scummvm.ScummVM
     )
 fi
 
