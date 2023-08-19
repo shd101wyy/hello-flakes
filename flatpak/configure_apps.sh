@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Run "flatpak run --command=zsh com.visualstudio.code" to check the running environments.
 
 is_flatpak_app_installed() {
     flatpak list | grep -q "$1"
@@ -25,4 +26,6 @@ if is_flatpak_app_installed com.visualstudio.code; then
     flatpak override --user --filesystem=host-os com.visualstudio.code
     flatpak override --user --filesystem=host-etc com.visualstudio.code
     flatpak override --user --filesystem=home com.visualstudio.code
+    # Set environment variables
+    flatpak override --user --env=PATH="/app/bin:/usr/bin:$PATH" com.visualstudio.code
 fi

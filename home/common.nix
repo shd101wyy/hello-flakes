@@ -7,15 +7,16 @@
       export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin
       export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
 
-      # For flatpak installed vscode, add alias of `code` command
-      if [ -f "/var/lib/flatpak/exports/bin/com.visualstudio.code" ]; then
-        alias code="flatpak run com.visualstudio.code --password-store=\"gnome\""
-      fi
 
       # Check if /etc/os-release exists and the name is SteamOS
       if [ -f /etc/os-release ] && grep -q 'NAME="SteamOS"' /etc/os-release; then
         # podman path
         export PATH=$PATH:$HOME/.local/podman/bin
+      fi
+
+      # For flatpak installed vscode, add alias of `code` command
+      if [ -f "/var/lib/flatpak/exports/bin/com.visualstudio.code" ]; then
+        alias code="flatpak run com.visualstudio.code --password-store=\"gnome\""
       fi
 
       # direnv
