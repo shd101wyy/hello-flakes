@@ -82,16 +82,13 @@
       vim-plug
     ];
     extraPackages = with pkgs; [
-      git
-      (python3.withPackages (ps: with ps; [ black isort pylint ]))
-      nixpkgs-fmt
     ];
     # settings = { ignorecase = true; };
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
     # withNodeJs = true;
-    withPython3 = true;
+    # withPython3 = true;
     extraConfig = ''
       " ~/.vimrc configuration
 

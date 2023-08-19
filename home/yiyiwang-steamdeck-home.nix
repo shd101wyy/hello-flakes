@@ -12,23 +12,11 @@
     [
       # hello # Hello, world
 
-      # Software development
-      nodejs
       ## gnome.gnome-terminal # <- Doesn't work
-      sqlite
-      tree
-
-      # System
-      netcat # `nc` command
-
+      
       # VPN
       # qv2ray # Not working well
       # clash-verge # Please download from https://github.com/zzzgydi/clash-verge/releases/
-
-      # Nix related
-      nixfmt
-      niv
-      direnv
 
       # Tools/Apps
       # pandoc

@@ -130,33 +130,6 @@
 
   # Packages to install
   environment.systemPackages = with pkgs; [
-    # Software development
-    git
-    wget
-    direnv
-    nix-direnv
-    vim
-    tmux
-    python3
-    (python3.withPackages (ps: with ps; 
-      [ pip
-        ansible
-        virtualenv ]
-        )
-    )
-    poetry
-    nodejs_18
-    yarn
-    ruby
-    lzip
-    sqlite
-    cargo
-    rustc
-    tree
-    gcc
-    jdk
-    gnumake
-
     # Flatpak
     google-chrome
     slack
@@ -180,14 +153,6 @@
     etcher
     gparted
     font-manager
-    bind
-    htop
-    zip
-    unzip
-    xsel
-    ansible
-    sshpass
-    lsof
     pgloader
 
     # Tools/Apps
@@ -199,9 +164,7 @@
     # kooha
     # pgadmin4
     # calibre
-    pandoc
     # wkhtmltopdf # NOTE: This will build qtwebkit-5.212.0-alpha4 and will take long time.
-    browsh # fully-modern text-based browser
 
     ## Graphql IDEs
     # altair
