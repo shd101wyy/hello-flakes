@@ -10,13 +10,14 @@
       # So we might want to roll back to some previous commit.
       #
       # Below is the unixos-unstable
-      url = "github:NixOS/nixpkgs?rev=42c25608aa2ad4e5d3716d8d63c606063513ba33";
+      # * It causes grub bug, so I have to roll back to nixos-23.05
+      # url = "github:NixOS/nixpkgs?rev=42c25608aa2ad4e5d3716d8d63c606063513ba33";
       #
       # Below is the nixos-22.11
       # url = "github:NixOS/nixpkgs?rev=60c0f762658916a4a5b5a36b3e06486f8301daf4";
       #
       # Below is the nixos-23.05
-      # url = "github:NixOS/nixpkgs?rev=61676e4dcfeeb058f255294bcb08ea7f3bc3ce56";
+      url = "github:NixOS/nixpkgs?rev=53baed0863ff7df14b14444b779ddfaa80621f1a";
 
     };
     flake-utils = { url = "github:numtide/flake-utils"; };
