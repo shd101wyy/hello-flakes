@@ -134,9 +134,6 @@
     google-chrome
     slack
 
-    # VPN
-    clash-verge
-
     # Gnome related
     gnome.gnome-shell
     gnome.gnome-tweaks
