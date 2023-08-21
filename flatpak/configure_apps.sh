@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Run "flatpak run --command=zsh com.visualstudio.code" to check the running environments.
+# Run "flatpak run --command=bash com.visualstudio.code" to check the running environments.
+# Run "flatpak enter com.visualstudio.code bash" to enter the sandbox environment.
 
 is_flatpak_app_installed() {
     flatpak list | grep -q "$1"
