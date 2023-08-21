@@ -132,7 +132,6 @@
   environment.systemPackages = with pkgs; [
     # Flatpak
     google-chrome
-    slack
 
     # Gnome related
     gnome.gnome-shell

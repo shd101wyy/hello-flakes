@@ -30,3 +30,11 @@ if is_flatpak_app_installed com.visualstudio.code; then
     # Set environment variables
     flatpak override --user --env=PATH="/app/bin:/usr/bin:$PATH" com.visualstudio.code
 fi
+
+# Check if com.slack.Slack is installed
+if is_flatpak_app_installed com.slack.Slack; then
+    echo "* Configuring com.slack.Slack"
+    flatpak override --reset --user com.slack.Slack
+    # Disable the socket=wayland
+    flatpak override --user --nosocket=wayland com.slack.Slack
+fi
