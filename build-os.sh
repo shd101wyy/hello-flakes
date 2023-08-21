@@ -20,9 +20,3 @@ nixos-rebuild switch --flake .#yiyiwang-thinkpad -v \
 
 # If the substitue doesn't work, add `--option substitute false`
 # nixos-rebuild switch --flake .#yiyiwang-thinkpad -v --option substitute false
-
-# Hack to set /etc/shells as not symbolic link
-# We need to do this because the `flatpak run` cannot mount the symbolic link
-etc_shells=$(cat /etc/shells)
-rm -rf /etc/shells
-echo "$etc_shells" >/etc/shells

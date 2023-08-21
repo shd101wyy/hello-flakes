@@ -218,6 +218,9 @@
   # Enable ZSH
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
+  # Hack to set /etc/shells as not symbolic link
+  # We need to do this because the `flatpak run` cannot mount the symbolic link
+  environment.etc.shells.mode = "0666";
 
   # Define a user account.
   users.users.yiyiwang = {
