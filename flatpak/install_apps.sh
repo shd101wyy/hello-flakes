@@ -19,6 +19,7 @@ apps=(
     com.qq.QQmusic
     com.raggesilver.BlackBox
     com.skype.Client
+    com.visualstudio.code
     com.uploadedlobster.peek
     com.wps.Office
     io.dbeaver.DBeaverCommunity
@@ -43,7 +44,6 @@ if [[ $is_nixos -eq 1 ]]; then
     apps+=(
         com.google.Chrome
         com.slack.Slack
-        com.visualstudio.code
 
         # Input
         org.fcitx.Fcitx5
