@@ -18,7 +18,9 @@
       #
       # Below is the nixos-23.05
       url = "github:NixOS/nixpkgs?rev=53baed0863ff7df14b14444b779ddfaa80621f1a";
-
+    };
+    nixpkgs-unstable = {
+      url = "github:NixOS/nixpkgs/nixos-unstable";
     };
     flake-utils = { url = "github:numtide/flake-utils"; };
     nur = { url = "github:nix-community/NUR/master"; };
@@ -28,7 +30,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, nur, home-manager }@attrs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, flake-utils, nur, home-manager }@attrs:
     flake-utils.lib.eachDefaultSystem (system:
       let pkgs = nixpkgs.legacyPackages.${system};
       in (rec {
@@ -53,6 +55,7 @@
       })) // (let
         system = "x86_64-linux";
         pkgs = nixpkgs.legacyPackages.${system};
+        pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
       in {
 
         # NixOS configurations
@@ -76,6 +79,7 @@
 
             # Optionally use extraSpecialArgs
             # to pass through arguments to home.nix
+            extraSpecialArgs = { inherit pkgsUnstable; };
           };
 
         homeConfigurations.yiyiwang-steamdeck-home =
@@ -85,6 +89,7 @@
 
             # Optionally use extraSpecialArgs
             # to pass through arguments to home.nix
+            extraSpecialArgs = { inherit pkgsUnstable; };
           };
       });
 }

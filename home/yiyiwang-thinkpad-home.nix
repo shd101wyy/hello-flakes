@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, pkgsUnstable, ... }:
 # This module is managed by Flakes
 # Run the following commands build the configuration:
 # $ nix build .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage
@@ -20,7 +20,7 @@
 
   programs.vscode = {
     enable = true;
-    package = pkgs.vscode.fhsWithPackages (ps: with ps; [ rustup zlib glibc openssl.dev pkg-config ]);
+    package = pkgsUnstable.vscode.fhsWithPackages (ps: with ps; [ rustup zlib glibc openssl.dev pkg-config ]);
   };
 
   home.packages = with pkgs;
