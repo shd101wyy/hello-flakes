@@ -221,6 +221,14 @@
   # Hack to set /etc/shells as not symbolic link
   # We need to do this because the `flatpak run` cannot mount the symbolic link
   environment.etc.shells.mode = "0666";
+  # https://github.com/NixOS/nixpkgs/issues/189851
+  # https://discourse.nixos.org/t/open-links-from-flatpak-via-host-firefox/15465/8
+  systemd.user.extraConfig = ''
+    DefaultEnvironment="PATH=/run/current-system/sw/bin"
+  '';
+
+  # Enable xdg related
+  xdg.portal.enable = true;
 
   # Define a user account.
   users.users.yiyiwang = {

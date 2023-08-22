@@ -19,6 +19,14 @@
         alias code="flatpak run com.visualstudio.code --password-store=\"gnome\""
       fi
 
+      # For NixOS
+      if [ -f /etc/NIXOS ]; then
+        # https://github.com/NixOS/nixpkgs/issues/189851
+        # https://discourse.nixos.org/t/open-links-from-flatpak-via-host-firefox/15465/8
+        systemctl --user import-environment PATH
+        systemctl --user restart xdg-desktop-portal.service
+      fi
+
       # direnv
       eval "$(direnv hook zsh)"
 

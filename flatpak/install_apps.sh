@@ -21,7 +21,6 @@ apps=(
     com.skype.Client
     com.slack.Slack
     com.uploadedlobster.peek
-    com.visualstudio.code
     com.wps.Office
     io.dbeaver.DBeaverCommunity
     io.github.Fndroid.clash_for_windows
@@ -44,6 +43,7 @@ echo "* Is NixOS: $(test -f /etc/NIXOS && echo True || echo False)"
 if [[ $is_nixos -eq 1 ]]; then
     apps+=(
         com.google.Chrome
+        com.visualstudio.code # Have xdg-open problem
 
         # Input
         org.fcitx.Fcitx5

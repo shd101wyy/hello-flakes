@@ -18,10 +18,10 @@
     };
   };
 
-  # programs.vscode = {
-  #   enable = true;
-  #   package = pkgs.vscode.fhsWithPackages (ps: with ps; [ rustup zlib glibc ]);
-  # };
+  programs.vscode = {
+    enable = true;
+    package = pkgs.vscode.fhsWithPackages (ps: with ps; [ rustup zlib glibc openssl.dev pkg-config ]);
+  };
 
   home.packages = with pkgs;
     [
