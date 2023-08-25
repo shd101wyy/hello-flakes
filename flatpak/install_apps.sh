@@ -29,6 +29,7 @@ apps=(
     net.codeindustry.MasterPDFEditor
     org.filezillaproject.Filezilla
     org.gimp.GIMP
+    org.gnome.FontManager
     org.gnome.seahorse.Application
     org.kde.kwalletmanager5
     org.mozilla.firefox

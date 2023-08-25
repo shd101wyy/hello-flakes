@@ -32,6 +32,22 @@
 
       # rust cargo home
       export CARGO_HOME="$HOME/.cargo"
+
+      # set proxy env variables
+      PORT=8889
+      ## Curl reads and understands the following environment variables:
+      export HTTP_PROXY=http://127.0.0.1:$PORT
+      export HTTPS_PROXY=http://127.0.0.1:$PORT
+      export http_proxy=http://127.0.0.1:$PORT
+      export https_proxy=http://127.0.0.1:$PORT
+      
+      ## They should be set for protocol-specific proxies. General proxy should be set with
+      export ALL_PROXY=socks://127.0.0.1:$PORT
+      export all_proxy=socks://127.0.0.1:$PORT
+      
+      ## A comma-separated list of host names that shouldn't go through any proxy is set in (only an asterisk, '*' matches all hosts)
+      export NO_PROXY=localhost,127.0.0.1,::1
+      export no_proxy=localhost,127.0.0.1,::1
     '';
 
     oh-my-zsh = {
@@ -116,6 +132,4 @@
       colorscheme PaperColor
     '';
   };
-
-  # programs.alacritty = { enable = true; };
 }

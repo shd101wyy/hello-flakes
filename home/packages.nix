@@ -3,10 +3,12 @@ let
   packages = with pkgs; [
     # Apps
     age # Modern encryption tool with small explicit keys
+    awscli2
     bind
     browsh # fully-modern text-based browser
     cargo
     gcc
+    gh # GitHub CLI tool
     gnumake
     htop
     hub # Command-line wrapper for git that makes you better at GitHub

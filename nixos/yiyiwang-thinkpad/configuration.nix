@@ -130,9 +130,6 @@
 
   # Packages to install
   environment.systemPackages = with pkgs; [
-    # Flatpak
-    google-chrome
-
     # Gnome related
     gnome.gnome-shell
     gnome.gnome-tweaks
@@ -144,12 +141,6 @@
     gnomeExtensions.custom-hot-corners-extended
     ## Install Flat Remix GNOME/GDM  https://www.gnome-look.org/p/1013030 
     gnomeExtensions.user-themes
-
-    # System
-    etcher
-    gparted
-    font-manager
-    pgloader
 
     # Tools/Apps
     ## libsForQt514.kolourpaint # Broken
@@ -179,9 +170,6 @@
 
     # Gnome app
     # evince # document viewer
-
-    # AWS
-    awscli2
 
     # Game engine
     # godot

@@ -28,5 +28,13 @@
       sl # An funny command
       crawl # Dungeon crawl stone soup
       logseq # A note taking app
+
+      pkgsUnstable.google-chrome
+
+      # System
+      ## etcher
+      gparted
+      ## pgloader
+
     ] ++ (import ./packages.nix { pkgs = pkgs; });
 }

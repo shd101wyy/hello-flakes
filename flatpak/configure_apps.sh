@@ -38,3 +38,28 @@ if is_flatpak_app_installed com.slack.Slack; then
     # Disable the socket=wayland
     flatpak override --user --nosocket=wayland com.slack.Slack
 fi
+
+# Check if com.raggesilver.BlackBox is installed
+if is_flatpak_app_installed com.raggesilver.BlackBox; then
+    echo "* Configuring com.raggesilver.BlackBox"
+    flatpak override --reset --user com.raggesilver.BlackBox
+
+    # Not working below:
+    # Set environment variables
+    ## Curl reads and understands the following environment variables:
+    # PROXY=http://127.0.0.1:8889
+    # flatpak override --user --env=HTTP_PROXY="$PROXY" com.raggesilver.BlackBox
+    # flatpak override --user --env=HTTPS_PROXY="$PROXY" com.raggesilver.BlackBox
+    # flatpak override --user --env=http_proxy="$PROXY" com.raggesilver.BlackBox
+    # flatpak override --user --env=https_proxy="$PROXY" com.raggesilver.BlackBox
+
+    ## They should be set for protocol-specific proxies. General proxy should be set with
+    # ALL_PROXY=socks://127.0.0.1:8889
+    # flatpak override --user --env=ALL_PROXY="$ALL_PROXY" com.raggesilver.BlackBox
+    # flatpak override --user --env=all_proxy="$ALL_PROXY" com.raggesilver.BlackBox
+
+    ## A comma-separated list of host names that shouldn't go through any proxy is set in (only an asterisk, '*' matches all hosts)
+    # NO_PROXY=localhost,127.0.0.1,::1
+    # flatpak override --user --env=NO_PROXY="$NO_PROXY" com.raggesilver.BlackBox
+    # flatpak override --user --env=no_proxy="$NO_PROXY" com.raggesilver.BlackBox
+fi
