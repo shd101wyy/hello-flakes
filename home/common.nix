@@ -48,6 +48,9 @@
       ## A comma-separated list of host names that shouldn't go through any proxy is set in (only an asterisk, '*' matches all hosts)
       export NO_PROXY=localhost,127.0.0.1,::1
       export no_proxy=localhost,127.0.0.1,::1
+      
+      # Alias commands
+      alias view='vim -R'
     '';
 
     oh-my-zsh = {
