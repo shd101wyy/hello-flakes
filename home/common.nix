@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 # This file includes some common
 {
   programs.zsh = {
@@ -73,13 +73,15 @@
   # https://nix-community.github.io/home-manager/options.html#opt-programs.neovim.enable
   programs.neovim = {
     enable = true;
+    # defaultEditor = true;
     coc = {
       enable = true;
       settings = { };
     };
     plugins = with pkgs.vimPlugins; [
-      YouCompleteMe
       awesome-vim-colorschemes
+      barbar-nvim
+      barbecue-nvim
       coc-css
       coc-emmet
       coc-go
@@ -94,20 +96,25 @@
       coc-yaml
       copilot-vim
       ctrlp-vim
-      nerdtree
-      nerdtree-git-plugin
+      nvim-tree-lua
+      nvim-treesitter
+      nvim-treesitter.withAllGrammars
+      nvim-web-devicons
       orgmode
       rainbow
       syntastic
+      telescope-nvim
       vim-airline
       vim-airline-themes
       vim-codefmt
       vim-fugitive
       vim-gitgutter
+      vim-illuminate
       vim-lsp
       vim-multiple-cursors
       vim-nix
       vim-plug
+      YouCompleteMe
     ];
     extraPackages = with pkgs; [
     ];
@@ -117,23 +124,8 @@
     vimdiffAlias = true;
     # withNodeJs = true;
     # withPython3 = true;
-    extraConfig = ''
-      " ~/.vimrc configuration
-
-      " Enable NERDTree on start
-      " autocmd VimEnter * NERDTree
-
-      " Enable line number
-      set number
-
-      " Keymaps
-      map <silent> <C-b> :NERDTreeToggle<CR>
-
-      " Airline theme
-      let g:airline_theme='papercolor'
-      set background=dark
-      colorscheme PaperColor
-    '';
+    extraConfig = builtins.readFile ../nvim/init.vim;
+    extraLuaConfig = builtins.readFile ../nvim/init.lua;
   };
 
   programs.doom-emacs = {

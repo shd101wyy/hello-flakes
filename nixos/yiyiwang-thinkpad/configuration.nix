@@ -251,14 +251,15 @@
     fontDir.enable = true;
     enableDefaultFonts = true;
     fonts = with pkgs; [
+      hack-font
+      jetbrains-mono
+      (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "Ubuntu" "UbuntuMono" ]; })
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
       noto-fonts-emoji
       sarasa-gothic # 更纱黑体
       source-code-pro
-      hack-font
-      jetbrains-mono
       ubuntu_font_family
     ];
     fontconfig = {

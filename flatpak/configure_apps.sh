@@ -44,6 +44,12 @@ if is_flatpak_app_installed com.raggesilver.BlackBox; then
     echo "* Configuring com.raggesilver.BlackBox"
     flatpak override --reset --user com.raggesilver.BlackBox
 
+    # Grant access to the following folders
+    flatpak override --user --filesystem=host com.raggesilver.BlackBox
+    flatpak override --user --filesystem=host-os com.visualstudio.code
+    flatpak override --user --filesystem=host-etc com.visualstudio.code
+    flatpak override --user --filesystem=home com.visualstudio.code
+
     # Not working below:
     # Set environment variables
     ## Curl reads and understands the following environment variables:
