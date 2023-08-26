@@ -51,6 +51,7 @@ let
     nil
     direnv
     nix-direnv
+    nixfmt
 
   ];
 in

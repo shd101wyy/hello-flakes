@@ -28,35 +28,41 @@
       url = "github:nix-community/home-manager?ref=release-23.05"; # The version here should match `nixpkgs`
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-doom-emacs = {
+      url = "github:nix-community/nix-doom-emacs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, flake-utils, nur, home-manager }@attrs:
-    flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = nixpkgs.legacyPackages.${system};
-      in (rec {
-        packages = {
-          hello = pkgs.stdenv.mkDerivation {
-            name = "hello";
-            src = self;
-            buildPhase = "gcc -o hello ./hello.c";
-            installPhase = "mkdir -p $out/bin; install -t $out/bin hello";
+  outputs = { self, nixpkgs, nixpkgs-unstable, flake-utils, nur, home-manager, nix-doom-emacs }@attrs:
+    flake-utils.lib.eachDefaultSystem
+      (system:
+        let pkgs = nixpkgs.legacyPackages.${system};
+        in (rec {
+          packages = {
+            hello = pkgs.stdenv.mkDerivation {
+              name = "hello";
+              src = self;
+              buildPhase = "gcc -o hello ./hello.c";
+              installPhase = "mkdir -p $out/bin; install -t $out/bin hello";
+            };
+            test = pkgs.stdenv.mkDerivation {
+              name = "test";
+              src = self;
+              buildPhase = "gcc -o test ./test.c";
+              installPhase = "mkdir -p $out/bin; install -t $out/bin test";
+            };
           };
-          test = pkgs.stdenv.mkDerivation {
-            name = "test";
-            src = self;
-            buildPhase = "gcc -o test ./test.c";
-            installPhase = "mkdir -p $out/bin; install -t $out/bin test";
-          };
-        };
-        defaultPackage = packages.hello;
+          defaultPackage = packages.hello;
 
-        # If you want to enable the dev shell, you need to add the following line: 
-        devShell = import ./shell.nix { inherit pkgs; };
-      })) // (let
+          # If you want to enable the dev shell, you need to add the following line: 
+          devShell = import ./shell.nix { inherit pkgs; };
+        })) // (
+      let
         system = "x86_64-linux";
         pkgs = nixpkgs.legacyPackages.${system};
         pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
-      in {
+      in
+      {
 
         # NixOS configurations
         # Run the following command to build the NixOS configuration
@@ -75,7 +81,11 @@
         homeConfigurations.yiyiwang-thinkpad-home =
           home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ ./home/yiyiwang-thinkpad-home.nix ./home/common.nix ];
+            modules = [
+              nix-doom-emacs.hmModule
+              ./home/yiyiwang-thinkpad-home.nix
+              ./home/common.nix 
+            ];
 
             # Optionally use extraSpecialArgs
             # to pass through arguments to home.nix
@@ -85,11 +95,16 @@
         homeConfigurations.yiyiwang-steamdeck-home =
           home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
-            modules = [ ./home/yiyiwang-steamdeck-home.nix ./home/common.nix ];
+            modules = [ 
+              nix-doom-emacs.hmModule
+              ./home/yiyiwang-steamdeck-home.nix 
+              ./home/common.nix 
+            ];
 
             # Optionally use extraSpecialArgs
             # to pass through arguments to home.nix
             extraSpecialArgs = { inherit pkgsUnstable; };
           };
-      });
+      }
+    );
 }

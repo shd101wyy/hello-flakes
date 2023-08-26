@@ -132,4 +132,10 @@
       colorscheme PaperColor
     '';
   };
+
+  programs.doom-emacs = {
+    enable = false;
+    # Link to ../emacs/doom.d
+    doomPrivateDir = builtins.getEnv("PWD") + "/emacs/doom.d";
+  };
 }
