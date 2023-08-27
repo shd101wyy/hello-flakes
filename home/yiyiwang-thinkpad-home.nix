@@ -30,6 +30,7 @@
       logseq # A note taking app
 
       pkgsUnstable.google-chrome
+      pkgsUnstable.clash-verge
 
       # System
       ## etcher
