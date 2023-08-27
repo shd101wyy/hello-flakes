@@ -23,7 +23,10 @@ apps=(
     com.uploadedlobster.peek
     com.wps.Office
     io.dbeaver.DBeaverCommunity
-    io.github.Fndroid.clash_for_windows
+    
+    # NOTE: This is actually worse than clash_verge
+    # io.github.Fndroid.clash_for_windows
+    
     io.github.giantpinkrobots.flatsweep
     io.podman_desktop.PodmanDesktop
     net.codeindustry.MasterPDFEditor
