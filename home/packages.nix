@@ -16,6 +16,7 @@ let
     jq # A lightweight and flexible command-line JSON processor
     lsof
     lzip
+    mkcert
     netcat # `nc` command
     nodejs
     pandoc
