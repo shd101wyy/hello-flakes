@@ -36,6 +36,9 @@
       ## etcher
       gparted
       ## pgloader
+      qemu
+      quickemu # Quickly create and run optimised Windows, macOS and Linux desktop virtual machines
+      quickgui # A Flutter frontend for quickemu
 
     ] ++ (import ./packages.nix { pkgs = pkgs; });
 }
