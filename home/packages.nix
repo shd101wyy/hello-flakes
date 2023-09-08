@@ -7,6 +7,7 @@ let
     bind
     browsh # fully-modern text-based browser
     cargo
+    docker-compose
     gcc
     gh # GitHub CLI tool
     gnumake
@@ -32,6 +33,7 @@ let
           ]
          )
     )
+    redis
     ruby
     rustc
     sops # Mozilla sops (Secrets OPerationS) is an editor of encrypted files

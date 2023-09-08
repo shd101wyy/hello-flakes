@@ -21,7 +21,8 @@
     ./hardware-configuration.nix
 
     # Redis configuration
-    ../../services/redis.nix
+    # Not working well. Use https://hub.docker.com/r/bitnami/redis-cluster/ instead.  
+    # ../../services/redis.nix
     # Postgresql configuration
     ../../services/postgresql.nix
     # Neo4j configuration
