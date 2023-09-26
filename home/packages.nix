@@ -19,6 +19,7 @@ let
     lzip
     mkcert
     netcat # `nc` command
+    ngrok # Allows you to expose a web server running on your local machine to the internet
     nodejs
     pandoc
     poetry
