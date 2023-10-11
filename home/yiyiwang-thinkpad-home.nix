@@ -28,6 +28,8 @@
       sl # An funny command
       crawl # Dungeon crawl stone soup
       logseq # A note taking app
+      obsidian # A powerful knowledge base that works on top of a local folder of plain text Markdown files
+      bleachbit # A program to clean your computer
 
       pkgsUnstable.google-chrome
       pkgsUnstable.clash-verge
