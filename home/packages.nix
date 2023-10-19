@@ -8,7 +8,6 @@ let
     browsh # fully-modern text-based browser
     cargo
     docker-compose
-    gcc
     gh # GitHub CLI tool
     gnumake
     htop
