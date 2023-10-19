@@ -42,8 +42,9 @@
       quickemu # Quickly create and run optimised Windows, macOS and Linux desktop virtual machines
       quickgui # A Flutter frontend for quickemu
 
-      llvm
+      llvmPackages_14.llvm
       clang
+      cmake
 
     ] ++ (import ./packages.nix { pkgs = pkgs; });
 }
