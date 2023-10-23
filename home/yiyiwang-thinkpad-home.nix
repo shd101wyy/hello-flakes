@@ -46,5 +46,5 @@
       clang
       cmake
 
-    ] ++ (import ./packages.nix { pkgs = pkgs; });
+    ] ++ (import ./packages.nix { pkgs = pkgs; pkgsUnstable = pkgsUnstable; });
 }

@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs, pkgsUnstable }:
 let
   packages = with pkgs; [
     # Apps
@@ -35,7 +35,7 @@ let
     )
     redis
     ruby
-    rustc
+    pkgsUnstable.rustc
     sops # Mozilla sops (Secrets OPerationS) is an editor of encrypted files
     sqlite
     sshpass
