@@ -331,7 +331,7 @@
     allowUnfree = true;
     # allowBroken = true;
     # allowUnsupportedSystem = true;
-    permittedInsecurePackages = [ "electron-12.2.3" "qtwebkit-5.212.0-alpha4" ];
+    permittedInsecurePackages = [ "electron-12.2.3" "electron-24.8.6" "qtwebkit-5.212.0-alpha4" ];
   };
 
 }

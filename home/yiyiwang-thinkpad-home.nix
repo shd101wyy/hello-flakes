@@ -33,6 +33,9 @@
 
       pkgsUnstable.google-chrome
       pkgsUnstable.clash-verge
+      ghc # haskell
+      koka # Koka language compiler and interpreter
+      stripe-cli # A command-line tool for Stripe
 
       # System
       ## etcher
