@@ -44,6 +44,7 @@
       qemu
       quickemu # Quickly create and run optimised Windows, macOS and Linux desktop virtual machines
       quickgui # A Flutter frontend for quickemu
+      eyedropper # Color picker
 
       llvmPackages_14.llvm
       clang
