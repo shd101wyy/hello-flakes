@@ -60,7 +60,7 @@
   };
   boot.loader.efi = {
     efiSysMountPoint = "/boot";
-    # canTouchEfiVariables = true;
+    canTouchEfiVariables = false;
   };
   # Disable the ipv6. 
   # This is necessary to be used together with the `networking.enableIPv6` option.

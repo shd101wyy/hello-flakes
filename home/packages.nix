@@ -12,6 +12,7 @@ let
     gnumake
     htop
     hub # Command-line wrapper for git that makes you better at GitHub
+    imagemagick # Image manipulation tools
     jdk
     jq # A lightweight and flexible command-line JSON processor
     lsof
