@@ -250,8 +250,8 @@
   };
   fonts = {
     fontDir.enable = true;
-    enableDefaultFonts = true;
-    fonts = with pkgs; [
+    enableDefaultPackages = true;
+    packages = with pkgs; [
       hack-font
       jetbrains-mono
       (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "Ubuntu" "UbuntuMono" ]; })
@@ -331,7 +331,12 @@
     allowUnfree = true;
     # allowBroken = true;
     # allowUnsupportedSystem = true;
-    permittedInsecurePackages = [ "electron-12.2.3" "electron-24.8.6" "qtwebkit-5.212.0-alpha4" ];
+    permittedInsecurePackages = [ 
+      "electron-12.2.3"
+      "electron-24.8.6"
+      "electron-25.9.0"
+      "qtwebkit-5.212.0-alpha4"
+    ];
   };
 
 }

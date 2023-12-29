@@ -19,7 +19,7 @@
       # Below is the nixos-23.05
       # url = "github:NixOS/nixpkgs?rev=da4024d0ead5d7820f6bd15147d3fe2a0c0cec73";
       # Below is the nixos-23.11
-      url = "github:NixOS/nixpkgs?rev=b4372c4924d9182034066c823df76d6eaf1f4ec4";
+      url = "github:NixOS/nixpkgs?rev=d02d818f22c777aa4e854efc3242ec451e5d462a";
     };
     nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -27,7 +27,7 @@
     flake-utils = { url = "github:numtide/flake-utils"; };
     nur = { url = "github:nix-community/NUR/master"; };
     home-manager = {
-      url = "github:nix-community/home-manager?ref=release-23.05"; # The version here should match `nixpkgs`
+      url = "github:nix-community/home-manager?ref=release-23.11"; # The version here should match `nixpkgs`
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-doom-emacs = {

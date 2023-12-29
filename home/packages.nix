@@ -16,6 +16,7 @@ let
     jdk
     jq # A lightweight and flexible command-line JSON processor
     lsof
+    lua
     lzip
     mkcert
     netcat # `nc` command
@@ -40,6 +41,7 @@ let
     sops # Mozilla sops (Secrets OPerationS) is an editor of encrypted files
     sqlite
     sshpass
+    telegram-desktop
     tmux
     tree
     unzip
