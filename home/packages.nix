@@ -10,8 +10,11 @@ let
     docker-compose
     gh # GitHub CLI tool
     gnumake
+    gnome.zenity
+    helix
     htop
     hub # Command-line wrapper for git that makes you better at GitHub
+    # ifuse
     imagemagick # Image manipulation tools
     jdk
     jq # A lightweight and flexible command-line JSON processor
@@ -22,6 +25,9 @@ let
     netcat # `nc` command
     ngrok # Allows you to expose a web server running on your local machine to the internet
     nodejs
+    nss
+    nssTools
+    # nss_latest
     pandoc
     poetry
     # python3 # <= Cause conflicts with below
@@ -48,6 +54,7 @@ let
     wget
     xsel
     yarn
+    # yarn-berry
     zip
 
     # Nix related
