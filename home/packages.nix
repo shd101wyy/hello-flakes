@@ -66,6 +66,8 @@ let
     nix-direnv
     nixfmt
 
+    # LaTeX
+    texliveFull
   ];
 in
 packages
