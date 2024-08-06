@@ -117,7 +117,8 @@
   services.printing.enable = true;
 
   # Enable sound
-  sound.enable = true;
+  # DEPRECATED
+  # sound.enable = true;
   # hardware.pulseaudio.enable = true;
 
   # Enable bluetooth
@@ -301,7 +302,7 @@
       };
       aggregatedFonts = pkgs.buildEnv {
         name = "system-fonts";
-        paths = config.fonts.fonts;
+        paths = config.fonts.packages;
         pathsToLink = [ "/share/fonts" ];
       };
     in

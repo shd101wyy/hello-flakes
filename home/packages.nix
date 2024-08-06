@@ -68,6 +68,9 @@ let
 
     # LaTeX
     texliveFull
+
+    # Crypto
+    pkgsUnstable.railway-wallet
   ];
 in
 packages
