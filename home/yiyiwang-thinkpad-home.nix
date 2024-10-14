@@ -32,6 +32,7 @@
       bleachbit # A program to clean your computer
 
       pkgsUnstable.google-chrome
+      pkgsUnstable.chromium
       pkgsUnstable.clash-verge
       ghc # haskell
       pkgsUnstable.koka # Koka language compiler and interpreter
@@ -50,5 +51,6 @@
       clang
       cmake
 
+      pkgsUnstable.trezor-suite
     ] ++ (import ./packages.nix { pkgs = pkgs; pkgsUnstable = pkgsUnstable; });
 }

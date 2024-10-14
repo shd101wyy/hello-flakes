@@ -76,6 +76,10 @@
   networking.networkmanager.enable =
     true; # Easiest to use and most distros use this by default.
   ## networking.enableIPv6 = false; # Disable IPv6
+  networking.nameservers = [
+    "8.8.8.8"
+    "8.8.4.4"
+  ];
 
   # Set my time zone
   time.timeZone = "Asia/Shanghai";
@@ -125,7 +129,7 @@
   hardware.bluetooth.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
-  services.xserver.libinput.enable = true;
+  services.libinput.enable = true;
 
   # Environment variables
   environment.variables.EDITOR = "nvim";
@@ -181,6 +185,9 @@
 
   # Enable flatpak
   services.flatpak.enable = true;
+
+  # Enable trezor hardware wallet
+  services.trezord.enable = true;
 
   # V2ray
   ## services.v2ray = {
