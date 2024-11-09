@@ -33,7 +33,7 @@
 
       pkgsUnstable.google-chrome
       pkgsUnstable.chromium
-      pkgsUnstable.clash-verge
+      clash-verge
       ghc # haskell
       pkgsUnstable.koka # Koka language compiler and interpreter
       stripe-cli # A command-line tool for Stripe
@@ -50,6 +50,8 @@
       llvmPackages_14.llvm
       clang
       cmake
+      
+      pkgsUnstable.wechat-uos
 
       pkgsUnstable.trezor-suite
     ] ++ (import ./packages.nix { pkgs = pkgs; pkgsUnstable = pkgsUnstable; });

@@ -60,3 +60,14 @@ Follow https://determinate.systems/posts/nix-on-the-steam-deck
 
 After installing applications, the application might not show in the menu.  
 We will need to open `Menu Editor` then add the executable paths of the applications manually.
+
+
+## Install wechat
+
+> https://github.com/NixOS/nixpkgs/issues/349245
+
+Download `license.tar.gz` from https://aur.archlinux.org/packages/wechat-uos, then run the following command before installing wechat:
+
+```bash
+$ nix-store --add-fixed sha256 license.tar.gz
+```

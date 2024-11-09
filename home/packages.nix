@@ -71,6 +71,11 @@ let
 
     # Crypto
     pkgsUnstable.railway-wallet
+
+    # Wechat
+    ## pkgsUnstable.wechat-uos
+
+    ngrok # Allows you to expose a web server running on your local machine to the internet
   ];
 in
 packages
