@@ -21,7 +21,9 @@
       # Below is the nixos-23.11
       # url = "github:NixOS/nixpkgs?rev=12430e43bd9b81a6b4e79e64f87c624ade701eaf";
       # Below is the nixos-24.05
-      url = "github:NixOS/nixpkgs?rev=dba414932936fde69f0606b4f1d87c5bc0003ede";
+      # url = "github:NixOS/nixpkgs?rev=dba414932936fde69f0606b4f1d87c5bc0003ede";
+      # Below is the nixos-24.11
+      url = "github:NixOS/nixpkgs?rev=0c582677378f2d9ffcb01490af2f2c678dcb29d3";
     };
     nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";

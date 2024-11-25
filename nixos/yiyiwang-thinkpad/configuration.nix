@@ -1,10 +1,5 @@
-{ config
-, lib
-, pkgs
-, # From flake.nix
-  nur
-, ...
-}:
+{ config, lib, pkgs, # From flake.nix
+nur, ... }:
 # Run the following command to build the NixOS configuration:
 #  $ sudo nixos-rebuild switch --flake '.#yiyiwang-thinkpad'
 # 
@@ -76,10 +71,7 @@
   networking.networkmanager.enable =
     true; # Easiest to use and most distros use this by default.
   ## networking.enableIPv6 = false; # Disable IPv6
-  networking.nameservers = [
-    "8.8.8.8"
-    "8.8.4.4"
-  ];
+  networking.nameservers = [ "8.8.8.8" "8.8.4.4" ];
 
   # Set my time zone
   time.timeZone = "Asia/Shanghai";
@@ -212,6 +204,11 @@
       true; # Open ports in the firewall for Source Dedicated Server
   };
 
+  programs.clash-verge = {
+    enable = true;
+    package = pkgs.clash-verge-rev;
+  };
+
   # Enable ZSH
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
@@ -262,7 +259,9 @@
     packages = with pkgs; [
       hack-font
       jetbrains-mono
-      (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "Ubuntu" "UbuntuMono" ]; })
+      (nerdfonts.override {
+        fonts = [ "FiraCode" "DroidSansMono" "Ubuntu" "UbuntuMono" ];
+      })
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
@@ -300,24 +299,22 @@
 
   # Bind some directories
   system.fsPackages = [ pkgs.bindfs ];
-  fileSystems =
-    let
-      mkRoSymBind = path: {
-        device = path;
-        fsType = "fuse.bindfs";
-        options = [ "ro" "resolve-symlinks" "x-gvfs-hide" ];
-      };
-      aggregatedFonts = pkgs.buildEnv {
-        name = "system-fonts";
-        paths = config.fonts.packages;
-        pathsToLink = [ "/share/fonts" ];
-      };
-    in
-    {
-      # Create an FHS mount to support flatpak host icons/fonts
-      "/usr/share/icons" = mkRoSymBind (config.system.path + "/share/icons");
-      "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
+  fileSystems = let
+    mkRoSymBind = path: {
+      device = path;
+      fsType = "fuse.bindfs";
+      options = [ "ro" "resolve-symlinks" "x-gvfs-hide" ];
     };
+    aggregatedFonts = pkgs.buildEnv {
+      name = "system-fonts";
+      paths = config.fonts.packages;
+      pathsToLink = [ "/share/fonts" ];
+    };
+  in {
+    # Create an FHS mount to support flatpak host icons/fonts
+    "/usr/share/icons" = mkRoSymBind (config.system.path + "/share/icons");
+    "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
+  };
 
   # Nix settings
   nix.settings = {
@@ -339,7 +336,7 @@
     allowUnfree = true;
     # allowBroken = true;
     # allowUnsupportedSystem = true;
-    permittedInsecurePackages = [ 
+    permittedInsecurePackages = [
       "electron-12.2.3"
       "electron-24.8.6"
       "electron-25.9.0"

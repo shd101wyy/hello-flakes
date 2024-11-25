@@ -89,7 +89,7 @@
       coc-json
       coc-lua
       coc-nvim
-      coc-python
+      # coc-python
       coc-rls
       coc-tailwindcss
       coc-tsserver

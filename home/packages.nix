@@ -64,7 +64,7 @@ let
     nil
     direnv
     nix-direnv
-    nixfmt
+    nixfmt-classic
 
     # LaTeX
     texliveFull
