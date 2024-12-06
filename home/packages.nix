@@ -56,6 +56,7 @@ let
     yarn
     # yarn-berry
     zip
+    zig
 
     # Nix related
     niv

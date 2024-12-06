@@ -53,6 +53,6 @@
       
       pkgsUnstable.wechat-uos
 
-      pkgsUnstable.trezor-suite
+      # pkgsUnstable.trezor-suite
     ] ++ (import ./packages.nix { pkgs = pkgs; pkgsUnstable = pkgsUnstable; });
 }
