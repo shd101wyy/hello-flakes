@@ -293,7 +293,17 @@ nur, ... }:
     # $ sudo systemctl start waydroid-container
     # $ waydroid show-full-ui
     waydroid = { enable = true; };
-    docker = { enable = true; };
+    docker = { 
+      enable = true;
+      daemon.settings = {
+        registry-mirrors = [
+          # 国内 dockerhub 镜像 https://blog.csdn.net/buluxianfeng/article/details/143977194
+          "https://docker.unsee.tech"
+          "https://dockerpull.org"
+          "https://dockerhub.icu"
+        ];
+      };
+    };
     # lxd = { enable = true; };
   };
 

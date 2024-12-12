@@ -56,7 +56,10 @@ let
     yarn
     # yarn-berry
     zip
+
+    # zig language
     zig
+    zls # zig LSP
 
     # Nix related
     niv
