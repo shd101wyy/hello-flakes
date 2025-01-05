@@ -48,6 +48,7 @@ let
     sqlite
     sshpass
     telegram-desktop
+    tldr
     tmux
     tree
     unzip
