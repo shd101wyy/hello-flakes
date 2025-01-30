@@ -62,6 +62,9 @@ let
     zig
     zls # zig LSP
 
+    # elixir
+    elixir_1_18
+
     # Nix related
     niv
     nix-prefetch
