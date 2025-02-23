@@ -53,6 +53,7 @@ let
     tree
     unzip
     wget
+    wireguard-tools
     xsel
     yarn
     # yarn-berry
@@ -78,7 +79,7 @@ let
     texliveFull
 
     # Crypto
-    pkgsUnstable.railway-wallet
+    # pkgsUnstable.railway-wallet
 
     # Wechat
     ## pkgsUnstable.wechat-uos

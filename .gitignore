@@ -1,3 +1,5 @@
 result
 .direnv
 .vscode
+db
+secrets

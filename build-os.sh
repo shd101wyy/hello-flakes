@@ -16,7 +16,8 @@ export NIX_CURL_FLAGS="-x $http_proxy -x $https_proxy"
 rm -rf /home/yiyiwang/.local/neo4j/logs/debug.log
 
 nixos-rebuild switch --flake .#yiyiwang-thinkpad -v \
-  --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://aseipp-nix-cache.global.ssl.fastly.net https://cache.nixos.org"
+  --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://aseipp-nix-cache.global.ssl.fastly.net https://cache.nixos.org" \
+  --impure
 
 # If the substitue doesn't work, add `--option substitute false`
 # nixos-rebuild switch --flake .#yiyiwang-thinkpad -v --option substitute false

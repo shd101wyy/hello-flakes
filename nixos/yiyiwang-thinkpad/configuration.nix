@@ -24,6 +24,8 @@ nur, ... }:
     ../../services/neo4j.nix
     # pgadmin configuration
     ../../services/pgadmin.nix
+    # wireguard configuration
+    ../../services/wireguard.nix
   ];
 
   # Use the GRUB 2 boot loader
