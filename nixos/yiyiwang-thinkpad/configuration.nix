@@ -1,8 +1,13 @@
-{ config, lib, pkgs, # From flake.nix
-nur, ... }:
+{
+  config,
+  lib,
+  pkgs, # From flake.nix
+  nur,
+  ...
+}:
 # Run the following command to build the NixOS configuration:
 #  $ sudo nixos-rebuild switch --flake '.#yiyiwang-thinkpad'
-# 
+#
 # If `nixos-switch` or `nixos-install` cannot fetch `cache.nixos.org`, then
 # add `--option substituters "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"`
 #
@@ -16,7 +21,7 @@ nur, ... }:
     ./hardware-configuration.nix
 
     # Redis configuration
-    # Not working well. Use https://hub.docker.com/r/bitnami/redis-cluster/ instead.  
+    # Not working well. Use https://hub.docker.com/r/bitnami/redis-cluster/ instead.
     # ../../services/redis.nix
     # Postgresql configuration
     ../../services/postgresql.nix
@@ -59,7 +64,7 @@ nur, ... }:
     efiSysMountPoint = "/boot";
     canTouchEfiVariables = false;
   };
-  # Disable the ipv6. 
+  # Disable the ipv6.
   # This is necessary to be used together with the `networking.enableIPv6` option.
   ## boot.kernelParams = [ "ipv6.disable=1" ];
 
@@ -70,10 +75,12 @@ nur, ... }:
 
   # networking.hostName = "yiyiwang-thinkpad"; # Define your hostname.
   # Run `sudo nmtui` to activate connection to Wifi
-  networking.networkmanager.enable =
-    true; # Easiest to use and most distros use this by default.
+  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
   ## networking.enableIPv6 = false; # Disable IPv6
-  networking.nameservers = [ "8.8.8.8" "8.8.4.4" ];
+  networking.nameservers = [
+    "8.8.8.8"
+    "8.8.4.4"
+  ];
 
   # Set my time zone
   time.timeZone = "Asia/Shanghai";
@@ -139,7 +146,7 @@ nur, ... }:
     gnomeExtensions.dash-to-dock
     gnomeExtensions.dash-to-panel
     gnomeExtensions.custom-hot-corners-extended
-    ## Install Flat Remix GNOME/GDM  https://www.gnome-look.org/p/1013030 
+    ## Install Flat Remix GNOME/GDM  https://www.gnome-look.org/p/1013030
     gnomeExtensions.user-themes
 
     # Tools/Apps
@@ -200,10 +207,8 @@ nur, ... }:
   #   $ steam
   programs.steam = {
     enable = true;
-    remotePlay.openFirewall =
-      true; # Open ports in the firewall for Steam Remote Play
-    dedicatedServer.openFirewall =
-      true; # Open ports in the firewall for Source Dedicated Server
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   };
 
   programs.clash-verge = {
@@ -262,7 +267,12 @@ nur, ... }:
       hack-font
       jetbrains-mono
       (nerdfonts.override {
-        fonts = [ "FiraCode" "DroidSansMono" "Ubuntu" "UbuntuMono" ];
+        fonts = [
+          "FiraCode"
+          "DroidSansMono"
+          "Ubuntu"
+          "UbuntuMono"
+        ];
       })
       noto-fonts
       noto-fonts-cjk-sans
@@ -291,18 +301,23 @@ nur, ... }:
     # https://nixos.wiki/wiki/WayDroid
     # Run the following to init:
     # $ sudo waydroid init -c https://waydroid.bardia.tech/OTA/system -v https://waydroid.bardia.tech/OTA/vendor
-    # After intalling: 
+    # After intalling:
     # $ sudo systemctl start waydroid-container
     # $ waydroid show-full-ui
-    waydroid = { enable = true; };
-    docker = { 
+    waydroid = {
+      enable = true;
+    };
+    docker = {
       enable = true;
       daemon.settings = {
         registry-mirrors = [
           # 国内 dockerhub 镜像 https://blog.csdn.net/buluxianfeng/article/details/143977194
-          "https://docker.unsee.tech"
-          "https://dockerpull.org"
-          "https://dockerhub.icu"
+          # "https://docker.unsee.tech"
+          # "https://dockerpull.org"
+          # "https://dockerhub.icu"
+          # "https://hub.rat.dev"
+          # "https://hub.xdark.top"
+          "https://hub.littlediary.cn"
         ];
       };
     };
@@ -311,22 +326,28 @@ nur, ... }:
 
   # Bind some directories
   system.fsPackages = [ pkgs.bindfs ];
-  fileSystems = let
-    mkRoSymBind = path: {
-      device = path;
-      fsType = "fuse.bindfs";
-      options = [ "ro" "resolve-symlinks" "x-gvfs-hide" ];
+  fileSystems =
+    let
+      mkRoSymBind = path: {
+        device = path;
+        fsType = "fuse.bindfs";
+        options = [
+          "ro"
+          "resolve-symlinks"
+          "x-gvfs-hide"
+        ];
+      };
+      aggregatedFonts = pkgs.buildEnv {
+        name = "system-fonts";
+        paths = config.fonts.packages;
+        pathsToLink = [ "/share/fonts" ];
+      };
+    in
+    {
+      # Create an FHS mount to support flatpak host icons/fonts
+      "/usr/share/icons" = mkRoSymBind (config.system.path + "/share/icons");
+      "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
     };
-    aggregatedFonts = pkgs.buildEnv {
-      name = "system-fonts";
-      paths = config.fonts.packages;
-      pathsToLink = [ "/share/fonts" ];
-    };
-  in {
-    # Create an FHS mount to support flatpak host icons/fonts
-    "/usr/share/icons" = mkRoSymBind (config.system.path + "/share/icons");
-    "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
-  };
 
   # Nix settings
   nix.settings = {
@@ -339,7 +360,10 @@ nur, ... }:
       "https://cache.nixos.org"
     ];
     trusted-users = [ "@wheel" ];
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
   };
 
   # Nixpkgs settings

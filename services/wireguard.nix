@@ -1,4 +1,7 @@
 {pkgs, ...}: {
+  # Run 
+  # $ sudo systemctl restart wg-quick-rvoffice.service
+  # to restart the wireguard rvoffice vpn
   networking.wg-quick.interfaces = let
     endpoint = "${builtins.readFile /home/yiyiwang/Workspace/hello-flakes/secrets/rv-wireguard-endpoint}";    
     publicKey = "${builtins.readFile /home/yiyiwang/Workspace/hello-flakes/secrets/rv-wireguard-public-key}";

@@ -23,13 +23,17 @@
       # Below is the nixos-24.05
       # url = "github:NixOS/nixpkgs?rev=dba414932936fde69f0606b4f1d87c5bc0003ede";
       # Below is the nixos-24.11
-      url = "github:NixOS/nixpkgs?rev=44534bc021b85c8d78e465021e21f33b856e2540";
+      url = "github:NixOS/nixpkgs?rev=cdd2ef009676ac92b715ff26630164bb88fec4e0";
     };
     nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
-    flake-utils = { url = "github:numtide/flake-utils"; };
-    nur = { url = "github:nix-community/NUR/master"; };
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+    };
+    nur = {
+      url = "github:nix-community/NUR/master";
+    };
     home-manager = {
       url = "github:nix-community/home-manager?ref=release-24.11"; # The version here should match `nixpkgs`
       inputs.nixpkgs.follows = "nixpkgs";
@@ -39,30 +43,43 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, flake-utils, nur, home-manager, nix-doom-emacs }@attrs:
-    flake-utils.lib.eachDefaultSystem
-      (system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in (rec {
-          packages = {
-            hello = pkgs.stdenv.mkDerivation {
-              name = "hello";
-              src = self;
-              buildPhase = "gcc -o hello ./hello.c";
-              installPhase = "mkdir -p $out/bin; install -t $out/bin hello";
-            };
-            test = pkgs.stdenv.mkDerivation {
-              name = "test";
-              src = self;
-              buildPhase = "gcc -o test ./test.c";
-              installPhase = "mkdir -p $out/bin; install -t $out/bin test";
-            };
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixpkgs-unstable,
+      flake-utils,
+      nur,
+      home-manager,
+      nix-doom-emacs,
+    }@attrs:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in
+      (rec {
+        packages = {
+          hello = pkgs.stdenv.mkDerivation {
+            name = "hello";
+            src = self;
+            buildPhase = "gcc -o hello ./hello.c";
+            installPhase = "mkdir -p $out/bin; install -t $out/bin hello";
           };
-          defaultPackage = packages.hello;
+          test = pkgs.stdenv.mkDerivation {
+            name = "test";
+            src = self;
+            buildPhase = "gcc -o test ./test.c";
+            installPhase = "mkdir -p $out/bin; install -t $out/bin test";
+          };
+        };
+        defaultPackage = packages.hello;
 
-          # If you want to enable the dev shell, you need to add the following line: 
-          devShell = import ./shell.nix { inherit pkgs; };
-        })) // (
+        # If you want to enable the dev shell, you need to add the following line:
+        devShell = import ./shell.nix { inherit pkgs; };
+      })
+    )
+    // (
       let
         system = "x86_64-linux";
         pkgs = nixpkgs.legacyPackages.${system};
@@ -83,34 +100,32 @@
         # Home configurations
         # Run the following command to build the home-manager configuration
         # $ nix build .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage
-        # $ "$(nix path-info .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage)"/activate 
-        homeConfigurations.yiyiwang-thinkpad-home =
-          home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-            modules = [
-              nix-doom-emacs.hmModule
-              ./home/yiyiwang-thinkpad-home.nix
-              ./home/common.nix 
-            ];
+        # $ "$(nix path-info .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage)"/activate
+        homeConfigurations.yiyiwang-thinkpad-home = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            nix-doom-emacs.hmModule
+            ./home/yiyiwang-thinkpad-home.nix
+            ./home/common.nix
+          ];
 
-            # Optionally use extraSpecialArgs
-            # to pass through arguments to home.nix
-            extraSpecialArgs = { inherit pkgsUnstable; };
-          };
+          # Optionally use extraSpecialArgs
+          # to pass through arguments to home.nix
+          extraSpecialArgs = { inherit pkgsUnstable; };
+        };
 
-        homeConfigurations.yiyiwang-steamdeck-home =
-          home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-            modules = [ 
-              nix-doom-emacs.hmModule
-              ./home/yiyiwang-steamdeck-home.nix 
-              ./home/common.nix 
-            ];
+        homeConfigurations.yiyiwang-steamdeck-home = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            nix-doom-emacs.hmModule
+            ./home/yiyiwang-steamdeck-home.nix
+            ./home/common.nix
+          ];
 
-            # Optionally use extraSpecialArgs
-            # to pass through arguments to home.nix
-            extraSpecialArgs = { inherit pkgsUnstable; };
-          };
+          # Optionally use extraSpecialArgs
+          # to pass through arguments to home.nix
+          extraSpecialArgs = { inherit pkgsUnstable; };
+        };
       }
     );
 }

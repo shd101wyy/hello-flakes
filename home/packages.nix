@@ -31,16 +31,16 @@ let
     pandoc
     poetry
     # python3 # <= Cause conflicts with below
-    (python3.withPackages (ps: with ps; 
-      [ pip
-         ansible
-         virtualenv
-         black
-         isort 
-         pylint
-          ]
-         )
-    )
+    (python3.withPackages (
+      ps: with ps; [
+        pip
+        ansible
+        virtualenv
+        black
+        isort
+        pylint
+      ]
+    ))
     redis
     ruby
     pkgsUnstable.rustc
@@ -56,6 +56,7 @@ let
     wireguard-tools
     xsel
     yarn
+    yazi # File manager
     # yarn-berry
     zip
 
@@ -73,7 +74,7 @@ let
     nil
     direnv
     nix-direnv
-    nixfmt-classic
+    nixfmt-rfc-style
 
     # LaTeX
     texliveFull

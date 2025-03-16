@@ -2,7 +2,7 @@
 # This module is managed by Flakes
 # Run the following commands build the configuration:
 # $ nix build .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage
-# $ "$(nix path-info .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage)"/activate 
+# $ "$(nix path-info .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage)"/activate
 # To get the SHA256
 # nix-prefetch fetchFromGitHub --owner owner --repo repo --rev 65bb66d364e0d10d00bd848a3d35e2755654655b
 {
@@ -20,10 +20,19 @@
 
   programs.vscode = {
     enable = true;
-    package = pkgs.vscode.fhsWithPackages (ps: with ps; [ rustup zlib glibc openssl.dev pkg-config ]);
+    package = pkgs.vscode.fhsWithPackages (
+      ps: with ps; [
+        rustup
+        zlib
+        glibc
+        openssl.dev
+        pkg-config
+      ]
+    );
   };
 
-  home.packages = with pkgs;
+  home.packages =
+    with pkgs;
     [
       sl # An funny command
       crawl # Dungeon crawl stone soup
@@ -50,9 +59,13 @@
       llvmPackages_14.llvm
       clang
       cmake
-      
+
       pkgsUnstable.wechat-uos
 
       # pkgsUnstable.trezor-suite
-    ] ++ (import ./packages.nix { pkgs = pkgs; pkgsUnstable = pkgsUnstable; });
+    ]
+    ++ (import ./packages.nix {
+      pkgs = pkgs;
+      pkgsUnstable = pkgsUnstable;
+    });
 }

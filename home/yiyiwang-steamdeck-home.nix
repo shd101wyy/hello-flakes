@@ -8,17 +8,19 @@
 
   manual.manpages.enable = false;
 
-  home.packages = with pkgs;
+  home.packages =
+    with pkgs;
     [
       # hello # Hello, world
 
       ## gnome.gnome-terminal # <- Doesn't work
-      
+
       # VPN
       # qv2ray # Not working well
       # clash-verge # Please download from https://github.com/zzzgydi/clash-verge/releases/
 
       # Tools/Apps
       # pandoc
-    ] ++ (import ./packages.nix { pkgs = pkgs; });
+    ]
+    ++ (import ./packages.nix { pkgs = pkgs; });
 }

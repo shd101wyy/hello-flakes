@@ -1,1 +1,6 @@
-let flake = builtins.getFlake (toString ./.); in { inherit flake; }
+let
+  flake = builtins.getFlake (toString ./.);
+in
+{
+  inherit flake;
+}
