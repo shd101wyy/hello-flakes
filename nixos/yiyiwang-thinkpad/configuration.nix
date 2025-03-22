@@ -135,6 +135,10 @@
   # Environment variables
   environment.variables.EDITOR = "nvim";
 
+  # Enable XWayland to fix some blurry problem 
+  # for certain applications such as eletron and chrome.
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
   # Packages to install
   environment.systemPackages = with pkgs; [
     # Gnome related
