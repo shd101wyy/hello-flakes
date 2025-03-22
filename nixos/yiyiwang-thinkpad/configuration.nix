@@ -135,7 +135,7 @@
   # Environment variables
   environment.variables.EDITOR = "nvim";
 
-  # Enable XWayland to fix some blurry problem 
+  # Enable XWayland to fix some blurry problem
   # for certain applications such as eletron and chrome.
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
@@ -150,8 +150,12 @@
     gnomeExtensions.dash-to-dock
     gnomeExtensions.dash-to-panel
     gnomeExtensions.custom-hot-corners-extended
+    gnomeExtensions.kimpanel # for input method
     ## Install Flat Remix GNOME/GDM  https://www.gnome-look.org/p/1013030
     gnomeExtensions.user-themes
+
+    # Hyperland
+    ## kitty # required for the default hyperland config
 
     # Tools/Apps
     ## libsForQt514.kolourpaint # Broken
@@ -187,6 +191,9 @@
     # godot-export-templates
     # pixelorama
   ];
+
+  # Enable polkit
+  security.polkit.enable = true;
 
   # Enable flatpak
   services.flatpak.enable = true;
@@ -253,6 +260,13 @@
     enableSSHSupport = true;
   };
 
+  # Enable the hyperland
+  ## programs.hyprland = {
+  ##   enable = true;
+  ##   xwayland.enable = true;
+  ##   package = pkgs.hyprland;
+  ## };
+
   # Enable SSH
   services.openssh.enable = true;
 
@@ -260,8 +274,20 @@
   i18n = {
     defaultLocale = "en_US.UTF-8"; # "zh_CN.UTF-8";
     inputMethod = {
-      enabled = "ibus";
-      ibus.engines = with pkgs.ibus-engines; [ libpinyin ];
+      # enabled = "ibus";
+      # ibus.engines = with pkgs.ibus-engines; [ libpinyin ];
+      type = "fcitx5";
+      enable = true;
+      fcitx5.waylandFrontend = true;
+      fcitx5.addons = with pkgs; [
+        fcitx5-gtk # alternatively, kdePackages.fcitx5-qt
+        fcitx5-chinese-addons
+        # table input method support
+        # Search for `pinyin` in fcitx-configtool
+
+        # fcitx5-nord # a color theme
+        fcitx5-material-color
+      ];
     };
   };
   fonts = {
