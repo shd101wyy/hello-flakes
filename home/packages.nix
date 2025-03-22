@@ -79,6 +79,9 @@ let
     # LaTeX
     texliveFull
 
+    # scheme
+    chez
+
     # Crypto
     # pkgsUnstable.railway-wallet
 
