@@ -334,9 +334,9 @@
     # After intalling:
     # $ sudo systemctl start waydroid-container
     # $ waydroid show-full-ui
-    waydroid = {
-      enable = true;
-    };
+    ## waydroid = {
+    ##   enable = true;
+    ## };
     docker = {
       enable = true;
       daemon.settings = {

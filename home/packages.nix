@@ -10,8 +10,7 @@ let
     docker-compose
     gh # GitHub CLI tool
     gnumake
-    gnome.zenity
-    helix
+    zenity
     htop
     hub # Command-line wrapper for git that makes you better at GitHub
     # ifuse
@@ -61,11 +60,11 @@ let
     zip
 
     # zig language
-    zig
-    zls # zig LSP
+    pkgsUnstable.zig
+    pkgsUnstable.zls # zig LSP
 
     # elixir
-    elixir_1_18
+    ## elixir_1_18
 
     # Nix related
     niv

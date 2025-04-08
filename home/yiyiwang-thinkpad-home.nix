@@ -41,15 +41,16 @@
       # obsidian # A powerful knowledge base that works on top of a local folder of plain text Markdown files
       bleachbit # A program to clean your computer
 
+      # Chrome with flag --gtk-version=4 to get fcitx5 chinese input working
       pkgsUnstable.google-chrome
-      pkgsUnstable.chromium
+      # pkgsUnstable.chromium
       # clash-verge-rev
       ghc # haskell
-      pkgsUnstable.koka # Koka language compiler and interpreter
+      # pkgsUnstable.koka # Koka language compiler and interpreter
       stripe-cli # A command-line tool for Stripe
 
       # System
-      ## etcher
+      ## etcher # A cross-platform USB image writer
       gparted
       ## pgloader
       qemu
