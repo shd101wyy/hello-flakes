@@ -48,7 +48,6 @@ let
     sshpass
     telegram-desktop
     tldr
-    tmux
     tree
     unzip
     wget
@@ -58,6 +57,9 @@ let
     yazi # File manager
     # yarn-berry
     zip
+
+    # tmux
+    zellij # Use zellij to replace tmux
 
     # zig language
     pkgsUnstable.zig
