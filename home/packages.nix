@@ -80,8 +80,9 @@ let
     # LaTeX
     texliveFull
 
-    # scheme
+    # lisp (scheme)
     chez
+    newlisp
 
     # Crypto
     # pkgsUnstable.railway-wallet
