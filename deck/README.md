@@ -3,7 +3,7 @@
 ## 添加国内 Flatpak 镜像
 
 ```bash
-$ sudo flatpak remote-modify flathub --url=https://mirror.sjtu.edu.cn/flathub
+$ flatpak remote-modify flathub --url=https://mirror.sjtu.edu.cn/flathub
 $ flatpak remotes --show-details
 ```
 
@@ -13,10 +13,22 @@ $ flatpak remotes --show-details
 flatpak remote-add --if-not-exists flathub https://mirror.sjtu.edu.cn/flathub
 ```
 
+## Official Flatpak remote
+
+```bash
+$ flatpak remote-modify flathub --url=https://flathub.org/repo/flathub.flatpakrepo
+```
+
 ## Upgrade Nix on Steam Deck
 
 ```bash
 $ curl -L https://nixos.org/nix/install | sh -s -- --daemon
+```
+
+## Install direnv on Steam Deck
+
+```bash
+$ curl -sfL https://direnv.net/install.sh | bash
 ```
 
 ## Enable `nix` experimental features

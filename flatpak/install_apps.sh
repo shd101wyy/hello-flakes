@@ -5,6 +5,11 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 # sudo flatpak remote-modify flathub --url=https://mirror.sjtu.edu.cn/flathub
 
 flatpak update -y
+# If this command failed or gives a bunch of warnings, try to run:
+# $ flatpak repair 
+# Actually this^ doesn't help. But the ones below work:
+# $flatpak remote-delete --force flathub
+# $flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 # An array of apps to install
 apps=(
@@ -29,7 +34,7 @@ apps=(
     
     io.github.giantpinkrobots.flatsweep
     io.podman_desktop.PodmanDesktop
-    net.codeindustry.MasterPDFEditor
+    # net.codeindustry.MasterPDFEditor
     org.filezillaproject.Filezilla
     org.gimp.GIMP
     org.gnome.FontManager
@@ -52,6 +57,8 @@ if [[ $is_nixos -eq 1 ]]; then
         # Input
         org.fcitx.Fcitx5
         org.gnome.font-viewer
+
+        com.tencent.WeChat
     )
 fi
 
