@@ -89,15 +89,16 @@ for app in "${apps[@]}"; do
     flatpak install -y --or-update flathub "$app"
 done
 
+# NOTE: Let's not uninstall apps that are not in the list for now
 # Delete app not in the list
-echo "* Uninstalling apps..."
-installed_apps=$(flatpak list --app --columns=application)
-for app in $installed_apps; do
-    if [[ ! " ${apps[@]} " =~ " ${app} " ]]; then
-        echo "= Uninstalling $app"
-        flatpak uninstall -y "$app"
-    fi
-done
+## echo "* Uninstalling apps..."
+## installed_apps=$(flatpak list --app --columns=application)
+## for app in $installed_apps; do
+##     if [[ ! " ${apps[@]} " =~ " ${app} " ]]; then
+##         echo "= Uninstalling $app"
+##         flatpak uninstall -y "$app"
+##     fi
+## done
 
 # Run configure_apps.sh
 echo "* Configuring apps..."
