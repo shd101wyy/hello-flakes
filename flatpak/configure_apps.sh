@@ -29,6 +29,12 @@ if is_flatpak_app_installed com.visualstudio.code; then
     flatpak override --user --filesystem=home com.visualstudio.code
     # Set environment variables
     flatpak override --user --env=PATH="/app/bin:/usr/bin:$PATH" com.visualstudio.code
+    
+    # For steam deck only to configure the kwalletd5 and org.freedesktop.secrets
+    # https://code.visualstudio.com/docs/configure/settings-sync#_troubleshooting-keychain-issues
+    if [ -f /etc/os-release ] && grep -q 'NAME="SteamOS"' /etc/os-release; then
+        flatpak override --user --talk-name=org.kde.kwalletd5 --talk-name=org.freedesktop.secrets com.visualstudio.code
+    fi
 fi
 
 # Check if com.slack.Slack is installed
