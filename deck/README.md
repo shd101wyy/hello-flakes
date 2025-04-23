@@ -48,3 +48,23 @@ experimental-features = nix-command flakes
 ```bash
 $ ./install_podman.sh
 ```
+
+## KWallet
+
+Steam Deck is currently using the KDE5, not 6, so installing the latest KWallet will not work with KDE5.  
+
+Related discussion: https://www.reddit.com/r/kde/comments/1c4hu5y/cannot_run_kwalletmanager_on_my_steam_deck/
+
+Downgrade to KWallet5 manually:
+
+```bash
+$ flatpak update --commit=cf3a6420de76bed4ead3d5546bd6a9f402af26941d26bafa5be9de3da42bbb98 org.kde.kwalletmanager5
+$ flatpak mask org.kde.kwalletmanager5
+```
+
+Once Steam Deck updates to Plasma 6, revert it by:
+
+```bash
+$ flatpak mask --remove org.kde.kwalletmanager5
+```
+
