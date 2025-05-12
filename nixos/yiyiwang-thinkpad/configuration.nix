@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs, # From flake.nix
+  pkgsUnstable,
   nur,
   ...
 }:
@@ -224,7 +225,7 @@
 
   programs.clash-verge = {
     enable = true;
-    package = pkgs.clash-verge-rev;
+    package = pkgsUnstable.clash-verge-rev;
   };
 
   # Enable ZSH

@@ -23,7 +23,7 @@
       # Below is the nixos-24.05
       # url = "github:NixOS/nixpkgs?rev=dba414932936fde69f0606b4f1d87c5bc0003ede";
       # Below is the nixos-24.11
-      url = "github:NixOS/nixpkgs?rev=a880f49904d68b5e53338d1e8c7bf80f59903928";
+      url = "github:NixOS/nixpkgs?rev=0c0bf9c057382d5f6f63d54fd61f1abd5e1c2f63";
     };
     nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -93,7 +93,7 @@
         # Read the `configuration.nix` for more comments
         nixosConfigurations.yiyiwang-thinkpad = nixpkgs.lib.nixosSystem (rec {
           inherit system;
-          specialArgs = { inherit nur; };
+          specialArgs = { inherit nur; inherit pkgsUnstable; };
           modules = [ ./nixos/yiyiwang-thinkpad/configuration.nix ];
         });
 
