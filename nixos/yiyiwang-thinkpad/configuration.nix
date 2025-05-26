@@ -96,7 +96,7 @@
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome = {
     enable = true;
-    extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+    extraGSettingsOverridePackages = [ pkgs.mutter ];
     extraGSettingsOverrides = ''
       [org.gnome.mutter]
       experimental-features=['scale-monitor-framebuffer']
@@ -143,9 +143,9 @@
   # Packages to install
   environment.systemPackages = with pkgs; [
     # Gnome related
-    gnome.gnome-shell
-    gnome.gnome-tweaks
-    gnome.adwaita-icon-theme
+    gnome-shell
+    gnome-tweaks
+    adwaita-icon-theme
     gnomeExtensions.lunar-calendar
     gnomeExtensions.proxy-switcher
     gnomeExtensions.dash-to-dock
@@ -297,14 +297,14 @@
     packages = with pkgs; [
       hack-font
       jetbrains-mono
-      (nerdfonts.override {
-        fonts = [
-          "FiraCode"
-          "DroidSansMono"
-          "Ubuntu"
-          "UbuntuMono"
-        ];
-      })
+      # (nerdfonts.override {
+      #   fonts = [
+      #     "FiraCode"
+      #     "DroidSansMono"
+      #     "Ubuntu"
+      #     "UbuntuMono"
+      #   ];
+      # })
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif

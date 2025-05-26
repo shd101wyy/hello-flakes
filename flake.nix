@@ -23,7 +23,9 @@
       # Below is the nixos-24.05
       # url = "github:NixOS/nixpkgs?rev=dba414932936fde69f0606b4f1d87c5bc0003ede";
       # Below is the nixos-24.11
-      url = "github:NixOS/nixpkgs?rev=0c0bf9c057382d5f6f63d54fd61f1abd5e1c2f63";
+      # url = "github:NixOS/nixpkgs?rev=0c0bf9c057382d5f6f63d54fd61f1abd5e1c2f63";
+      # Below is the nixos-25.05
+      url = "github:NixOS/nixpkgs?rev=7c43f080a7f28b2774f3b3f43234ca11661bf334";
     };
     nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -35,7 +37,7 @@
       url = "github:nix-community/NUR/master";
     };
     home-manager = {
-      url = "github:nix-community/home-manager?ref=release-24.11"; # The version here should match `nixpkgs`
+      url = "github:nix-community/home-manager?ref=release-25.05"; # The version here should match `nixpkgs`
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-doom-emacs = {
@@ -93,7 +95,10 @@
         # Read the `configuration.nix` for more comments
         nixosConfigurations.yiyiwang-thinkpad = nixpkgs.lib.nixosSystem (rec {
           inherit system;
-          specialArgs = { inherit nur; inherit pkgsUnstable; };
+          specialArgs = {
+            inherit nur;
+            inherit pkgsUnstable;
+          };
           modules = [ ./nixos/yiyiwang-thinkpad/configuration.nix ];
         });
 
