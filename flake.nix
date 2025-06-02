@@ -25,7 +25,9 @@
       # Below is the nixos-24.11
       # url = "github:NixOS/nixpkgs?rev=0c0bf9c057382d5f6f63d54fd61f1abd5e1c2f63";
       # Below is the nixos-25.05
-      url = "github:NixOS/nixpkgs?rev=7c43f080a7f28b2774f3b3f43234ca11661bf334";
+      # url = "github:NixOS/nixpkgs?rev=7848cd8c982f7740edf76ddb3b43d234cb80fc4d";
+      # ^ nixos-25.05 is currently causing my bluetooth mouse not working
+      url = "github:NixOS/nixpkgs/nixos-unstable";
     };
     nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
