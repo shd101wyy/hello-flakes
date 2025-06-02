@@ -69,6 +69,10 @@
   # This is necessary to be used together with the `networking.enableIPv6` option.
   ## boot.kernelParams = [ "ipv6.disable=1" ];
 
+  # Use a specific kernel
+  # https://www.kernel.org/
+  boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_14;
+
   system = {
     copySystemConfiguration = false;
     stateVersion = "22.05";
