@@ -83,6 +83,7 @@ let
     # lisp (scheme)
     chez
     newlisp
+    chicken
 
     # Crypto
     # pkgsUnstable.railway-wallet
