@@ -32,6 +32,8 @@
     ../../services/pgadmin.nix
     # wireguard configuration
     ../../services/wireguard.nix
+    # nginx configuration
+    ../../services/nginx.nix
   ];
 
   # Use the GRUB 2 boot loader
@@ -402,7 +404,7 @@
   };
 
   # Nixpkgs settings
-  nixpkgs.overlays = [ nur.overlay ];
+  nixpkgs.overlays = [ nur.overlays.default ];
   nixpkgs.config = {
     allowUnfree = true;
     # allowBroken = true;
