@@ -64,6 +64,8 @@
 
       pkgsUnstable.wechat-uos
 
+      pkgsUnstable.zed-editor
+
       # pkgsUnstable.trezor-suite
     ]
     ++ (import ./packages.nix {
