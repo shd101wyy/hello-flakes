@@ -33,7 +33,7 @@
     # wireguard configuration
     ../../services/wireguard.nix
     # nginx configuration
-    ../../services/nginx.nix
+    # ../../services/nginx.nix
   ];
 
   # Use the GRUB 2 boot loader
@@ -83,6 +83,8 @@
   # networking.hostName = "yiyiwang-thinkpad"; # Define your hostname.
   # Run `sudo nmtui` to activate connection to Wifi
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
+  # networking.enableIPv6 = false; # Disable IPv6 globally
+
   ## networking.enableIPv6 = false; # Disable IPv6
   networking.nameservers = [
     "8.8.8.8"
