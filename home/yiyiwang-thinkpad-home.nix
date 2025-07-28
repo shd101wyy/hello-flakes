@@ -46,7 +46,7 @@
       # pkgsUnstable.chromium
       # clash-verge-rev
       ghc # haskell
-      # pkgsUnstable.koka # Koka language compiler and interpreter
+      pkgsUnstable.koka # Koka language compiler and interpreter
       stripe-cli # A command-line tool for Stripe
 
       # System

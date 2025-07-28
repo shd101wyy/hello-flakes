@@ -85,6 +85,9 @@ let
     newlisp
     chicken
 
+    # typescript language server
+    typescript-language-server
+
     # Crypto
     # pkgsUnstable.railway-wallet
 

@@ -3,7 +3,7 @@
 {
   programs.zsh = {
     enable = true;
-    initExtra = ''
+    initContent = ''
       export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin
       export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
 
@@ -137,7 +137,8 @@
   programs.helix = {
     enable = true;
     settings = {
-      theme = "autumn_night_transparent";
+      # https://github.com/helix-editor/helix/tree/master/runtime/themes
+      theme = "github_dark";
       editor.cursor-shape = {
         normal = "block";
         insert = "bar";
