@@ -349,6 +349,9 @@
     docker = {
       enable = true;
       daemon.settings = {
+        userland-proxy = false;
+        # experimental = true;
+        # ipv6 = true;
         registry-mirrors = [
           # 国内 dockerhub 镜像 https://blog.csdn.net/buluxianfeng/article/details/143977194
           # "https://docker.unsee.tech"
@@ -356,8 +359,13 @@
           # "https://dockerhub.icu"
           # "https://hub.rat.dev"
           # "https://hub.xdark.top"
-          "https://hub.littlediary.cn"
+          # "https://hub.littlediary.cn"
+          "https://docker.1ms.run"
         ];
+        "proxies" = {
+          "http-proxy" = "http://127.0.0.1:8889";
+          "https-proxy" = "http://127.0.0.1:8889";
+        };
       };
     };
     # lxd = { enable = true; };
