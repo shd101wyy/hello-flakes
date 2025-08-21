@@ -2,11 +2,17 @@
 # https://hub.docker.com/r/bitnami/redis-cluster
 # Copyright VMware, Inc.
 # SPDX-License-Identifier: APACHE-2.0
+#
+# Run the command below to start a single-node Redis cluster:
+# $ docker-compose up -d redis-single-node-cluster
 
-version: '3.8'
+networks:
+  redis-cluster-network:
+    driver: bridge
+
 services:
   redis-single-node-cluster:
-    image: docker.io/bitnami/redis-cluster:7.0
+    image: docker.io/bitnami/redis-cluster:8.2
     environment:
       - 'ALLOW_EMPTY_PASSWORD=yes'
       - 'REDIS_CLUSTER_REPLICAS=0'
@@ -16,3 +22,5 @@ services:
       - 'REDIS_CLUSTER_ANNOUNCE_IP=127.0.0.1'
     ports:
       - '6379:6379'
+    networks:
+      - redis-cluster-network
