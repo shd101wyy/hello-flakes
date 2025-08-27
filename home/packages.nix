@@ -43,6 +43,7 @@ let
     redis
     ruby
     pkgsUnstable.rustc
+    scc # Very fast accurate code counter with complexity calculations and COCOMO estimates written in pure Go
     sops # Mozilla sops (Secrets OPerationS) is an editor of encrypted files
     sqlite
     sshpass
