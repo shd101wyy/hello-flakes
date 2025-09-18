@@ -29,6 +29,7 @@ let
     # nss_latest
     pandoc
     poetry
+    uv
     # python3 # <= Cause conflicts with below
     (python3.withPackages (
       ps: with ps; [
@@ -77,6 +78,7 @@ let
     direnv
     nix-direnv
     nixfmt-rfc-style
+    devenv
 
     # LaTeX
     texliveFull
