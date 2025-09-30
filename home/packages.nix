@@ -8,6 +8,11 @@ let
     browsh # fully-modern text-based browser
     cargo
     docker-compose
+    flex # Fast lexical analyser generator
+    bison # Yacc-compatible parser generator
+    go # go language
+    gopls # go language server
+    golds # Experimental Go local docs server/generator and code reader implemented with some fresh ideas
     gh # GitHub CLI tool
     gnumake
     zenity
