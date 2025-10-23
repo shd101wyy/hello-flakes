@@ -49,6 +49,9 @@
       export NO_PROXY=localhost,127.0.0.1,::1
       export no_proxy=localhost,127.0.0.1,::1
 
+      # export RUST_SRC_PATH="${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}"
+      export RUST_BACKTRACE=1
+
       # Alias commands
       alias view='vim -R'
     '';

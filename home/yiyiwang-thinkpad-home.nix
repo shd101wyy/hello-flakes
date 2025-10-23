@@ -28,6 +28,8 @@
         glibc
         openssl.dev
         pkg-config
+        llvm
+        udev
       ]
     );
   };
@@ -58,9 +60,18 @@
       # quickgui # A Flutter frontend for quickemu
       eyedropper # Color picker
 
-      llvmPackages_14.llvm
+      # llvmPackages_14.llvm
       clang
       cmake
+
+      # For solfuzz
+      protobuf
+      # libllvm # <- this conflicts with rocmPackages.llvm.llvm
+      # rocmPackages.llvm.llvm
+      llvm
+      pkg-config
+      udev
+
 
       pkgsUnstable.wechat-uos
 

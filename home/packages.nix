@@ -1,12 +1,21 @@
 { pkgs, pkgsUnstable }:
 let
+  rust_overlay = import (builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz");
+  pkgsWithRust = import <nixpkgs> { overlays = [ rust_overlay ]; };
+  rustVersion = "latest";
+  # rustVersion = "1.86.0";
+  rust = pkgsWithRust.rust-bin.stable.${rustVersion}.default.override {
+    extensions = [
+      "rust-src" # for rust-analyzer
+      "rust-analyzer"
+    ];
+  };
   packages = with pkgs; [
     # Apps
     age # Modern encryption tool with small explicit keys
     awscli2
     bind
     browsh # fully-modern text-based browser
-    cargo
     docker-compose
     flex # Fast lexical analyser generator
     bison # Yacc-compatible parser generator
@@ -49,7 +58,10 @@ let
     ))
     redis
     ruby
-    pkgsUnstable.rustc
+    
+    # Rust related
+    rust
+
     scc # Very fast accurate code counter with complexity calculations and COCOMO estimates written in pure Go
     sops # Mozilla sops (Secrets OPerationS) is an editor of encrypted files
     sqlite
