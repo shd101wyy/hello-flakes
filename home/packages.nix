@@ -34,6 +34,7 @@ let
     # nss_latest
     pandoc
     poetry
+    pkg-config # Tool that allows packages to find out information about other packages (wrapper script)
     uv
     # python3 # <= Cause conflicts with below
     (python3.withPackages (
