@@ -20,6 +20,7 @@
 
       # Tools/Apps
       # pandoc
+      flatpak-xdg-utils
     ] ++ (import ./packages.nix {
       pkgs = pkgs;
       pkgsUnstable = pkgsUnstable;
