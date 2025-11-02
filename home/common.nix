@@ -19,6 +19,11 @@
         alias code="flatpak run com.visualstudio.code --password-store=\"gnome\""
       fi
 
+      # Add debugCommand directory to PATH if it exists
+      if [ -d "$HOME/.var/app/com.visualstudio.code/config/Code/User/globalStorage/github.copilot-chat/debugCommand" ]; then
+        export PATH="$PATH:$HOME/.var/app/com.visualstudio.code/config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+      fi
+
       # For NixOS
       if [ -f /etc/NIXOS ]; then
         # https://github.com/NixOS/nixpkgs/issues/189851
