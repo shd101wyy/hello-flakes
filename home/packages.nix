@@ -96,7 +96,7 @@ let
     direnv
     nix-direnv
     nixfmt-rfc-style
-    devenv
+    ## devenv
 
     # LaTeX
     texliveFull
