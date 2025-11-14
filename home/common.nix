@@ -57,6 +57,18 @@
       # export RUST_SRC_PATH="${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}"
       export RUST_BACKTRACE=1
 
+      # Configure direnv
+      mkdir -p ~/.config/direnv/
+
+      if [ ! -f "$HOME/.config/direnv/direnv.toml" ]; then
+        cat > "$HOME/.config/direnv/direnv.toml" <<'EOF'
+    [global]
+    log_format = "-"
+    log_filter = "^$"
+    EOF
+      fi
+      
+
       # Alias commands
       alias view='vim -R'
     '';
