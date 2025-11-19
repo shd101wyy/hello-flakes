@@ -54,7 +54,6 @@
       export NO_PROXY=localhost,127.0.0.1,::1
       export no_proxy=localhost,127.0.0.1,::1
 
-      # export RUST_SRC_PATH="${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}"
       export RUST_BACKTRACE=1
 
       # Configure direnv
@@ -148,11 +147,11 @@
     extraLuaConfig = builtins.readFile ../nvim/init.lua;
   };
 
-  programs.doom-emacs = {
-    enable = false;
-    # Link to ../emacs/doom.d
-    doomPrivateDir = builtins.getEnv ("PWD") + "/emacs/doom.d";
-  };
+  ## programs.doom-emacs = {
+  ##   enable = false;
+  ##   # Link to ../emacs/doom.d
+  ##   doomPrivateDir = builtins.getEnv ("PWD") + "/emacs/doom.d";
+  ## };
 
   programs.helix = {
     enable = true;
