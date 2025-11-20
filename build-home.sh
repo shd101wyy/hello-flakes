@@ -1,6 +1,17 @@
 #!/bin/sh
 set -xeu
 
+# Check /etc/nix/nix.conf configuration
+echo "=========================================="
+echo "REMINDER: Please ensure /etc/nix/nix.conf contains:"
+echo ""
+echo "substituters = https://mirrors.ustc.edu.cn/nix-channels/store https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://cache.nixos.org/"
+echo "experimental-features = nix-command flakes"
+echo "trusted-users = your-user-name"
+echo ""
+echo "=========================================="
+echo ""
+
 # Options
 # --home yiyiwang-thinkpad-home
 # --home yiyiwang-steamdeck-home
@@ -19,6 +30,7 @@ while [ $# -gt 0 ]; do
     echo "  --home <home-config>  Home configuration to use"
     echo "                        --home yiyiwang-thinkpad-home"
     echo "                        --home yiyiwang-steamdeck-home"
+    echo "                        --home yiyiwang-wsl-home"
     echo "  --help, -h            Show this help"
     exit 0
     ;;
@@ -29,13 +41,16 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-# Check if the HOME_CONFIG is either yiyiwang-thinkpad-home or yiyiwang-steamdeck-home
-if [ "$HOME_CONFIG" != "yiyiwang-thinkpad-home" ] && [ "$HOME_CONFIG" != "yiyiwang-steamdeck-home" ]; then
+# Check if the HOME_CONFIG is either yiyiwang-thinkpad-home or yiyiwang-steamdeck-home or yiyiwang-wsl-home
+if [ "$HOME_CONFIG" != "yiyiwang-thinkpad-home" ] && 
+   [ "$HOME_CONFIG" != "yiyiwang-steamdeck-home" ] && 
+   [ "$HOME_CONFIG" != "yiyiwang-wsl-home" ]; then
   echo "Unknown home config: $HOME_CONFIG" >&2
-  echo "Please use --home yiyiwang-thinkpad-home or --home yiyiwang-steamdeck-home" >&2
+  echo "Please use '--home yiyiwang-thinkpad-home' or '--home yiyiwang-steamdeck-home' or '--home yiyiwang-wsl-home'" >&2
   exit 1
 fi
 
+# All my machines are running proxy at port 8889
 export HTTP_PROXY=http://127.0.0.1:8889
 export HTTPS_PROXY=http://127.0.0.1:8889
 export http_proxy=http://127.0.0.1:8889

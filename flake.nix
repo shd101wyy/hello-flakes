@@ -118,7 +118,10 @@
 
           # Optionally use extraSpecialArgs
           # to pass through arguments to home.nix
-          extraSpecialArgs = { inherit pkgsUnstable; };
+          extraSpecialArgs = { 
+            inherit pkgsUnstable; 
+            proxyPort = "8889";
+          };
         };
 
         homeConfigurations.yiyiwang-steamdeck-home = home-manager.lib.homeManagerConfiguration {
@@ -131,7 +134,26 @@
 
           # Optionally use extraSpecialArgs
           # to pass through arguments to home.nix
-          extraSpecialArgs = { inherit pkgsUnstable; };
+          extraSpecialArgs = { 
+            inherit pkgsUnstable; 
+            proxyPort = "8889";
+          };
+        };
+
+        homeConfigurations.yiyiwang-wsl-home = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            nix-doom-emacs.hmModule
+            ./home/yiyiwang-wsl-home.nix
+            ./home/common.nix
+          ];
+
+          # Optionally use extraSpecialArgs
+          # to pass through arguments to home.nix
+          extraSpecialArgs = { 
+            inherit pkgsUnstable; 
+            proxyPort = "8889";
+          };
         };
       }
     );

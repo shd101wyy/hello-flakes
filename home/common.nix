@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, proxyPort ? "", ... }:
 # This file includes some common
 {
   programs.zsh = {
@@ -38,8 +38,9 @@
       # rust cargo home
       export CARGO_HOME="$HOME/.cargo"
 
-      # set proxy env variables
-      PORT=8889
+      # set proxy env variables (only if proxyPort is provided)
+      ${lib.optionalString (proxyPort != "") ''
+      PORT=${proxyPort}
       ## Curl reads and understands the following environment variables:
       export HTTP_PROXY=http://127.0.0.1:$PORT
       export HTTPS_PROXY=http://127.0.0.1:$PORT
@@ -53,6 +54,7 @@
       ## A comma-separated list of host names that shouldn't go through any proxy is set in (only an asterisk, '*' matches all hosts)
       export NO_PROXY=localhost,127.0.0.1,::1
       export no_proxy=localhost,127.0.0.1,::1
+      ''}
 
       export RUST_BACKTRACE=1
 
