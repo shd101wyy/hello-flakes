@@ -22,6 +22,13 @@
   wsl.enable = true;
   wsl.defaultUser = "yiyiwang";
 
+  users.users.yiyiwang = {
+    isNormalUser = true;
+    extraGroups = [
+      "wheel" # Enable 'sudo' for the user;
+      "docker" # Adding users to the `docker` group will provide them access to the socket:
+    ];
+  };
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It's perfectly fine and recommended to leave
