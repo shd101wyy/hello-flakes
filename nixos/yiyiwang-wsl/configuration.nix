@@ -5,7 +5,12 @@
 # NixOS-WSL specific options are documented on the NixOS-WSL repository:
 # https://github.com/nix-community/NixOS-WSL
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -31,6 +36,108 @@
   # Set my time zone
   time.timeZone = "Asia/Shanghai";
 
+  # Enable the X11 windowing system
+  services.xserver.enable = true;
+
+  console.font = "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
+
+  # Environment variables
+  environment.variables.EDITOR = "nvim";
+
+  # Enable ZSH
+  programs.zsh.enable = true;
+  users.defaultUserShell = pkgs.zsh;
+  # Hack to set /etc/shells as not symbolic link
+  # We need to do this because the `flatpak run` cannot mount the symbolic link
+  environment.etc.shells.mode = "0666";
+  # https://github.com/NixOS/nixpkgs/issues/189851
+  # https://discourse.nixos.org/t/open-links-from-flatpak-via-host-firefox/15465/8
+  systemd.user.extraConfig = ''
+    DefaultEnvironment="PATH=/run/current-system/sw/bin"
+  '';
+
+  # Enable xdg related
+  xdg.portal.extraPortals = with pkgs; [
+    # xdg-desktop-portal-kde
+    xdg-desktop-portal-gtk
+  ];
+  xdg.portal.enable = true;
+  xdg.portal.config.common.default = [ "gtk" ];
+
+  # Enable SSH
+  services.openssh.enable = true;
+
+  fonts = {
+    fontDir.enable = true;
+    enableDefaultPackages = true;
+    packages = with pkgs; [
+      hack-font
+      jetbrains-mono
+      # (nerdfonts.override {
+      #   fonts = [
+      #     "FiraCode"
+      #     "DroidSansMono"
+      #     "Ubuntu"
+      #     "UbuntuMono"
+      #   ];
+      # })
+      noto-fonts
+      noto-fonts-cjk-sans
+      noto-fonts-cjk-serif
+      noto-fonts-emoji
+      sarasa-gothic # 更纱黑体
+      source-code-pro
+      ubuntu_font_family
+    ];
+    fontconfig = {
+      # 测试字体 👹
+      defaultFonts = {
+        emoji = [ "Noto Color Emoji" ];
+        serif = [ "Ubuntu Regular" ];
+        sansSerif = [ "Sans Regular" ];
+        monospace = [ "Ubuntu Mono Regular" ];
+      };
+      antialias = true;
+      hinting.enable = true;
+      # hinting.style = "slight";
+    };
+  };
+
+  # Virtualization
+  virtualisation = {
+    # https://nixos.wiki/wiki/WayDroid
+    # Run the following to init:
+    # $ sudo waydroid init -c https://waydroid.bardia.tech/OTA/system -v https://waydroid.bardia.tech/OTA/vendor
+    # After intalling:
+    # $ sudo systemctl start waydroid-container
+    # $ waydroid show-full-ui
+    ## waydroid = {
+    ##   enable = true;
+    ## };
+    docker = {
+      enable = true;
+      daemon.settings = {
+        userland-proxy = false;
+        # experimental = true;
+        # ipv6 = true;
+        registry-mirrors = [
+          # 国内 dockerhub 镜像 https://blog.csdn.net/buluxianfeng/article/details/143977194
+          # "https://docker.unsee.tech"
+          # "https://dockerpull.org"
+          # "https://dockerhub.icu"
+          # "https://hub.rat.dev"
+          # "https://hub.xdark.top"
+          # "https://hub.littlediary.cn"
+          "https://docker.1ms.run"
+        ];
+        "proxies" = {
+          "http-proxy" = "http://127.0.0.1:8889";
+          "https-proxy" = "http://127.0.0.1:8889";
+        };
+      };
+    };
+    # lxd = { enable = true; };
+  };
 
   nix.settings = {
     auto-optimise-store = true;
@@ -40,7 +147,10 @@
       "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store" # <- This is very slow
       "https://cache.nixos.org"
     ];
-    allowed-users = ["*" "@users"];
+    allowed-users = [
+      "*"
+      "@users"
+    ];
     trusted-users = [ "@wheel" ];
     experimental-features = [
       "nix-command"
