@@ -71,3 +71,13 @@ Download `license.tar.gz` from https://aur.archlinux.org/packages/wechat-uos, th
 ```bash
 $ nix-store --add-fixed sha256 license.tar.gz
 ```
+
+## WSL NixOS
+
+Check https://github.com/nix-community/NixOS-WSL
+
+If you are using clash, then make sure you turn off the `Tun` mode and enable the `System Proxy`.  
+
+Also, enable the WSL `mirrored` network mode. 
+
+`sudo nix-channel --update` might only work for `root` user in the beginning under the proxy mode. You need to use `sudo -E` to pass the environment variables to the `nix-channel` command. So it's `sudo -E nix-channel --update`.

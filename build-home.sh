@@ -13,25 +13,25 @@ echo "=========================================="
 echo ""
 
 # Options
-# --home yiyiwang-thinkpad-home
-# --home yiyiwang-steamdeck-home
+# --flake yiyiwang-thinkpad-home
+# --flake yiyiwang-steamdeck-home
 HOME_CONFIG=""
 
 # Parse options
 while [ $# -gt 0 ]; do
   case "$1" in
-  --home)
+  --flake)
     HOME_CONFIG="$2"
     shift 2
     ;;
   --help | -h)
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  --home <home-config>  Home configuration to use"
-    echo "                        --home yiyiwang-thinkpad-home"
-    echo "                        --home yiyiwang-steamdeck-home"
-    echo "                        --home yiyiwang-wsl-home"
-    echo "  --help, -h            Show this help"
+    echo "  --flake <home-config>  Home configuration to use"
+    echo "                         --flake yiyiwang-thinkpad-home"
+    echo "                         --flake yiyiwang-steamdeck-home"
+    echo "                         --flake yiyiwang-wsl-home"
+    echo "  --help, -h             Show this help"
     exit 0
     ;;
   *)
@@ -46,7 +46,7 @@ if [ "$HOME_CONFIG" != "yiyiwang-thinkpad-home" ] &&
    [ "$HOME_CONFIG" != "yiyiwang-steamdeck-home" ] && 
    [ "$HOME_CONFIG" != "yiyiwang-wsl-home" ]; then
   echo "Unknown home config: $HOME_CONFIG" >&2
-  echo "Please use '--home yiyiwang-thinkpad-home' or '--home yiyiwang-steamdeck-home' or '--home yiyiwang-wsl-home'" >&2
+  echo "Please use '--flake yiyiwang-thinkpad-home' or '--flake yiyiwang-steamdeck-home' or '--flake yiyiwang-wsl-home'" >&2
   exit 1
 fi
 

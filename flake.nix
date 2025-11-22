@@ -32,6 +32,9 @@
     nixpkgs-unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL?ref=main";
+    };
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
@@ -52,6 +55,7 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
+      nixos-wsl,
       flake-utils,
       nur,
       home-manager,
@@ -102,6 +106,21 @@
             inherit pkgsUnstable;
           };
           modules = [ ./nixos/yiyiwang-thinkpad/configuration.nix ];
+        });
+
+        # WSL NixOS configuration
+        # https://github.com/nix-community/NixOS-WSL
+        nixosConfigurations.yiyiwang-wsl = nixpkgs.lib.nixosSystem (rec {
+          inherit system;
+          specialArgs = {
+            inherit nur;
+            inherit pkgsUnstable;
+          };
+          modules = [
+            nixos-wsl.nixosModules.default
+ 
+            ./nixos/yiyiwang-wsl/configuration.nix
+          ];
         });
 
         # Home configurations
