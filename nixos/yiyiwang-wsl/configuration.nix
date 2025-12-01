@@ -91,10 +91,10 @@
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       sarasa-gothic # 更纱黑体
       source-code-pro
-      ubuntu_font_family
+      ubuntu-classic
     ];
     fontconfig = {
       # 测试字体 👹

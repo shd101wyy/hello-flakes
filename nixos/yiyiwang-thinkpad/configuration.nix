@@ -95,14 +95,14 @@
   time.timeZone = "Asia/Shanghai";
 
   # Enable the X11 windowing system
-  services.xserver.enable = true;
+  # services.xserver.enable = true;
 
   # Intel
-  services.xserver.videoDrivers = [ "modesetting" ];
+  # services.xserver.videoDrivers = [ "modesetting" ];
 
   # Enable the GNOME Desktop Environment
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome = {
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome = {
     enable = true;
     extraGSettingsOverridePackages = [ pkgs.mutter ];
     extraGSettingsOverrides = ''
@@ -249,7 +249,7 @@
   '';
 
   # Enable xdg related
-  xdg.portal.enable = true;
+  ## xdg.portal.enable = true;
 
   # Define a user account.
   users.users.yiyiwang = {
@@ -290,7 +290,7 @@
       fcitx5.waylandFrontend = true;
       fcitx5.addons = with pkgs; [
         fcitx5-gtk # alternatively, kdePackages.fcitx5-qt
-        fcitx5-chinese-addons
+        qt6Packages.fcitx5-chinese-addons
         # table input method support
         # Search for `pinyin` in fcitx-configtool
 
@@ -316,10 +316,10 @@
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       sarasa-gothic # 更纱黑体
       source-code-pro
-      ubuntu_font_family
+      ubuntu-classic
     ];
     fontconfig = {
       # 测试字体 👹

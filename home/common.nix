@@ -25,12 +25,12 @@
       fi
 
       # For NixOS
-      if [ -f /etc/NIXOS ]; then
-        # https://github.com/NixOS/nixpkgs/issues/189851
-        # https://discourse.nixos.org/t/open-links-from-flatpak-via-host-firefox/15465/8
-        systemctl --user import-environment PATH
-        systemctl --user restart xdg-desktop-portal.service
-      fi
+      ## if [ -f /etc/NIXOS ]; then
+      ##   # https://github.com/NixOS/nixpkgs/issues/189851
+      ##   # https://discourse.nixos.org/t/open-links-from-flatpak-via-host-firefox/15465/8
+      ##   systemctl --user import-environment PATH
+      ##   systemctl --user restart xdg-desktop-portal.service
+      ## fi
 
       # direnv
       eval "$(direnv hook zsh)"
@@ -83,7 +83,7 @@
 
   programs.git = {
     enable = true;
-    extraConfig = {
+    settings = {
       pull = {
         rebase = false;
         # ff = "only";
@@ -111,7 +111,7 @@
       coc-lua
       coc-nvim
       # coc-python
-      coc-rls
+      coc-rust-analyzer
       coc-tailwindcss
       coc-tsserver
       coc-yaml
