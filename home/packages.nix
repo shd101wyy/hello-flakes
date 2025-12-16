@@ -117,6 +117,7 @@ let
     ## pkgsUnstable.wechat-uos
 
     ngrok # Allows you to expose a web server running on your local machine to the internet
+    ripgrep # Utility that combines the usability of The Silver Searcher with the raw speed of grep
   ];
 in
 packages
