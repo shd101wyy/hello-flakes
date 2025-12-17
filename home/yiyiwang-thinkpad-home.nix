@@ -77,6 +77,8 @@
 
       pkgsUnstable.zed-editor
 
+      pkgsUnstable.antigravity
+
       # pkgsUnstable.trezor-suite
     ]
     ++ (import ./packages.nix {
