@@ -191,7 +191,7 @@
 
   # Install Yo syntax and filetype detection for Neovim
   home.file = {
-    ".config/nvim/syntax/yo.vim".text = builtins.readFile ../nvim/yo.vim;
+    ".config/nvim/syntax/yo.vim".text = builtins.readFile ../nvim/syntax/yo.vim;
     ".config/nvim/syntax/yo.vim".force = true;
     ".config/nvim/ftdetect/yo.vim".text = builtins.readFile ../nvim/ftdetect/yo.vim;
     ".config/nvim/ftdetect/yo.vim".force = true;
