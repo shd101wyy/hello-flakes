@@ -32,4 +32,6 @@ nnoremap <silent>    <A-0> <Cmd>BufferLast<CR>
 " Airline theme
 let g:airline_theme='papercolor'
 set background=dark
-colorscheme PaperColor
+
+" GitHub dark theme
+colorscheme github_dark_default

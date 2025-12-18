@@ -1,77 +1,82 @@
-{ pkgs, lib, proxyPort ? "", ... }:
+{
+  pkgs,
+  lib,
+  proxyPort ? "",
+  ...
+}:
 # This file includes some common
 {
   programs.zsh = {
     enable = true;
     initContent = ''
-      export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin
-      export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
+        export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin
+        export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
 
 
-      # Check if /etc/os-release exists and the name is SteamOS
-      if [ -f /etc/os-release ] && grep -q 'NAME="SteamOS"' /etc/os-release; then
-        # podman path
-        export PATH=$PATH:$HOME/.local/podman/bin
-      fi
+        # Check if /etc/os-release exists and the name is SteamOS
+        if [ -f /etc/os-release ] && grep -q 'NAME="SteamOS"' /etc/os-release; then
+          # podman path
+          export PATH=$PATH:$HOME/.local/podman/bin
+        fi
 
-      # For flatpak installed vscode, add alias of `code` command
-      if [ -f "/var/lib/flatpak/exports/bin/com.visualstudio.code" ]; then
-        alias code="flatpak run com.visualstudio.code --password-store=\"gnome\""
-      fi
+        # For flatpak installed vscode, add alias of `code` command
+        if [ -f "/var/lib/flatpak/exports/bin/com.visualstudio.code" ]; then
+          alias code="flatpak run com.visualstudio.code --password-store=\"gnome\""
+        fi
 
-      # Add debugCommand directory to PATH if it exists
-      if [ -d "$HOME/.var/app/com.visualstudio.code/config/Code/User/globalStorage/github.copilot-chat/debugCommand" ]; then
-        export PATH="$PATH:$HOME/.var/app/com.visualstudio.code/config/Code/User/globalStorage/github.copilot-chat/debugCommand"
-      fi
+        # Add debugCommand directory to PATH if it exists
+        if [ -d "$HOME/.var/app/com.visualstudio.code/config/Code/User/globalStorage/github.copilot-chat/debugCommand" ]; then
+          export PATH="$PATH:$HOME/.var/app/com.visualstudio.code/config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        fi
 
-      # For NixOS
-      ## if [ -f /etc/NIXOS ]; then
-      ##   # https://github.com/NixOS/nixpkgs/issues/189851
-      ##   # https://discourse.nixos.org/t/open-links-from-flatpak-via-host-firefox/15465/8
-      ##   systemctl --user import-environment PATH
-      ##   systemctl --user restart xdg-desktop-portal.service
-      ## fi
+        # For NixOS
+        ## if [ -f /etc/NIXOS ]; then
+        ##   # https://github.com/NixOS/nixpkgs/issues/189851
+        ##   # https://discourse.nixos.org/t/open-links-from-flatpak-via-host-firefox/15465/8
+        ##   systemctl --user import-environment PATH
+        ##   systemctl --user restart xdg-desktop-portal.service
+        ## fi
 
-      # direnv
-      eval "$(direnv hook zsh)"
+        # direnv
+        eval "$(direnv hook zsh)"
 
-      # rust cargo home
-      export CARGO_HOME="$HOME/.cargo"
+        # rust cargo home
+        export CARGO_HOME="$HOME/.cargo"
 
-      # set proxy env variables (only if proxyPort is provided)
-      ${lib.optionalString (proxyPort != "") ''
-      PORT=${proxyPort}
-      ## Curl reads and understands the following environment variables:
-      export HTTP_PROXY=http://127.0.0.1:$PORT
-      export HTTPS_PROXY=http://127.0.0.1:$PORT
-      export http_proxy=http://127.0.0.1:$PORT
-      export https_proxy=http://127.0.0.1:$PORT
+        # set proxy env variables (only if proxyPort is provided)
+        ${lib.optionalString (proxyPort != "") ''
+          PORT=${proxyPort}
+          ## Curl reads and understands the following environment variables:
+          export HTTP_PROXY=http://127.0.0.1:$PORT
+          export HTTPS_PROXY=http://127.0.0.1:$PORT
+          export http_proxy=http://127.0.0.1:$PORT
+          export https_proxy=http://127.0.0.1:$PORT
 
-      ## They should be set for protocol-specific proxies. General proxy should be set with
-      export ALL_PROXY=socks://127.0.0.1:$PORT
-      export all_proxy=socks://127.0.0.1:$PORT
+          ## They should be set for protocol-specific proxies. General proxy should be set with
+          export ALL_PROXY=socks://127.0.0.1:$PORT
+          export all_proxy=socks://127.0.0.1:$PORT
 
-      ## A comma-separated list of host names that shouldn't go through any proxy is set in (only an asterisk, '*' matches all hosts)
-      export NO_PROXY=localhost,127.0.0.1,::1
-      export no_proxy=localhost,127.0.0.1,::1
-      ''}
+          ## A comma-separated list of host names that shouldn't go through any proxy is set in (only an asterisk, '*' matches all hosts)
+          export NO_PROXY=localhost,127.0.0.1,::1
+          export no_proxy=localhost,127.0.0.1,::1
+        ''}
 
-      export RUST_BACKTRACE=1
+        export RUST_BACKTRACE=1
 
-      # Configure direnv
-      mkdir -p ~/.config/direnv/
+        # Configure direnv
+        mkdir -p ~/.config/direnv/
 
-      if [ ! -f "$HOME/.config/direnv/direnv.toml" ]; then
-        cat > "$HOME/.config/direnv/direnv.toml" <<'EOF'
-    [global]
-    log_format = "-"
-    log_filter = "^$"
-    EOF
-      fi
-      
+        if [ ! -f "$HOME/.config/direnv/direnv.toml" ]; then
+          cat > "$HOME/.config/direnv/direnv.toml" <<'EOF'
+      [global]
+      log_format = "-"
+      log_filter = "^$"
+      EOF
+        fi
+        
 
-      # Alias commands
-      alias view='vim -R'
+        # Alias commands
+        alias view='vim -R'
     '';
 
     oh-my-zsh = {
@@ -136,6 +141,9 @@
       vim-nix
       vim-plug
       YouCompleteMe
+
+      # Install the github-nvim-theme plugin
+      github-nvim-theme
     ];
     extraPackages = with pkgs; [
     ];
@@ -179,5 +187,13 @@
         "ui.background" = { };
       };
     };
+  };
+
+  # Install Yo syntax and filetype detection for Neovim
+  home.file = {
+    ".config/nvim/syntax/yo.vim".text = builtins.readFile ../nvim/yo.vim;
+    ".config/nvim/syntax/yo.vim".force = true;
+    ".config/nvim/ftdetect/yo.vim".text = builtins.readFile ../nvim/ftdetect/yo.vim;
+    ".config/nvim/ftdetect/yo.vim".force = true;
   };
 }
