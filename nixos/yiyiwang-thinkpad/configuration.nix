@@ -73,7 +73,7 @@
 
   # Use a specific kernel
   # https://www.kernel.org/
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_17;
+  boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_18;
 
   system = {
     copySystemConfiguration = false;
