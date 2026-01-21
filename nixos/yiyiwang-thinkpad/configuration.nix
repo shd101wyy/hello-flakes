@@ -34,6 +34,8 @@
     ../../services/wireguard.nix
     # nginx configuration
     # ../../services/nginx.nix
+    # k-framework
+    ../../kup/k-framework.nix
   ];
 
   # Use the GRUB 2 boot loader
@@ -258,6 +260,7 @@
       "wheel" # Enable 'sudo' for the user;
       "docker" # Adding users to the `docker` group will provide them access to the socket:
       "neo4j"
+      "libvirtd"
     ];
   };
 
@@ -369,6 +372,15 @@
       };
     };
     # lxd = { enable = true; };
+
+    libvirtd = {
+      enable = true;
+      qemu = {
+        package = pkgs.qemu_kvm;
+        runAsRoot = true;
+        swtpm.enable = true;
+      };
+    };
   };
 
   # Bind some directories
@@ -406,7 +418,11 @@
       "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store" # <- This is very slow
       "https://cache.nixos.org"
     ];
-    trusted-users = [ "@wheel" ];
+    trusted-users = [
+      "root"
+      "@wheel"
+      "yiyiwang"
+    ];
     experimental-features = [
       "nix-command"
       "flakes"
