@@ -73,6 +73,7 @@
       pkg-config
       udev
 
+      remmina
 
       pkgsUnstable.wechat-uos
 
