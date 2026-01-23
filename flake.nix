@@ -181,10 +181,10 @@
           };
         };
 
-        homeConfigurations.yiyiwang-mac = home-manager.lib.homeManagerConfiguration {
+        homeConfigurations.yiyiwang-mac-home = home-manager.lib.homeManagerConfiguration {
           pkgs = pkgsDarwin;
           modules = [
-            ./home/yiyiwang-mac.nix
+            ./home/yiyiwang-mac-home.nix
             ./home/common.nix
           ];
 

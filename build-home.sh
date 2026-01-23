@@ -1,5 +1,6 @@
 #!/bin/sh
-set -xeu
+# set -xeu
+set -eu
 
 # Check /etc/nix/nix.conf configuration
 echo "=========================================="
@@ -17,6 +18,17 @@ echo ""
 # --flake yiyiwang-steamdeck-home
 HOME_CONFIG=""
 
+print_help() {
+  echo "Usage: $0 [options]"
+  echo "Options:"
+  echo "  --flake <home-config>  Home configuration to use"
+  echo "                         --flake yiyiwang-thinkpad-home"
+  echo "                         --flake yiyiwang-steamdeck-home"
+  echo "                         --flake yiyiwang-wsl-home"
+  echo "                         --flake yiyiwang-mac-home"
+  echo "  --help, -h             Show this help"
+}
+
 # Parse options
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -25,14 +37,7 @@ while [ $# -gt 0 ]; do
     shift 2
     ;;
   --help | -h)
-    echo "Usage: $0 [options]"
-    echo "Options:"
-    echo "  --flake <home-config>  Home configuration to use"
-    echo "                         --flake yiyiwang-thinkpad-home"
-    echo "                         --flake yiyiwang-steamdeck-home"
-    echo "                         --flake yiyiwang-wsl-home"
-    echo "  --help, -h             Show this help"
-    exit 0
+    print_help
     ;;
   *)
     echo "Unknown option: $1" >&2
@@ -45,9 +50,9 @@ done
 if [ "$HOME_CONFIG" != "yiyiwang-thinkpad-home" ] && 
    [ "$HOME_CONFIG" != "yiyiwang-steamdeck-home" ] && 
    [ "$HOME_CONFIG" != "yiyiwang-wsl-home" ] &&
-   [ "$HOME_CONFIG" != "yiyiwang-mac" ]; then
+   [ "$HOME_CONFIG" != "yiyiwang-mac-home" ]; then
   echo "Unknown home config: $HOME_CONFIG" >&2
-  echo "Please use '--flake yiyiwang-thinkpad-home' or '--flake yiyiwang-steamdeck-home' or '--flake yiyiwang-wsl-home' or '--flake yiyiwang-mac'" >&2
+  print_help
   exit 1
 fi
 
