@@ -21,7 +21,7 @@ let
     bison # Yacc-compatible parser generator
     go # go language
     gopls # go language server
-    golds # Experimental Go local docs server/generator and code reader implemented with some fresh ideas
+    # golds # Experimental Go local docs server/generator and code reader implemented with some fresh ideas
     gh # GitHub CLI tool
     gnumake
     zenity

@@ -44,9 +44,10 @@ done
 # Check if the HOME_CONFIG is either yiyiwang-thinkpad-home or yiyiwang-steamdeck-home or yiyiwang-wsl-home
 if [ "$HOME_CONFIG" != "yiyiwang-thinkpad-home" ] && 
    [ "$HOME_CONFIG" != "yiyiwang-steamdeck-home" ] && 
-   [ "$HOME_CONFIG" != "yiyiwang-wsl-home" ]; then
+   [ "$HOME_CONFIG" != "yiyiwang-wsl-home" ] &&
+   [ "$HOME_CONFIG" != "yiyiwang-mac" ]; then
   echo "Unknown home config: $HOME_CONFIG" >&2
-  echo "Please use '--flake yiyiwang-thinkpad-home' or '--flake yiyiwang-steamdeck-home' or '--flake yiyiwang-wsl-home'" >&2
+  echo "Please use '--flake yiyiwang-thinkpad-home' or '--flake yiyiwang-steamdeck-home' or '--flake yiyiwang-wsl-home' or '--flake yiyiwang-mac'" >&2
   exit 1
 fi
 

@@ -88,9 +88,16 @@
     )
     // (
       let
-        system = "x86_64-linux";
-        pkgs = nixpkgs.legacyPackages.${system};
-        pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
+        linuxSystem = "x86_64-linux";
+        currentSystem = builtins.currentSystem;
+        darwinSystem =
+          if currentSystem == "aarch64-darwin" || currentSystem == "x86_64-darwin"
+          then currentSystem
+          else "aarch64-darwin";
+        pkgsLinux = nixpkgs.legacyPackages.${linuxSystem};
+        pkgsLinuxUnstable = nixpkgs-unstable.legacyPackages.${linuxSystem};
+        pkgsDarwin = nixpkgs.legacyPackages.${darwinSystem};
+        pkgsDarwinUnstable = nixpkgs-unstable.legacyPackages.${darwinSystem};
       in
       {
 
@@ -99,10 +106,10 @@
         # $ sudo nixos-rebuild switch --flake .#yiyiwang-thinkpad
         # Read the `configuration.nix` for more comments
         nixosConfigurations.yiyiwang-thinkpad = nixpkgs.lib.nixosSystem (rec {
-          inherit system;
+          system = linuxSystem;
           specialArgs = {
             inherit nur;
-            inherit pkgsUnstable;
+            pkgsUnstable = pkgsLinuxUnstable;
           };
           modules = [ ./nixos/yiyiwang-thinkpad/configuration.nix ];
         });
@@ -110,10 +117,10 @@
         # WSL NixOS configuration
         # https://github.com/nix-community/NixOS-WSL
         nixosConfigurations.yiyiwang-wsl = nixpkgs.lib.nixosSystem (rec {
-          inherit system;
+          system = linuxSystem;
           specialArgs = {
             inherit nur;
-            inherit pkgsUnstable;
+            pkgsUnstable = pkgsLinuxUnstable;
           };
           modules = [
             nixos-wsl.nixosModules.default
@@ -127,7 +134,7 @@
         # $ nix build .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage
         # $ "$(nix path-info .\#homeConfigurations.yiyiwang-thinkpad-home.activationPackage)"/activate
         homeConfigurations.yiyiwang-thinkpad-home = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+          pkgs = pkgsLinux;
           modules = [
             nix-doom-emacs.hmModule
             ./home/yiyiwang-thinkpad-home.nix
@@ -137,13 +144,13 @@
           # Optionally use extraSpecialArgs
           # to pass through arguments to home.nix
           extraSpecialArgs = { 
-            inherit pkgsUnstable; 
+            pkgsUnstable = pkgsLinuxUnstable; 
             proxyPort = "8889";
           };
         };
 
         homeConfigurations.yiyiwang-steamdeck-home = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+          pkgs = pkgsLinux;
           modules = [
             nix-doom-emacs.hmModule
             ./home/yiyiwang-steamdeck-home.nix
@@ -153,13 +160,13 @@
           # Optionally use extraSpecialArgs
           # to pass through arguments to home.nix
           extraSpecialArgs = { 
-            inherit pkgsUnstable; 
+            pkgsUnstable = pkgsLinuxUnstable; 
             proxyPort = "8889";
           };
         };
 
         homeConfigurations.yiyiwang-wsl-home = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+          pkgs = pkgsLinux;
           modules = [
             nix-doom-emacs.hmModule
             ./home/yiyiwang-wsl-home.nix
@@ -169,7 +176,22 @@
           # Optionally use extraSpecialArgs
           # to pass through arguments to home.nix
           extraSpecialArgs = { 
-            inherit pkgsUnstable; 
+            pkgsUnstable = pkgsLinuxUnstable; 
+            proxyPort = "8889";
+          };
+        };
+
+        homeConfigurations.yiyiwang-mac = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgsDarwin;
+          modules = [
+            ./home/yiyiwang-mac.nix
+            ./home/common.nix
+          ];
+
+          # Optionally use extraSpecialArgs
+          # to pass through arguments to home.nix
+          extraSpecialArgs = { 
+            pkgsUnstable = pkgsDarwinUnstable; 
             proxyPort = "8889";
           };
         };
