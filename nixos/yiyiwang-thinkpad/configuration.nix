@@ -212,6 +212,8 @@
   # Enable trezor hardware wallet
   services.trezord.enable = true;
 
+  services.tailscale.enable = true;
+
   # V2ray
   ## services.v2ray = {
   ##   enable = true;
