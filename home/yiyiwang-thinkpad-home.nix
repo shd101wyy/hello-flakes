@@ -22,7 +22,7 @@
     enable = true;
     # Install the vscode from the unstable to use the latest version
     # NOTE: Don't use pkgsUnstable.vscode. It's causing problems sometimes.  
-    package = pkgs.vscode.fhsWithPackages (
+    package = pkgsUnstable.vscode.fhsWithPackages (
       ps: with ps; [
         rustup
         zlib
