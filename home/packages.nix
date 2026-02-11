@@ -84,7 +84,7 @@ let
 
     # zig language
     pkgsUnstable.zig
-    pkgsUnstable.zls # zig LSP
+    ## pkgsUnstable.zls # zig LSP
 
     # elixir
     ## elixir_1_18
