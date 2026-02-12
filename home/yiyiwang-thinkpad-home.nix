@@ -72,7 +72,6 @@
       llvm
       pkg-config
       udev
-      liburing
 
       remmina
 
@@ -83,8 +82,6 @@
       pkgsUnstable.antigravity
 
       # pkgsUnstable.trezor-suite
-
-      devenv # Fast, Declarative, Reproducible, and Composable Developer Environments
     ]
     ++ (import ./packages.nix {
       pkgs = pkgs;
