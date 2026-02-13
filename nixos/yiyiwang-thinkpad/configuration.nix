@@ -73,6 +73,9 @@
   # This is necessary to be used together with the `networking.enableIPv6` option.
   ## boot.kernelParams = [ "ipv6.disable=1" ];
 
+  # Enable foreign binaries to run on NixOS
+  programs.nix-ld.enable = true;
+
   # Use a specific kernel
   # https://www.kernel.org/
   boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_18;
