@@ -150,12 +150,18 @@
     # lxd = { enable = true; };
   };
 
+  systemd.services.nix-daemon.environment = {
+    http_proxy = "http://127.0.0.1:8889";
+    https_proxy = "http://127.0.0.1:8889";
+  };
+
   nix.settings = {
     auto-optimise-store = true;
     substituters = lib.mkForce [
       # BROKEN: "https://mirror.sjtu.edu.cn/nix-channels/store"
       "https://mirrors.ustc.edu.cn/nix-channels/store"
-      "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store" # <- This is very slow
+      # "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store" # <- This is very slow
+      # BROKEN: "https://aseipp-nix-cache.global.ssl.fastly.net"
       "https://cache.nixos.org"
     ];
     allowed-users = [
