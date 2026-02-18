@@ -21,6 +21,9 @@
 
   wsl.enable = true;
   wsl.defaultUser = "yiyiwang";
+  
+  # wsl.docker-desktop.enable = true; # Enable Windows Docker Desktop integration.
+  # NOTE: Let's use the native docker, not docker desktop on windows for now.
 
   users.users.yiyiwang = {
     isNormalUser = true;
@@ -121,6 +124,7 @@
     ## waydroid = {
     ##   enable = true;
     ## };
+    
     docker = {
       enable = true;
       daemon.settings = {

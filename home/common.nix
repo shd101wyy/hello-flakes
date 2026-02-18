@@ -140,7 +140,8 @@
       vim-multiple-cursors
       vim-nix
       vim-plug
-      YouCompleteMe
+      
+      # YouCompleteMe
 
       # Install the github-nvim-theme plugin
       github-nvim-theme
