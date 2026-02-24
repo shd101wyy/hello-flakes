@@ -8,9 +8,13 @@
 
   manual.manpages.enable = false;
 
-  home.packages = with pkgs;
+  home.packages =
+    with pkgs;
     [
-    ] ++ (import ./packages.nix {
+      devenv # Fast, Declarative, Reproducible, and Composable Developer Environments
+
+    ]
+    ++ (import ./packages.nix {
       pkgs = pkgs;
       pkgsUnstable = pkgsUnstable;
     });
