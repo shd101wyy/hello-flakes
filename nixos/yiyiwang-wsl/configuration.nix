@@ -128,7 +128,10 @@
     docker = {
       enable = true;
       daemon.settings = {
-        userland-proxy = false;
+        # NOTE: Keep userland-proxy enabled (the default).
+        # Setting it to false uses iptables NAT instead of docker-proxy,
+        # which breaks 127.0.0.1 → container port forwarding on WSL2.
+        # userland-proxy = false;
         # experimental = true;
         # ipv6 = true;
         registry-mirrors = [
