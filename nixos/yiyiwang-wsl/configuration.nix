@@ -17,6 +17,9 @@
     # include NixOS-WSL modules
     # <nixos-wsl/modules>
     # ^ This is done in flake.nix
+
+    # Postgresql configuration
+    ../../services/postgresql.nix
   ];
 
   wsl.enable = true;
