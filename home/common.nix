@@ -190,6 +190,33 @@
     };
   };
 
+  # tmux configuration
+  # https://github.com/srid/nixos-config/blob/master/modules/home/cli/tmux.nix
+  programs.tmux = {
+    enable = true;
+    # shortcut = "b";
+    # aggressiveResize = true; -- Disabled to be iTerm-friendly
+    baseIndex = 1;
+    newSession = true;
+    # Stop tmux+escape craziness.
+    escapeTime = 0;
+    # Force tmux to use /tmp for sockets (WSL2 compat)
+    secureSocket = false;
+    mouse = true;
+    clock24 = true;
+    historyLimit = 50000;
+
+    plugins = with pkgs; [
+      tmuxPlugins.better-mouse-mode
+      tmuxPlugins.catppuccin
+      tmuxPlugins.cpu
+      tmuxPlugins.battery
+      tmuxPlugins.tmux-which-key
+    ];
+
+    extraConfig = builtins.readFile ../tmux/.tmux.conf;
+  };
+
   # Install Yo syntax and filetype detection for Neovim
   home.file = {
     ".config/nvim/syntax/yo.vim".text = builtins.readFile ../nvim/syntax/yo.vim;
