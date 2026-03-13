@@ -80,6 +80,9 @@
   # Enable SSH
   services.openssh.enable = true;
 
+  # Enable Tailscale
+  services.tailscale.enable = true;
+
   fonts = {
     fontDir.enable = true;
     enableDefaultPackages = true;
