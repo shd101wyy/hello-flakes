@@ -79,9 +79,6 @@ let
     # yarn-berry
     zip
 
-    # tmux
-    zellij # Use zellij to replace tmux
-
     # zig language
     pkgsUnstable.zig
     pkgsUnstable.zls # zig LSP

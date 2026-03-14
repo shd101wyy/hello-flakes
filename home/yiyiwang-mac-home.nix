@@ -14,6 +14,5 @@
       ripgrep # Utility that combines the usability of The Silver Searcher with the raw speed of grep
       ## devenv # Fast, Declarative, Reproducible, and Composable Developer Environments
       direnv
-      zellij
     ];
 }

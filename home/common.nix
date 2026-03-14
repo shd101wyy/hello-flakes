@@ -217,6 +217,17 @@
     extraConfig = builtins.readFile ../tmux/.tmux.conf;
   };
 
+  # zellij configuration
+  programs.zellij = {
+    enable = true;
+    package = pkgs.zellij;
+    enableBashIntegration = false; # Don't automatically start zellij in bash
+    enableZshIntegration = false; # Don't automatically start zellij in zsh
+    settings = {
+      theme = "onedark";
+    };
+  };
+
   # Install Yo syntax and filetype detection for Neovim
   home.file = {
     ".config/nvim/syntax/yo.vim".text = builtins.readFile ../nvim/syntax/yo.vim;
