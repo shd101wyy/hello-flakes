@@ -13,7 +13,7 @@
         export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
 
         # Ensure zellij uses a consistent socket dir across all WSL terminals
-        export ZELLIJ_SOCKET_DIR="$HOME/.local/share/zellij/sockets"
+        export ZELLIJ_SOCKET_DIR="/tmp/zellij-$(id -u)"
 
 
         # Check if /etc/os-release exists and the name is SteamOS
