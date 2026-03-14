@@ -228,6 +228,7 @@
     enableZshIntegration = false; # Don't automatically start zellij in zsh
     settings = {
       theme = "onedark";
+      show_startup_tips = false;
     };
   };
 
