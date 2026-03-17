@@ -1,15 +1,15 @@
 { pkgs, pkgsUnstable }:
 let
-  rust_overlay = import (builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz");
-  pkgsWithRust = import <nixpkgs> { overlays = [ rust_overlay ]; };
-  rustVersion = "latest";
-  # rustVersion = "1.86.0";
-  rust = pkgsWithRust.rust-bin.stable.${rustVersion}.default.override {
-    extensions = [
-      "rust-src" # for rust-analyzer
-      "rust-analyzer"
-    ];
-  };
+  ## rust_overlay = import (builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz");
+  ## pkgsWithRust = import <nixpkgs> { overlays = [ rust_overlay ]; };
+  ## rustVersion = "latest";
+  ## # rustVersion = "1.86.0";
+  ## rust = pkgsWithRust.rust-bin.stable.${rustVersion}.default.override {
+  ##   extensions = [
+  ##     "rust-src" # for rust-analyzer
+  ##     "rust-analyzer"
+  ##   ];
+  ## };
   packages = with pkgs; [
     # Apps
     age # Modern encryption tool with small explicit keys
@@ -60,7 +60,8 @@ let
     ruby
     
     # Rust related
-    rust
+    # NOTE: Use devenv instead
+    # rust
 
     ripgrep
     scc # Very fast accurate code counter with complexity calculations and COCOMO estimates written in pure Go
