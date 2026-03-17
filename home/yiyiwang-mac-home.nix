@@ -15,5 +15,6 @@
       ## devenv # Fast, Declarative, Reproducible, and Composable Developer Environments
       direnv
       scc # Very fast accurate code counter with complexity calculations and COCOMO estimates written in pure Go
+      devenv
     ];
 }
