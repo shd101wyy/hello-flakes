@@ -54,6 +54,18 @@ Added 1 variables.
 nix-repl> pkgs = flake.inputs.nixpkgs.legacyPackages.x86_64-linux
 ```
 
+## Set Proxy for Nix on macOS
+
+If you need a proxy (e.g., Clash) to speed up Nix downloads, run:
+
+```bash
+sudo python3 set_macos_nix_proxy_with_sudo.py
+```
+
+This sets `http_proxy` and `https_proxy` in the nix-daemon LaunchDaemon plist and reloads the service. Edit `HTTP_PROXY` in the script to match your proxy address (default: `http://127.0.0.1:8889`).
+
+To remove the proxy, uncomment the "remove http proxy" lines in the script and comment out the "set" lines, then run it again.
+
 ## Install Nix on Steam Deck
 
 Follow https://determinate.systems/posts/nix-on-the-steam-deck
