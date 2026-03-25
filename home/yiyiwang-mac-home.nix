@@ -18,5 +18,8 @@
       devenv
       htop # Interactive process viewer
       wget
+      yarn
+      yazi
+      tree
     ];
 }
