@@ -26,6 +26,7 @@ let
     gnumake
     zenity
     htop
+    btop # Monitor of resources
     hub # Command-line wrapper for git that makes you better at GitHub
     # ifuse
     imagemagick # Image manipulation tools
