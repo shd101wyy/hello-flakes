@@ -22,5 +22,6 @@
       yarn
       yazi
       tree
+      pkgsUnstable.google-chrome
     ];
 }

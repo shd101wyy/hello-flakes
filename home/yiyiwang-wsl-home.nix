@@ -12,7 +12,7 @@
     with pkgs;
     [
       devenv # Fast, Declarative, Reproducible, and Composable Developer Environments
-
+      pkgsUnstable.google-chrome
     ]
     ++ (import ./packages.nix {
       pkgs = pkgs;
