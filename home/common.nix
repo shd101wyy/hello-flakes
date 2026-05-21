@@ -8,6 +8,13 @@
 {
   programs.zsh = {
     enable = true;
+    # Sourced for login shells (including SSH) before initContent.
+    # Lives in ~/.zprofile so macOS updates can't wipe it like they do /etc/zshrc.
+    profileExtra = ''
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+    '';
     initContent = ''
         export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin
         export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
