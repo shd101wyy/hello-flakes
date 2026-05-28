@@ -8,6 +8,22 @@
 
   manual.manpages.enable = false;
 
+  # The `deck` user's login shell is bash, so the zsh ~/.zprofile hook in
+  # common.nix never runs here. SteamOS updates reset the read-only root and
+  # wipe Nix's hook in /etc/profile.d; ~/.bash_profile lives on the persistent
+  # /home partition, so sourcing the daemon here survives updates.
+  # (This only restores `nix` on PATH. If /nix itself is empty after an update,
+  # the bind-mount/systemd units are gone instead — re-run the Determinate
+  # installer: https://determinate.systems/posts/nix-on-the-steam-deck )
+  programs.bash = {
+    enable = true;
+    profileExtra = ''
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+    '';
+  };
+
   home.packages = with pkgs;
     [
       # hello # Hello, world
