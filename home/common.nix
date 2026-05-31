@@ -8,14 +8,21 @@
 {
   programs.zsh = {
     enable = true;
-    # Sourced for login shells (including SSH) before initContent.
-    # Lives in ~/.zprofile so macOS updates can't wipe it like they do /etc/zshrc.
+    # Sourced for login shells (SSH etc.). On Steam Deck the login shell is
+    # bash, so this alone isn't enough — we also need it in initContent below.
     profileExtra = ''
       if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
         . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
       fi
     '';
     initContent = ''
+        # Source nix-daemon on every interactive zsh shell (not just login
+        # shells). On Steam Deck, the login shell is bash, so zsh runs as
+        # non-login and would miss the profileExtra hook above.
+        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+          . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+        fi
+
         export PATH=$PATH:/usr/local/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.yarn/bin
         export XDG_DATA_DIRS=$XDG_DATA_DIRS:/usr/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share
 
