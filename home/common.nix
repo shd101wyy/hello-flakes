@@ -127,7 +127,7 @@
       barbecue-nvim
       coc-css
       coc-emmet
-      coc-go
+      # coc-go # no longer maintained
       coc-html
       coc-json
       coc-lua
@@ -135,7 +135,7 @@
       # coc-python
       coc-rust-analyzer
       coc-tailwindcss
-      coc-tsserver
+      # coc-tsserver # no longer maintained
       coc-yaml
       copilot-vim
       ctrlp-vim
@@ -169,10 +169,11 @@
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
-    # withNodeJs = true;
-    # withPython3 = true;
+    withRuby = false;
+    withNodeJs = false;
+    withPython3 = false;
     extraConfig = builtins.readFile ../nvim/init.vim;
-    extraLuaConfig = builtins.readFile ../nvim/init.lua;
+    initLua = builtins.readFile ../nvim/init.lua;
   };
 
   ## programs.doom-emacs = {
@@ -196,7 +197,7 @@
       {
         name = "nix";
         auto-format = true;
-        formatter.command = lib.getExe pkgs.nixfmt-rfc-style;
+        formatter.command = lib.getExe pkgs.nixfmt;
       }
     ];
     themes = {

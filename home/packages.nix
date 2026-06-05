@@ -32,6 +32,7 @@ let
     imagemagick # Image manipulation tools
     jdk
     jq # A lightweight and flexible command-line JSON processor
+    lazygit # Simple terminal UI for git commands
     lsof
     lua
     lzip
@@ -95,7 +96,7 @@ let
     nil
     direnv
     nix-direnv
-    nixfmt-rfc-style
+    nixfmt
     ## devenv
 
     # LaTeX
