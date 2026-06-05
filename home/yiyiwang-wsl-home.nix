@@ -1,6 +1,9 @@
 { pkgs, pkgsUnstable, ... }:
-# This is the home configuration for yiyiwang's steam deck
-# It seems like not all home.packages are working well, so I decided to install all applications by the `Discover` app on SteamOS instead of using Nix
+# This is the home configuration for yiyiwang's WSL setup.
+# NOTE: home-manager installs zsh but cannot change your login shell.
+# On stock Ubuntu WSL (not NixOS-WSL), run these once to switch to zsh:
+#   $ echo /home/yiyiwang/.nix-profile/bin/zsh | sudo tee -a /etc/shells
+#   $ chsh -s /home/yiyiwang/.nix-profile/bin/zsh
 {
   home.stateVersion = "22.11";
   home.username = "yiyiwang";

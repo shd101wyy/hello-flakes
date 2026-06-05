@@ -30,6 +30,7 @@
 
   users.users.yiyiwang = {
     isNormalUser = true;
+    shell = pkgs.zsh;
     extraGroups = [
       "wheel" # Enable 'sudo' for the user;
       "docker" # Adding users to the `docker` group will provide them access to the socket:
