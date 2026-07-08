@@ -23,6 +23,7 @@ let
     gopls # go language server
     # golds # Experimental Go local docs server/generator and code reader implemented with some fresh ideas
     gh # GitHub CLI tool
+    gitleaks # Scan git repos (or files) for secrets
     gnumake
     zenity
     htop
