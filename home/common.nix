@@ -95,6 +95,9 @@
 
         # Alias commands
         alias view='vim -R'
+
+        alias claude-rv='CLAUDE_CONFIG_DIR="$HOME/.claude-rv" claude'
+        alias claude-sk='CLAUDE_CONFIG_DIR="$HOME/.claude-sk" claude'
     '';
 
     oh-my-zsh = {
