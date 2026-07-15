@@ -76,11 +76,11 @@
 
       remmina
 
-      pkgsUnstable.wechat-uos
+      # pkgsUnstable.wechat-uos
 
-      pkgsUnstable.zed-editor
+      # pkgsUnstable.zed-editor
 
-      pkgsUnstable.antigravity
+      # pkgsUnstable.antigravity
 
       # pkgsUnstable.trezor-suite
     
