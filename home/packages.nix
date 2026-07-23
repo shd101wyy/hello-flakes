@@ -16,6 +16,7 @@ let
     awscli2
     bind
     browsh # fully-modern text-based browser
+    buildah # Tool which facilitates building OCI images
     docker-compose
     flex # Fast lexical analyser generator
     bison # Yacc-compatible parser generator
@@ -45,6 +46,7 @@ let
     nssTools
     # nss_latest
     pandoc
+    podman # Program for managing pods, containers and container images
     poetry
     pkg-config # Tool that allows packages to find out information about other packages (wrapper script)
     uv
