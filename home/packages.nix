@@ -74,6 +74,7 @@ let
     sqlite
     sshpass
     telegram-desktop
+    terraform # Tool for building, changing, and versioning infrastructure
     tldr
     tree
     unzip
