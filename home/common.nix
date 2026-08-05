@@ -14,6 +14,11 @@
       if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
         . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
       fi
+
+      # SOPS age key from SSH private key (only if the file exists)
+      if [ -f "$HOME/.ssh/yiyi-wang-age-encrypted" ]; then
+        export SOPS_AGE_SSH_PRIVATE_KEY_FILE="$HOME/.ssh/yiyi-wang-age-encrypted"
+      fi
     '';
     initContent = ''
         # Source nix-daemon on every interactive zsh shell (not just login
