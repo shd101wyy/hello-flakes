@@ -14,6 +14,7 @@ let
     # Apps
     age # Modern encryption tool with small explicit keys
     awscli2
+    azure-cli # Next generation multi-platform command line experience for Azure
     bind
     browsh # fully-modern text-based browser
     buildah # Tool which facilitates building OCI images
