@@ -268,6 +268,7 @@
     settings = {
       theme = "onedark";
       show_startup_tips = false;
+      default_shell = "${pkgs.zsh}/bin/zsh";
     };
   };
 
