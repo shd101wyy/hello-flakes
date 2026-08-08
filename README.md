@@ -73,6 +73,31 @@ Follow https://determinate.systems/posts/nix-on-the-steam-deck
 After installing applications, the application might not show in the menu.  
 We will need to open `Menu Editor` then add the executable paths of the applications manually.
 
+## Install Tailscale on Steam Deck
+
+> https://github.com/tailscale-dev/deck-tailscale
+
+```bash
+# 1. Clone and install (installs binaries to /opt/tailscale, enables systemd service)
+git clone https://github.com/tailscale-dev/deck-tailscale.git ~/deck-tailscale
+sudo -i
+cd ~deck/deck-tailscale
+bash tailscale.sh
+
+# 2. Put binaries in PATH (this repo's home config already adds /opt/tailscale
+#    to PATH via home/common.nix, so this is only needed in fresh shells)
+source /etc/profile.d/tailscale.sh
+
+# 3. Authenticate (scan the QR code with your phone)
+tailscale up --qr --operator=deck --ssh
+```
+
+Notes:
+
+- The service starts automatically on boot.
+- Update with `sudo tailscale update`; enable auto-updates with `sudo tailscale set --auto-update`.
+- To update the install script itself, `git pull` in `~/deck-tailscale` and re-run `sudo bash tailscale.sh`. The config at `/etc/default/tailscaled` is kept; `override.conf` is reset (old one saved as `override.conf.bak`).
+- If you see `invalid value "" for flag -port: can't be the empty string`, delete `/etc/default/tailscaled` and re-run the installer.
 
 ## Install wechat
 
