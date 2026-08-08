@@ -42,6 +42,16 @@
           export PATH=$PATH:$HOME/.local/podman/bin
         fi
 
+        # Add ~/.opencode/bin to PATH if it exists
+        if [ -d "$HOME/.opencode/bin" ]; then
+          export PATH="$PATH:$HOME/.opencode/bin"
+        fi
+
+        # Add /opt/tailscale to PATH if it exists
+        if [ -d "/opt/tailscale" ]; then
+          export PATH="$PATH:/opt/tailscale"
+        fi
+
         # For flatpak installed vscode, add alias of `code` command
         if [ -f "/var/lib/flatpak/exports/bin/com.visualstudio.code" ]; then
           alias code="flatpak run com.visualstudio.code --password-store=\"gnome\""
