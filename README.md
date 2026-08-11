@@ -135,17 +135,17 @@ If the URL changes, update `sub-url` and re-activate as above. The generated
 - **Health checks every 5min** — `interval: 300`; the `AUTO` group always uses
   the fastest alive node, so dead nodes are skipped automatically.
 - **On all-nodes-failure** — the `mihomo-refresh.timer` (every 15min) runs
-  `mihomo refresh-if-dead`, which force-refreshes the subscription only when
+  `mihomo-ctl refresh-if-dead`, which force-refreshes the subscription only when
   every node is dead AND the last refresh is older than 1h.
-- **Manual** — `mihomo refresh`, or:
+- **Manual** — `mihomo-ctl refresh`, or:
   `curl -X PUT http://127.0.0.1:9090/providers/proxies/jms`
 
 ### Pick a node manually
 
 ```bash
-mihomo status                       # provider summary + UP/DOWN + last delay
-mihomo test                         # live latency of every node
-mihomo set-node "JMS-202958@c19s3.portablesubmarines.com:443"
+mihomo-ctl status                       # provider summary + UP/DOWN + last delay
+mihomo-ctl test                         # live latency of every node
+mihomo-ctl set-node "JMS-202958@c19s3.portablesubmarines.com:443"
 ```
 
 or via the API:

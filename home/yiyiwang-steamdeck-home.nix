@@ -76,10 +76,11 @@
 
   systemd.user.startServices = true;
 
-  # CLI helper for the mihomo service (refresh subscription, pick node, ...).
-  # See README.md "Mihomo on Steam Deck" and mihomo.sh --help in this repo.
-  home.file.".local/bin/mihomo" = {
-    source = ../mihomo.sh;
+  # CLI control helper for the mihomo service (refresh subscription, pick node,
+  # ...). Named mihomo-ctl so it doesn't shadow the real `mihomo` binary on
+  # PATH. See README.md "Mihomo on Steam Deck" and mihomo-ctl.sh in this repo.
+  home.file.".local/bin/mihomo-ctl" = {
+    source = ../mihomo-ctl.sh;
     executable = true;
   };
 
@@ -88,7 +89,7 @@
     Unit = { Description = "Refresh mihomo subscription when all nodes dead"; };
     Service = {
       Type = "oneshot";
-      ExecStart = "%h/.local/bin/mihomo refresh-if-dead";
+      ExecStart = "%h/.local/bin/mihomo-ctl refresh-if-dead";
     };
   };
   systemd.user.timers.mihomo-refresh = {

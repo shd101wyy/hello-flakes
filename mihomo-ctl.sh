@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
-# Helper for the headless mihomo (Clash Meta) proxy service on the Steam Deck.
-# Installed to ~/.local/bin/mihomo by home-manager (see
+# Control helper for the headless mihomo (Clash Meta) proxy service on the
+# Steam Deck. Installed to ~/.local/bin/mihomo-ctl by home-manager (see
 # home/yiyiwang-steamdeck-home.nix). See README.md "Mihomo on Steam Deck".
 #
 # Usage:
-#   mihomo status             Provider summary + node health (UP/DOWN, last delay)
-#   mihomo nodes              Just the node list (UP/DOWN)
-#   mihomo test               Live latency of every node (5s timeout each)
-#   mihomo set-node "NAME"    Manually pick a node for the PROXY group
-#   mihomo refresh            Force a subscription refresh now
-#   mihomo refresh-if-dead    Refresh only when every node is dead and the last
-#                             refresh is older than 1h (used by the systemd timer)
+#   mihomo-ctl status             Provider summary + node health (UP/DOWN, last delay)
+#   mihomo-ctl nodes              Just the node list (UP/DOWN)
+#   mihomo-ctl test               Live latency of every node (5s timeout each)
+#   mihomo-ctl set-node "NAME"    Manually pick a node for the PROXY group
+#   mihomo-ctl refresh            Force a subscription refresh now
+#   mihomo-ctl refresh-if-dead    Refresh only when every node is dead and the last
+#                                 refresh is older than 1h (used by the systemd timer)
+#
+# Named mihomo-ctl (not mihomo) because `mihomo` is the Clash Meta binary
+# itself, installed by nixpkgs into ~/.nix-profile/bin ahead of ~/.local/bin
+# on PATH.
 #
 # The Clash API listens on 127.0.0.1:9090 (external-controller in the mihomo
 # config). Override with MIHOMO_API / MIHOMO_PROVIDER / MIHOMO_GROUP.
@@ -71,7 +75,7 @@ PY
 set-node)
   node="${2:-}"
   if [ -z "$node" ]; then
-    echo "usage: mihomo set-node \"NODE NAME\"" >&2
+    echo "usage: mihomo-ctl set-node \"NODE NAME\"" >&2
     exit 1
   fi
   curl -sf -X PUT "$API/proxies/$GROUP" -H "Content-Type: application/json" -d "{\"name\":\"$node\"}" -w "set-node: HTTP %{http_code}\n"
@@ -105,7 +109,7 @@ PY
   fi
   ;;
 *)
-  echo "usage: mihomo {status|nodes|test|set-node \"NAME\"|refresh|refresh-if-dead}" >&2
+  echo "usage: mihomo-ctl {status|nodes|test|set-node \"NAME\"|refresh|refresh-if-dead}" >&2
   exit 1
   ;;
 esac
