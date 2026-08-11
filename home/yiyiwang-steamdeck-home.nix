@@ -104,9 +104,11 @@
     };
   };
 
-  # The subscription URL is private, so it is NOT committed to this repo.
-  # Keep it in ~/.config/mihomo/sub-url (chmod 600); the activation hook
-  # below injects it into the template at ~/.config/mihomo/config.yaml.
+  # The subscription URLs are private, so they are NOT committed to this repo.
+  # Keep one file per subscription in ~/.config/mihomo/sub-url.d/NAME (chmod
+  # 600), where NAME becomes the provider name. The activation hook below
+  # generates the proxy-providers section of the template at
+  # ~/.config/mihomo/config.yaml from those files.
   # force = true: the activation hook replaces the linked template with a
   # chmod-600 regular file, so re-activation would otherwise refuse to link.
   home.file.".config/mihomo/config.yaml" = {
@@ -122,16 +124,7 @@
 
     external-controller: 127.0.0.1:9090
 
-    proxy-providers:
-      jms:
-        type: http
-        url: "__SUBSCRIPTION_URL__"
-        interval: 86400
-        path: ./providers/jms.yaml
-        health-check:
-          enable: true
-          url: "https://www.gstatic.com/generate_204"
-          interval: 300
+    __PROXY_PROVIDERS__
 
     proxy-groups:
       - name: "PROXY"
@@ -139,14 +132,12 @@
         proxies:
           - "AUTO"
           - DIRECT
-        use:
-          - jms
+        use: [__SUBSCRIPTION_NAMES__]
       - name: "AUTO"
         type: url-test
         url: "https://www.gstatic.com/generate_204"
         interval: 300
-        use:
-          - jms
+        use: [__SUBSCRIPTION_NAMES__]
 
     rules:
       - "IP-CIDR,192.168.0.0/16,DIRECT,no-resolve"
@@ -158,24 +149,58 @@
     '';
   };
 
-  # Inject the private subscription URL after home.file links the template.
-  # No-op if ~/.config/mihomo/sub-url is missing (config keeps placeholder).
+  # Generate the proxy-providers section after home.file links the template:
+  # one provider entry per file in ~/.config/mihomo/sub-url.d/. The generated
+  # file replaces the store symlink with a chmod-600 regular file.
   home.activation.injectSubscriptionUrl = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    if [ -f "$HOME/.config/mihomo/sub-url" ]; then
-      ${pkgs.python3}/bin/python3 - "$HOME/.config/mihomo/sub-url" "$HOME/.config/mihomo/config.yaml" <<'PY'
-    import os, sys
-    url = open(sys.argv[1]).read().strip()
-    path = sys.argv[2]
-    if os.path.exists(path):
-        with open(path) as f:
-            data = f.read()
-        if "__SUBSCRIPTION_URL__" in data:
-            tmp = path + ".tmp"
-            with open(tmp, "w") as f:
-                f.write(data.replace("__SUBSCRIPTION_URL__", url))
-            os.replace(tmp, path)
-            os.chmod(path, 0o600)
+    ${pkgs.python3}/bin/python3 - "$HOME/.config/mihomo" "$HOME/.config/mihomo/config.yaml" <<'PY'
+    import os, re, sys
+
+    conf_dir, path = sys.argv[1], sys.argv[2]
+    if not os.path.exists(path):
+        sys.exit(0)
+
+    urls = {}
+    d = os.path.join(conf_dir, "sub-url.d")
+    if os.path.isdir(d):
+        for fn in sorted(os.listdir(d)):
+            fp = os.path.join(d, fn)
+            if not os.path.isfile(fp):
+                continue
+            url = open(fp).read().strip()
+            if url:
+                urls[re.sub(r"[^a-zA-Z0-9_-]", "_", fn)] = url
+
+    data = open(path).read()
+    if urls:
+        lines = ["proxy-providers:"]
+        for name, url in urls.items():
+            lines.append(f"  {name}:")
+            lines.append("    type: http")
+            lines.append(f'    url: "{url}"')
+            lines.append("    interval: 86400")
+            lines.append(f"    path: ./providers/{name}.yaml")
+            lines.append("    health-check:")
+            lines.append("      enable: true")
+            lines.append('      url: "https://www.gstatic.com/generate_204"')
+            lines.append("      interval: 300")
+        block = "\n".join(lines)
+        out = []
+        for line in data.split("\n"):
+            if line.strip() == "__PROXY_PROVIDERS__":
+                indent = line[: len(line) - len(line.lstrip())]
+                out.append("\n".join(indent + l for l in block.split("\n")))
+            else:
+                out.append(line)
+        data = "\n".join(out)
+        data = data.replace("__SUBSCRIPTION_NAMES__", ", ".join(urls.keys()))
+
+    if data != open(path).read():
+        tmp = path + ".tmp"
+        with open(tmp, "w") as f:
+            f.write(data)
+        os.replace(tmp, path)
+        os.chmod(path, 0o600)
     PY
-    fi
   '';
 }

@@ -114,19 +114,26 @@ sudo loginctl enable-linger deck
 
 ### Set the subscription URL (private)
 
-The URL is never committed to this repo. Store it in `~/.config/mihomo/sub-url`
-(chmod 600); a home-manager activation hook injects it into the `config.yaml`
-template:
+Subscription URLs are never committed to this repo. Each one lives in its own
+file under `~/.config/mihomo/sub-url.d/` (chmod 600); the file name becomes
+the mihomo provider name. A home-manager activation hook generates the
+`proxy-providers` section of `config.yaml` from these files:
 
 ```bash
-printf '%s\n' 'https://your-provider/sub?token=...&format=clash' > ~/.config/mihomo/sub-url
-chmod 600 ~/.config/mihomo/sub-url
-./build-home.sh --flake yiyiwang-steamdeck-home   # re-activate to re-inject
+mkdir -p ~/.config/mihomo/sub-url.d
+printf '%s\n' 'https://your-provider/sub?token=...&format=clash' > ~/.config/mihomo/sub-url.d/jms
+printf '%s\n' 'https://another-provider/sub?token=...&format=clash' > ~/.config/mihomo/sub-url.d/airport2
+chmod 600 ~/.config/mihomo/sub-url.d/*
+./build-home.sh --flake yiyiwang-steamdeck-home   # re-activate to re-generate
 systemctl --user restart mihomo
 ```
 
-If the URL changes, update `sub-url` and re-activate as above. The generated
-`~/.config/mihomo/config.yaml` is also chmod 600.
+- **Multiple subscriptions**: just add more files — all providers are merged
+  into the `PROXY`/`AUTO` groups automatically.
+- **Add/remove/rename** a subscription: edit the files, re-activate, restart.
+  (Old provider caches live in `~/.config/mihomo/providers/`.)
+- If the URL changes, update the file and re-activate as above. The generated
+  `~/.config/mihomo/config.yaml` is also chmod 600.
 
 ### Subscription refresh
 
