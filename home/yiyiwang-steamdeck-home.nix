@@ -22,6 +22,16 @@
         . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
       fi
     '';
+    # The deck user's login shell is bash and /etc/passwd is on the read-only
+    # rootfs, so `chsh` can't persist. Hand interactive bash sessions off to
+    # zsh (installed by programs.zsh in common.nix) so SSH gets a zsh shell.
+    # Scripts (`#!/bin/bash`, `ssh deck@deck "cmd"`) still use bash since
+    # initExtra only runs for interactive shells.
+    initExtra = ''
+      if [[ $- == *i* ]] && [ -x "$HOME/.nix-profile/bin/zsh" ]; then
+        exec "$HOME/.nix-profile/bin/zsh"
+      fi
+    '';
   };
 
   home.packages = with pkgs;
