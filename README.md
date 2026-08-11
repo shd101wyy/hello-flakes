@@ -143,9 +143,11 @@ If the URL changes, update `sub-url` and re-activate as above. The generated
 ### Pick a node manually
 
 ```bash
-mihomo-ctl status                       # provider summary + UP/DOWN + last delay
-mihomo-ctl test                         # live latency of every node
-mihomo-ctl set-node "JMS-202958@c19s3.portablesubmarines.com:443"
+mihomo-ctl current                        # which node is selected right now
+mihomo-ctl status                         # provider summary + UP/DOWN + last delay
+mihomo-ctl test                           # live latency of every node
+mihomo-ctl set-node "YOUR-NODE-NAME"      # pick a node (use a name from `mihomo-ctl test`)
+mihomo-ctl set-node "AUTO"                # back to auto-selecting the fastest alive node
 ```
 
 or via the API:
@@ -153,7 +155,7 @@ or via the API:
 ```bash
 curl -X PUT http://127.0.0.1:9090/proxies/PROXY \
   -H 'Content-Type: application/json' \
-  -d '{"name":"JMS-202958@c19s3.portablesubmarines.com:443"}'
+  -d '{"name":"YOUR-NODE-NAME"}'
 ```
 
 The choice persists in `~/.config/mihomo/cache.db` across restarts; the `AUTO`

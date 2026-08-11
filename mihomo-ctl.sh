@@ -6,6 +6,7 @@
 # Usage:
 #   mihomo-ctl status             Provider summary + node health (UP/DOWN, last delay)
 #   mihomo-ctl nodes              Just the node list (UP/DOWN)
+#   mihomo-ctl current            Show which node the PROXY group is using now
 #   mihomo-ctl test               Live latency of every node (5s timeout each)
 #   mihomo-ctl set-node "NAME"    Manually pick a node for the PROXY group
 #   mihomo-ctl refresh            Force a subscription refresh now
@@ -28,13 +29,18 @@ PY="$(command -v python3 || echo /usr/bin/python3)"
 case "${1:-}" in
 status)
   tmp="$(mktemp)"
-  trap 'rm -f "$tmp"' EXIT
+  gtmp="$(mktemp)"
+  trap 'rm -f "$tmp" "$gtmp"' EXIT
   curl -sf "$API/providers/proxies/$PROVIDER" > "$tmp"
-  "$PY" - "$tmp" <<'PY'
+  curl -sf "$API/proxies/$GROUP" > "$gtmp"
+  "$PY" - "$tmp" "$gtmp" <<'PY'
 import json, sys
 d = json.load(open(sys.argv[1]))
+g = json.load(open(sys.argv[2]))
 proxies = d.get("proxies", [])
+current = g.get("now")
 print(f"provider: {d.get('name')}  updatedAt: {d.get('updatedAt')}")
+print(f"group: {g.get('name')} ({g.get('type')})  current: {current}")
 print(f"nodes: {len(proxies)}  alive: {sum(1 for p in proxies if p.get('alive'))}")
 for p in proxies:
     last = "n/a"
@@ -42,7 +48,18 @@ for p in proxies:
     if hist:
         last = f"{hist[-1].get('delay')}ms"
     mark = "UP  " if p.get("alive") else "DOWN"
-    print(f"  {mark} {p.get('name')}  {last}")
+    sel = "  <- current" if p.get("name") == current else ""
+    print(f"  {mark} {p.get('name')}  {last}{sel}")
+PY
+  ;;
+current)
+  "$PY" - "$API" "$GROUP" <<'PY'
+import json, sys, urllib.parse, urllib.request
+api, group = sys.argv[1], sys.argv[2]
+url = f"{api}/proxies/{urllib.parse.quote(group, safe='')}"
+d = json.load(urllib.request.urlopen(url, timeout=10))
+print(f"group: {d.get('name')} ({d.get('type')})")
+print(f"current: {d.get('now')}")
 PY
   ;;
 nodes)
@@ -109,7 +126,7 @@ PY
   fi
   ;;
 *)
-  echo "usage: mihomo-ctl {status|nodes|test|set-node \"NAME\"|refresh|refresh-if-dead}" >&2
+  echo "usage: mihomo-ctl {status|nodes|current|test|set-node \"NAME\"|refresh|refresh-if-dead}" >&2
   exit 1
   ;;
 esac
