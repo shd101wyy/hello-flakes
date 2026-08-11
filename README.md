@@ -99,6 +99,74 @@ Notes:
 - To update the install script itself, `git pull` in `~/deck-tailscale` and re-run `sudo bash tailscale.sh`. The config at `/etc/default/tailscaled` is kept; `override.conf` is reset (old one saved as `override.conf.bak`).
 - If you see `invalid value "" for flag -port: can't be the empty string`, delete `/etc/default/tailscaled` and re-run the installer.
 
+## Mihomo (Clash Meta) on Steam Deck
+
+Headless proxy service replacing Clash Verge (which only ran in desktop mode).
+It serves a mixed HTTP/SOCKS proxy on `127.0.0.1:8889` (matching `proxyPort`
+in `flake.nix`) and exposes the Clash API on `127.0.0.1:9090`. The service is
+declared in `home/yiyiwang-steamdeck-home.nix`
+(`systemd.user.services.mihomo`) and starts at boot even in game mode once
+linger is enabled:
+
+```bash
+sudo loginctl enable-linger deck
+```
+
+### Set the subscription URL (private)
+
+The URL is never committed to this repo. Store it in `~/.config/mihomo/sub-url`
+(chmod 600); a home-manager activation hook injects it into the `config.yaml`
+template:
+
+```bash
+printf '%s\n' 'https://your-provider/sub?token=...&format=clash' > ~/.config/mihomo/sub-url
+chmod 600 ~/.config/mihomo/sub-url
+./build-home.sh --flake yiyiwang-steamdeck-home   # re-activate to re-inject
+systemctl --user restart mihomo
+```
+
+If the URL changes, update `sub-url` and re-activate as above. The generated
+`~/.config/mihomo/config.yaml` is also chmod 600.
+
+### Subscription refresh
+
+- **Automatic every 24h** — `interval: 86400` on the `jms` provider in the
+  config template. mihomo re-fetches the subscription in the background.
+- **Health checks every 5min** — `interval: 300`; the `AUTO` group always uses
+  the fastest alive node, so dead nodes are skipped automatically.
+- **On all-nodes-failure** — the `mihomo-refresh.timer` (every 15min) runs
+  `mihomo refresh-if-dead`, which force-refreshes the subscription only when
+  every node is dead AND the last refresh is older than 1h.
+- **Manual** — `mihomo refresh`, or:
+  `curl -X PUT http://127.0.0.1:9090/providers/proxies/jms`
+
+### Pick a node manually
+
+```bash
+mihomo status                       # provider summary + UP/DOWN + last delay
+mihomo test                         # live latency of every node
+mihomo set-node "JMS-202958@c19s3.portablesubmarines.com:443"
+```
+
+or via the API:
+
+```bash
+curl -X PUT http://127.0.0.1:9090/proxies/PROXY \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"JMS-202958@c19s3.portablesubmarines.com:443"}'
+```
+
+The choice persists in `~/.config/mihomo/cache.db` across restarts; the `AUTO`
+group reselects on health changes. For a GUI, point a Clash dashboard (e.g.
+metacubexd) at `http://127.0.0.1:9090`.
+
+### Troubleshooting
+
+```bash
+systemctl --user status mihomo
+journalctl --user -u mihomo -f
+```
+
 ## Install wechat
 
 > https://github.com/NixOS/nixpkgs/issues/349245
