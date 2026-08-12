@@ -65,6 +65,12 @@
       After = [ "network-online.target" ];
     };
     Service = {
+      # Wait for real connectivity before starting: at boot mihomo otherwise
+      # starts before Wi-Fi/DHCP is up, which makes the subscription fetch and
+      # the first health-check round fail (stale provider + all nodes DOWN).
+      # www.baidu.com: universal China-friendly DNS probe (must not be a
+      # foreign host — e.g. cache.nixos.org is TLS-reset on this network).
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in $(seq 1 90); do ip route show default >/dev/null 2>&1 && getent hosts www.baidu.com >/dev/null 2>&1 && exit 0; sleep 2; done; exit 1'";
       ExecStart = "${pkgsUnstable.mihomo}/bin/mihomo -d %h/.config/mihomo";
       Restart = "on-failure";
       RestartSec = 10;
