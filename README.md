@@ -186,16 +186,22 @@ works around both: it installs the package into the user-writable
 `~/.local/share/dsh` and launches it directly with `node --expose-internals`.
 
 ```bash
-dsh-ctl install              # install (or update to) the latest @deepseek-ai/dsh
-dsh-ctl start                # start the Web UI in the background
-dsh-ctl status               # running? (pid + health)
-dsh-ctl stop                 # stop it
-dsh-ctl exec --help          # pass args through to the dsh CLI itself
+dsh-ctl install                     # install (or update to) the latest @deepseek-ai/dsh
+dsh-ctl start [--profile NAME] [--port PORT]   # start in the background
+dsh-ctl status                      # running? (pid + every URL that actually answers)
+dsh-ctl stop                        # stop it
+dsh-ctl exec --help                 # pass args through to the dsh CLI itself
 ```
 
-The Web UI listens on `http://127.0.0.1:3080`. Override the install dir with
-`DSH_ROOT`, the port with `DSH_PORT`, and the node/npm binaries with
-`DSH_NODE` / `DSH_NPM`.
+The Web UI listens on `http://127.0.0.1:3080` by default; `status`/`start` also
+show any LAN URL (e.g. `http://192.168.3.238:3080`) that actually answers.
+Override the install dir with `DSH_ROOT`, the bind host with `DSH_HOST`, the
+default port with `DSH_PORT`, and the node/npm binaries with `DSH_NODE` /
+`DSH_NPM`.
+
+Note: dsh refuses `--host 0.0.0.0` for safety (it would expose the agent's
+remote code execution to the network), so `DSH_HOST=0.0.0.0` is rejected by
+both dsh and dsh-ctl.
 
 ## Install wechat
 
