@@ -6,7 +6,8 @@ set -eu
 echo "=========================================="
 echo "REMINDER: Please ensure /etc/nix/nix.conf contains:"
 echo ""
-echo "substituters = https://mirrors.ustc.edu.cn/nix-channels/store https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://cache.nixos.org/"
+echo "substituters = https://mirrors.ustc.edu.cn/nix-channels/store https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://cache.nixos.org/ https://nix-community.cachix.org"
+echo "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
 echo "experimental-features = nix-command flakes"
 echo "trusted-users = your-user-name @wheel"
 echo ""
@@ -65,7 +66,14 @@ export NIX_CURL_FLAGS="-x $http_proxy -x $https_proxy"
 
 export NIXPKGS_ALLOW_UNFREE=1
 # export NIXPKGS_ALLOW_INSECURE=1
+
+# Substituters:
+#  - USTC/TUNA mirrors + cache.nixos.org cover most packages (fast in China)
+#  - nix-community.cachix.org carries packages that Hydra never builds,
+#    e.g. terraform (BUSL-1.1 license -> not in the official binary cache).
+#    Without it terraform gets built from source, and its go-modules download
+#    from proxy.golang.org times out.
 nix build --impure .\#homeConfigurations.$HOME_CONFIG.activationPackage \
-  --option substituters "https://cache.nixos.org"
-# "https://mirrors.ustc.edu.cn/nix-channels/store https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://cache.nixos.org" #  https://aseipp-nix-cache.global.ssl.fastly.net
+  --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store https://cache.nixos.org https://nix-community.cachix.org" \
+  --option trusted-public-keys "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
 "$(nix path-info --impure .\#homeConfigurations.$HOME_CONFIG.activationPackage)"/activate
