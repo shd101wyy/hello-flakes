@@ -272,6 +272,15 @@
     };
   };
 
+  # dsh-ctl: control helper for the DeepSeek Harness (dsh) Web UI. Installs
+  # the package into ~/.local/share/dsh (the npm global prefix on Nix is a
+  # read-only Nix store) and launches it with node --expose-internals, which
+  # Node bans inside NODE_OPTIONS. See README.md "dsh-ctl" and dsh-ctl.sh.
+  home.file.".local/bin/dsh-ctl" = {
+    source = ../dsh-ctl.sh;
+    executable = true;
+  };
+
   # Install Yo syntax and filetype detection for Neovim
   home.file = {
     ".config/nvim/syntax/yo.vim".text = builtins.readFile ../nvim/syntax/yo.vim;

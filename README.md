@@ -176,6 +176,27 @@ systemctl --user status mihomo
 journalctl --user -u mihomo -f
 ```
 
+## dsh-ctl (DeepSeek Harness Web UI)
+
+[dsh](https://www.deepseek.com/harness/) is DeepSeek's agent harness. On Nix
+machines the npm global prefix is a read-only Nix store and Node refuses
+`--expose-internals` inside `NODE_OPTIONS`, so `npm i -g` and plain `npx`
+don't work. `dsh-ctl` (installed to `~/.local/bin` by `home/common.nix`)
+works around both: it installs the package into the user-writable
+`~/.local/share/dsh` and launches it directly with `node --expose-internals`.
+
+```bash
+dsh-ctl install              # install (or update to) the latest @deepseek-ai/dsh
+dsh-ctl start                # start the Web UI in the background
+dsh-ctl status               # running? (pid + health)
+dsh-ctl stop                 # stop it
+dsh-ctl exec --help          # pass args through to the dsh CLI itself
+```
+
+The Web UI listens on `http://127.0.0.1:3080`. Override the install dir with
+`DSH_ROOT`, the port with `DSH_PORT`, and the node/npm binaries with
+`DSH_NODE` / `DSH_NPM`.
+
 ## Install wechat
 
 > https://github.com/NixOS/nixpkgs/issues/349245
