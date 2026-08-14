@@ -19,10 +19,15 @@
 #
 # Named dsh-ctl (not dsh) because `dsh` is the DeepSeek Harness binary itself.
 #
-# Override the package dir with DSH_ROOT, the bind host with DSH_HOST (e.g.
-# the machine's LAN IP, like DSH_HOST=192.168.3.238, to expose it on the LAN;
-# dsh refuses 0.0.0.0 by design), the default port with DSH_PORT, or the
-# node/npm/pnpm binaries with DSH_NODE / DSH_NPM / DSH_PNPM.
+# Override the package dir with DSH_ROOT, the bind host with DSH_HOST, the
+# default port with DSH_PORT, or the node/npm/pnpm binaries with
+# DSH_NODE / DSH_NPM / DSH_PNPM.
+# dsh's webserver schema only accepts --host 127.0.0.1 (loopback, default) or
+# 0.0.0.0 (all interfaces), but the dsh web app intentionally refuses
+# 0.0.0.0 for now (it would expose remote code execution to the network), so
+# dsh-ctl rejects it up front too. To expose the Web UI on the LAN, set
+# DSH_HOST to a specific LAN IP (e.g. DSH_HOST=192.168.3.238); dsh-ctl passes
+# it as --trusted-host so the /api trusted-host fence accepts it.
 set -euo pipefail
 
 ROOT="${DSH_ROOT:-$HOME/.local/share/dsh}"
@@ -193,7 +198,7 @@ start)
   PORT="$local_port"
   URL="http://$(health_host):$PORT"
   if [ "$HOST" = "0.0.0.0" ]; then
-    echo "dsh refuses --host 0.0.0.0 for safety (would expose remote code" >&2
+    echo "dsh refuses --host 0.0.0.0 for now (it would expose remote code" >&2
     echo "execution to the network); bind a specific address instead, e.g." >&2
     echo "DSH_HOST=<your LAN IP> dsh-ctl start" >&2
     exit 1
@@ -210,6 +215,8 @@ start)
     echo "stop it first, e.g. pkill -f 'dsh.*lib/bin.js'" >&2
     exit 1
   fi
+  # Non-loopback bind hosts are passed as --trusted-host (IP literal and its
+  # :PORT form) so the /api trusted-host fence accepts browser requests to them.
   trusted_flags=""
   if [ "$HOST" != "127.0.0.1" ]; then
     trusted_flags="--trusted-host $HOST --trusted-host $HOST:$PORT"
