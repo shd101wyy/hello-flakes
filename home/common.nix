@@ -281,6 +281,13 @@
     executable = true;
   };
 
+  # dsh-tui: shorthand for `dsh-ctl exec --profile cc-tui ARGS...`;
+  # `dsh-tui update` updates the dsh-cc-tui plugin to its latest version.
+  home.file.".local/bin/dsh-tui" = {
+    source = ../dsh-tui.sh;
+    executable = true;
+  };
+
   # Install Yo syntax and filetype detection for Neovim
   home.file = {
     ".config/nvim/syntax/yo.vim".text = builtins.readFile ../nvim/syntax/yo.vim;

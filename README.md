@@ -196,6 +196,8 @@ dsh-ctl start [--profile NAME] [--port PORT]   # start in the background
 dsh-ctl status                      # running? (pid + every URL that actually answers)
 dsh-ctl stop                        # stop it
 dsh-ctl exec --help                 # pass args through to the dsh CLI itself
+dsh-tui --help                      # same as: dsh-ctl exec --profile cc-tui --help
+dsh-tui update                      # update the dsh-cc-tui plugin to its latest version
 ```
 
 The Web UI listens on `http://127.0.0.1:3080` by default; `status`/`start` also
