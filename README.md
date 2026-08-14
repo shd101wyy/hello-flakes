@@ -185,6 +185,11 @@ don't work. `dsh-ctl` (installed to `~/.local/bin` by `home/common.nix`)
 works around both: it installs the package into the user-writable
 `~/.local/share/dsh` and launches it directly with `node --expose-internals`.
 
+`dsh-ctl install` resolves the registry's `latest` version with `npm view`
+and installs it with **pnpm** when available. pnpm is required on machines
+where npm's resolver spins forever on the dsh peer-dependency graph (npm 11
+hangs at 100% CPU building the ideal tree for it, e.g. on Steam Deck).
+
 ```bash
 dsh-ctl install                     # install (or update to) the latest @deepseek-ai/dsh
 dsh-ctl start [--profile NAME] [--port PORT]   # start in the background
@@ -196,8 +201,8 @@ dsh-ctl exec --help                 # pass args through to the dsh CLI itself
 The Web UI listens on `http://127.0.0.1:3080` by default; `status`/`start` also
 show any LAN URL (e.g. `http://192.168.3.238:3080`) that actually answers.
 Override the install dir with `DSH_ROOT`, the bind host with `DSH_HOST`, the
-default port with `DSH_PORT`, and the node/npm binaries with `DSH_NODE` /
-`DSH_NPM`.
+default port with `DSH_PORT`, and the node/npm/pnpm binaries with `DSH_NODE` /
+`DSH_NPM` / `DSH_PNPM`.
 
 Note: dsh refuses `--host 0.0.0.0` for safety (it would expose the agent's
 remote code execution to the network), so `DSH_HOST=0.0.0.0` is rejected by

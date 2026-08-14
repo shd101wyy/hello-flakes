@@ -3,7 +3,9 @@
 # the global npm prefix lives in a read-only Nix store and --expose-internals
 # cannot be passed via NODE_OPTIONS (Node refuses it there). So the package is
 # installed into a user-writable prefix (~/.local/share/dsh) and the server is
-# launched directly with node --expose-internals. See README.md "dsh-ctl".
+# launched directly with node --expose-internals.  Install uses pnpm when
+# available: npm 11's resolver spins forever on the dsh peer-dependency
+# graph. See README.md "dsh-ctl".
 #
 # Usage:
 #   dsh-ctl install              Install (or update to) the latest @deepseek-ai/dsh
@@ -20,12 +22,14 @@
 # Override the package dir with DSH_ROOT, the bind host with DSH_HOST (e.g.
 # the machine's LAN IP, like DSH_HOST=192.168.3.238, to expose it on the LAN;
 # dsh refuses 0.0.0.0 by design), the default port with DSH_PORT, or the
-# node/npm binaries with DSH_NODE / DSH_NPM.
+# node/npm/pnpm binaries with DSH_NODE / DSH_NPM / DSH_PNPM.
 set -euo pipefail
 
 ROOT="${DSH_ROOT:-$HOME/.local/share/dsh}"
 NODE_BIN="${DSH_NODE:-$(command -v node)}"
 NPM_BIN="${DSH_NPM:-$(command -v npm)}"
+PNPM_BIN="${DSH_PNPM:-$(command -v pnpm)}"
+PKG="@deepseek-ai/dsh"
 HOST="${DSH_HOST:-127.0.0.1}"
 PORT="${DSH_PORT:-3080}"
 LOG="$ROOT/dsh.log"
@@ -104,8 +108,33 @@ port_in_use() {
 case "${1:-}" in
 install)
   mkdir -p "$ROOT"
-  echo "installing @deepseek-ai/dsh into $ROOT ..."
-  "$NPM_BIN" install --prefix "$ROOT" @deepseek-ai/dsh
+  # npm 11's arborist spins forever (100% CPU) building the ideal tree for
+  # the dsh peer-dependency graph, so use pnpm when it is available.  Resolve
+  # the version with `npm view` first: pnpm's own tag handling picks the
+  # broken 0.0.1-rc.x line for this package, while the registry's `latest`
+  # tag (what `npm view` reports) is the current 0.1.0-rc.x line.
+  latest="$("$NPM_BIN" view "$PKG" version 2>/dev/null)" || {
+    echo "dsh-ctl: could not resolve the latest $PKG version from the registry" >&2
+    exit 1
+  }
+  if [ -n "$PNPM_BIN" ]; then
+    if [ ! -f "$ROOT/pnpm-workspace.yaml" ]; then
+      # pnpm 11 blocks dependency build scripts by default; dsh needs them
+      # (koffi/node-pty/protobufjs native builds), so allow them all here.
+      printf 'dangerouslyAllowAllBuilds: true\n' > "$ROOT/pnpm-workspace.yaml"
+    fi
+    echo "installing $PKG@$latest into $ROOT ..."
+    "$PNPM_BIN" add --dir "$ROOT" "$PKG@$latest"
+    # npm runs dependency build scripts with a bundled node-gyp; pnpm does
+    # not, and node-pty (a dsh dependency) needs `node-gyp rebuild` on
+    # Linux.  node-gyp is a pure-JS dev dep of this scratch project, so add
+    # it and rebuild node-pty's native module.
+    "$PNPM_BIN" add -D --dir "$ROOT" node-gyp
+    "$PNPM_BIN" rebuild --dir "$ROOT" node-pty
+  else
+    echo "installing $PKG@$latest into $ROOT ..."
+    "$NPM_BIN" install --prefix "$ROOT" "$PKG@$latest"
+  fi
   echo "installed: $(entry)"
   ;;
 start)
