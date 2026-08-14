@@ -47,6 +47,7 @@ let
     nssTools
     # nss_latest
     pandoc
+    pnpm # Fast, disk space efficient package manager for JavaScript
     podman # Program for managing pods, containers and container images
     poetry
     pkg-config # Tool that allows packages to find out information about other packages (wrapper script)
@@ -75,7 +76,7 @@ let
     sqlite
     sshpass
     telegram-desktop
-    terraform # Tool for building, changing, and versioning infrastructure
+    # terraform # Tool for building, changing, and versioning infrastructure
     tldr
     tree
     unzip
