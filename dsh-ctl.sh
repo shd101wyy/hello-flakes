@@ -9,11 +9,12 @@
 #
 # Usage:
 #   dsh-ctl install              Install (or update to) the latest @deepseek-ai/dsh
-#   dsh-ctl patch                Re-apply the LAN patches: allows --host 0.0.0.0
-#                                 and injects a crypto.randomUUID polyfill into
-#                                 the web UI (its browser half calls
-#                                 randomUUID, which insecure HTTP LAN origins
-#                                 lack), so LAN devices work over plain HTTP
+#   dsh-ctl patch                Re-apply the LAN patches: allows --host 0.0.0.0,
+#                                 injects a crypto.randomUUID polyfill into the
+#                                 web UI (its browser half calls randomUUID,
+#                                 which insecure HTTP LAN origins lack), and
+#                                 lets the settings/credentials API methods
+#                                 honor trusted hosts instead of loopback only
 #   dsh-ctl start [web flags...] Start the server in the background. Every
 #                                 flag after the dsh-ctl ones is passed
 #                                 verbatim to `dsh web`, so
@@ -225,6 +226,46 @@ HTML
   ' "$f"
 }
 
+# The settings/credentials/native-dialog methods (PRIVILEGED_METHODS) are
+# deliberately pinned to loopback even on LAN deployments: their gate calls
+# isTrustedApiRequest(request, []) with an empty trust list, so LAN browsers
+# get HTTP 403 for /api/settings.describe, credentials, host.pickDirectory,
+# etc. Lift that by letting the gate honor the configured trustedHosts — the
+# same boundary the rest of /api already uses.
+client_connection_file() {
+  local pkg_dir
+  pkg_dir="$(dirname "$(entry)")"
+  "$NODE_BIN" -e '
+    const { createRequire } = require("node:module");
+    const req = createRequire(process.argv[1]);
+    process.stdout.write(req.resolve("@deepseek-ai/dsh-client-connection"));
+  ' "file://$(realpath "$pkg_dir/package.json")"
+}
+
+patch_privileged_gate() {
+  local f
+  f="$(client_connection_file)" || return 1
+  "$NODE_BIN" -e '
+    const fs = require("node:fs");
+    const file = process.argv[1];
+    const src = fs.readFileSync(file, "utf8");
+    const old = "PRIVILEGED_METHODS.has(method) && !isTrustedApiRequest(request, [])";
+    const fresh = "PRIVILEGED_METHODS.has(method) && !isTrustedApiRequest(request, trustedHosts)";
+    if (!src.includes(old)) {
+      console.log(`dsh-ctl: ${file} already has the privileged-method gate lifted`);
+      process.exit(0);
+    }
+    const patched = src.replace(old, fresh);
+    if (patched === src) {
+      console.error(`dsh-ctl: could not patch the privileged-method gate in ${file}`);
+      process.exit(1);
+    }
+    fs.writeFileSync(`${file}.tmp`, patched);
+    fs.renameSync(`${file}.tmp`, file);
+    console.log(`dsh-ctl: patched ${file}: settings/credentials honor trusted hosts`);
+  ' "$f"
+}
+
 # Instance bookkeeping is keyed by port: each running instance owns
 # dsh.pid.<port> / dsh.state.<port> / dsh.log.<port>, so several dsh web
 # servers can run side by side. An empty port maps to the legacy unsuffixed
@@ -311,6 +352,7 @@ install)
   echo "installed: $(entry)"
   patch_dsh || echo "dsh-ctl: warning: could not apply the LAN patch (run 'dsh-ctl patch' later)" >&2
   patch_frontend || echo "dsh-ctl: warning: could not apply the randomUUID polyfill (run 'dsh-ctl patch' later)" >&2
+  patch_privileged_gate || echo "dsh-ctl: warning: could not lift the privileged-method loopback gate (run 'dsh-ctl patch' later)" >&2
   ;;
 patch)
   [ -f "$(entry)" ] || {
@@ -323,6 +365,10 @@ patch)
   fi
   if ! patch_frontend; then
     echo "dsh-ctl: could not locate @deepseek-ai/dsh-web-frontend/dist/index.html in $ROOT (is it installed?)" >&2
+    exit 1
+  fi
+  if ! patch_privileged_gate; then
+    echo "dsh-ctl: could not locate @deepseek-ai/dsh-client-connection/lib/index.js in $ROOT (is it installed?)" >&2
     exit 1
   fi
   ;;

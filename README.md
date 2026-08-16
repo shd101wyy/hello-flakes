@@ -244,6 +244,15 @@ only expose in *secure contexts*. `http://127.0.0.1` counts as secure
 settings/workspace dialogs crash with `crypto.randomUUID is not a function`
 on LAN devices (iPhone Safari/Brave enforce this strictly).
 
+One more dsh gate keeps the *privileged* API methods (`settings.describe` /
+`settings.update` / `credentials.*` / `host.pickDirectory` / `host.openPath`
+/ `llm.discoverModels`, ...) pinned to loopback even on LAN deployments —
+the settings and workspace-directory dialogs then fail with
+`transport failure for /api/settings.describe: HTTP 403`. `dsh-ctl patch`
+also lifts that: the privileged gate honors the same `trustedHosts` the rest
+of `/api` already uses, so those dialogs work from LAN browsers too (an
+untrusted `Host` header still gets 403).
+
 > **Security warning:** dsh's Web UI has **no authentication layer** — anyone
 > who can reach the port gets full remote code execution through the harness.
 > The `/api` trust fence only blocks *other* hostnames (DNS-rebinding), not
