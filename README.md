@@ -197,6 +197,8 @@ dsh-ctl start [dsh web flags...]    # start in the background
 dsh-ctl status                      # every running instance (pid + URLs)
 dsh-ctl stop                        # stop every instance
 dsh-ctl stop --port PORT            # stop just the instance on PORT
+dsh-ctl restart                     # restart every instance
+dsh-ctl restart --port PORT         # restart just the instance on PORT
 dsh-ctl exec --help                 # pass args through to the dsh CLI itself
 dsh-tui --help                      # same as: dsh-ctl exec --profile cc-tui --help
 dsh-tui update                      # update the dsh-cc-tui plugin to its latest version
@@ -222,6 +224,12 @@ in `dsh.pid.<port>` / `dsh.state.<port>` / `dsh.log.<port>` under `DSH_ROOT`.
 Start a second one on another port while the first is running; `status` lists
 every instance, `stop` stops all of them, and `stop --port 3081` stops just
 that one.
+
+`restart` replays each instance's recorded launch (host, port, profile, and
+extra web flags are stored in its state file), so `dsh-ctl restart` after a
+reboot brings every previously-running instance back up, and
+`restart --port 3081` cycles just one. Restarting drops and re-creates each
+instance: brief downtime, then the same URLs answer again.
 
 To expose the Web UI to other devices on the LAN, allow all-interfaces binding
 first (`dsh-ctl install` applies this patch automatically, `dsh-ctl patch`
