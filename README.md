@@ -192,7 +192,8 @@ hangs at 100% CPU building the ideal tree for it, e.g. on Steam Deck).
 
 ```bash
 dsh-ctl install                     # install (or update to) the latest @deepseek-ai/dsh
-dsh-ctl start [--profile NAME] [--port PORT]   # start in the background
+dsh-ctl patch                       # re-apply the LAN patch (allows --host 0.0.0.0)
+dsh-ctl start [dsh web flags...]    # start in the background
 dsh-ctl status                      # running? (pid + every URL that actually answers)
 dsh-ctl stop                        # stop it
 dsh-ctl exec --help                 # pass args through to the dsh CLI itself
@@ -201,14 +202,43 @@ dsh-tui update                      # update the dsh-cc-tui plugin to its latest
 ```
 
 The Web UI listens on `http://127.0.0.1:3080` by default; `status`/`start` also
-show any LAN URL (e.g. `http://192.168.3.238:3080`) that actually answers.
+show any LAN URL (e.g. `http://192.168.3.243:3080`) that actually answers.
 Override the install dir with `DSH_ROOT`, the bind host with `DSH_HOST`, the
 default port with `DSH_PORT`, and the node/npm/pnpm binaries with `DSH_NODE` /
 `DSH_NPM` / `DSH_PNPM`.
 
-Note: dsh refuses `--host 0.0.0.0` for safety (it would expose the agent's
-remote code execution to the network), so `DSH_HOST=0.0.0.0` is rejected by
-both dsh and dsh-ctl.
+`dsh-ctl start` is a thin supervisor over `dsh web`: every flag after the
+dsh-ctl ones is forwarded verbatim, so `dsh-ctl start ARGS...` behaves exactly
+like `dsh web ARGS...` while still running in the background and tracked by
+`status`/`stop`. `dsh-ctl start --help` prints `dsh web`'s usage and exits
+without starting anything. The current flags are `--host`, `--port`, and the
+repeatable `--trusted-host`; `--host`/`--port` are also used by dsh-ctl for
+its health checks and status output (e.g. `dsh-ctl start --host 0.0.0.0 --port
+5000`). `--profile NAME` stays a dsh-ctl-only flag for non-web profiles.
+
+To expose the Web UI to other devices on the LAN, allow all-interfaces binding
+first (`dsh-ctl install` applies this patch automatically, `dsh-ctl patch`
+re-applies it after the fact):
+
+```bash
+dsh-ctl patch                       # one-time (idempotent)
+dsh-ctl start --host 0.0.0.0        # serve on every interface
+```
+
+Other devices can then open `http://<this machine's LAN IP>:3080`, e.g.
+`http://192.168.3.243:3080`; dsh derives the LAN IPs it trusts from the
+interfaces itself, and dsh-ctl's `status` prints every URL that actually
+answers.
+
+> **Security warning:** dsh's Web UI has **no authentication layer** — anyone
+> who can reach the port gets full remote code execution through the harness.
+> The `/api` trust fence only blocks *other* hostnames (DNS-rebinding), not
+> other devices on the LAN. `0.0.0.0` also exposes the UI on every other
+> interface (Tailscale, VPNs, ...), so only do this on a trusted network.
+> Upstream removes the rejection line only on demand:
+> "`dsh web --host 0.0.0.0` is intentionally unsupported until remote access
+> has an authentication layer", hence the patch. `dsh-ctl install` re-applies
+> it after each update.
 
 ## Install wechat
 

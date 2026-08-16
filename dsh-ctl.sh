@@ -9,9 +9,13 @@
 #
 # Usage:
 #   dsh-ctl install              Install (or update to) the latest @deepseek-ai/dsh
-#   dsh-ctl start [--profile NAME] [--port PORT]
-#                                 Start the server in the background (default
-#                                 profile: web, default port: 3080)
+#   dsh-ctl patch                Re-apply the LAN patch (allows --host 0.0.0.0)
+#   dsh-ctl start [web flags...] Start the server in the background. Every
+#                                 flag after the dsh-ctl ones is passed
+#                                 verbatim to `dsh web`, so
+#                                 `dsh-ctl start ARGS...` == `dsh web ARGS...`
+#                                 (--host/--port are also read by dsh-ctl for
+#                                 its health checks and status output).
 #   dsh-ctl status               Show whether the server is running (pid +
 #                                 all reachable URLs, incl. LAN addresses)
 #   dsh-ctl stop                 Stop the background server
@@ -22,12 +26,14 @@
 # Override the package dir with DSH_ROOT, the bind host with DSH_HOST, the
 # default port with DSH_PORT, or the node/npm/pnpm binaries with
 # DSH_NODE / DSH_NPM / DSH_PNPM.
-# dsh's webserver schema only accepts --host 127.0.0.1 (loopback, default) or
-# 0.0.0.0 (all interfaces), but the dsh web app intentionally refuses
-# 0.0.0.0 for now (it would expose remote code execution to the network), so
-# dsh-ctl rejects it up front too. To expose the Web UI on the LAN, set
-# DSH_HOST to a specific LAN IP (e.g. DSH_HOST=192.168.3.238); dsh-ctl passes
-# it as --trusted-host so the /api trusted-host fence accepts it.
+# dsh's web app refuses --host 0.0.0.0 for now (it would expose remote code
+# execution to the network); `install` and `patch` remove that one-line
+# rejection from @deepseek-ai/dsh-web-app's startup. With the patch,
+# DSH_HOST=0.0.0.0 binds every interface and dsh derives its own LAN trust
+# list from the interfaces, so http://<LAN IP>:3080 works from other devices
+# on the LAN. There is no authentication layer: whoever can reach the port
+# gets full remote code execution, and binding 0.0.0.0 also exposes the Web
+# UI on every other interface (Tailscale, VPNs, ...).
 set -euo pipefail
 
 ROOT="${DSH_ROOT:-$HOME/.local/share/dsh}"
@@ -78,7 +84,7 @@ PY
 # Print every URL on this machine that actually answers: loopback, the bind
 # host, and each LAN address (so URLs only appear when they really work).
 show_urls() {
-  local cand="http://127.0.0.1:$PORT" ip u
+  local cand="http://127.0.0.1:$PORT" ip u seen=""
   if [ "$HOST" != "127.0.0.1" ]; then
     cand="$cand http://$(health_host):$PORT"
   fi
@@ -86,8 +92,12 @@ show_urls() {
     cand="$cand http://$ip:$PORT"
   done
   for u in $cand; do
+    case " $seen " in
+    *" $u "*) continue ;;
+    esac
     if curl -sf --max-time 3 -o /dev/null "$u"; then
       echo "$u"
+      seen="$seen $u"
     fi
   done
 }
@@ -95,6 +105,50 @@ show_urls() {
 entry() {
   local pkg="$ROOT/node_modules/@deepseek-ai/dsh"
   "$NODE_BIN" -e "const j = require(process.argv[1] + '/package.json'); process.stdout.write(process.argv[1] + '/' + j.bin.dsh)" "$pkg"
+}
+
+# Resolve @deepseek-ai/dsh-web-app's startup file through dsh's own dependency
+# graph (pnpm lays deps out under the dsh package's node_modules, keyed by
+# version), so the path stays correct across dsh updates. createRequire needs
+# the file:// URL form: the plain-path form realpaths and resolves from a
+# different base.
+web_startup_file() {
+  local pkg_dir
+  pkg_dir="$(dirname "$(entry)")"
+  "$NODE_BIN" -e '
+    const { createRequire } = require("node:module");
+    const req = createRequire(process.argv[1]);
+    process.stdout.write(req.resolve("@deepseek-ai/dsh-web-app/startup"));
+  ' "file://$(realpath "$pkg_dir/package.json")"
+}
+
+# Idempotently apply the LAN patch: delete the startup line that rejects
+# --host 0.0.0.0. The installed files are hard links into pnpm's
+# content-addressed store, so the patched copy is written over a fresh inode
+# (unlink + write), leaving the store entry pristine.
+patch_dsh() {
+  local f
+  f="$(web_startup_file)" || return 1
+  "$NODE_BIN" -e '
+    const fs = require("node:fs");
+    const file = process.argv[1];
+    const src = fs.readFileSync(file, "utf8");
+    const line = src.match(/^[^\n]*intentionally not supported[^\n]*\n?/m);
+    if (!line) {
+      console.log(`dsh-ctl: ${file} has no 0.0.0.0 rejection line, nothing to patch`);
+      process.exit(0);
+    }
+    fs.unlinkSync(file);
+    fs.writeFileSync(file, src.replace(line[0], ""));
+    console.log(`dsh-ctl: patched ${file}: --host 0.0.0.0 now allowed`);
+  ' "$f"
+}
+
+# 0 when the 0.0.0.0 rejection is gone, 1 when dsh still refuses it.
+patch_applied() {
+  local f
+  f="$(web_startup_file)" || return 1
+  "$NODE_BIN" -e 'process.exit(require("node:fs").readFileSync(process.argv[1], "utf8").includes("intentionally not supported") ? 1 : 0)' "$f"
 }
 
 running_pid() {
@@ -141,6 +195,14 @@ install)
     "$NPM_BIN" install --prefix "$ROOT" "$PKG@$latest"
   fi
   echo "installed: $(entry)"
+  patch_dsh || echo "dsh-ctl: warning: could not apply the LAN patch (run 'dsh-ctl patch' later)" >&2
+  ;;
+patch)
+  [ -f "$(entry)" ] || {
+    echo "not installed yet, run: dsh-ctl install" >&2
+    exit 1
+  }
+  patch_dsh
   ;;
 start)
   [ -f "$(entry)" ] || {
@@ -149,12 +211,14 @@ start)
   }
   profile="${DSH_PROFILE:-web}"
   local_port="$PORT"
+  local_host="$HOST"
+  extra_args=()
   shift
   while [ $# -gt 0 ]; do
     case "$1" in
     --profile)
       [ $# -ge 2 ] || {
-        echo "usage: dsh-ctl start [--profile NAME] [--port PORT]" >&2
+        echo "usage: dsh-ctl start [--profile NAME] [dsh web flags...]" >&2
         exit 1
       }
       profile="$2"
@@ -166,7 +230,7 @@ start)
       ;;
     --port)
       [ $# -ge 2 ] || {
-        echo "usage: dsh-ctl start [--profile NAME] [--port PORT]" >&2
+        echo "usage: dsh-ctl start [--profile NAME] [dsh web flags...]" >&2
         exit 1
       }
       local_port="$2"
@@ -176,10 +240,28 @@ start)
       local_port="${1#--port=}"
       shift
       ;;
+    --host)
+      [ $# -ge 2 ] || {
+        echo "usage: dsh-ctl start [--profile NAME] [dsh web flags...]" >&2
+        exit 1
+      }
+      local_host="$2"
+      shift 2
+      ;;
+    --host=*)
+      local_host="${1#--host=}"
+      shift
+      ;;
+    --help|-h)
+      # dsh-ctl start --help is dsh web --help: print the app's usage and
+      # exit instead of backgrounding a process that exits immediately.
+      exec "$NODE_BIN" --expose-internals "$(entry)" web "$@"
+      ;;
     *)
-      echo "unknown option: $1" >&2
-      echo "usage: dsh-ctl start [--profile NAME] [--port PORT]" >&2
-      exit 1
+      # Everything else is a `dsh web` flag (--trusted-host, ...); forward it
+      # verbatim so `dsh-ctl start ARGS...` behaves like `dsh web ARGS...`.
+      extra_args+=("$1")
+      shift
       ;;
     esac
   done
@@ -196,11 +278,12 @@ start)
     ;;
   esac
   PORT="$local_port"
+  HOST="$local_host"
   URL="http://$(health_host):$PORT"
-  if [ "$HOST" = "0.0.0.0" ]; then
-    echo "dsh refuses --host 0.0.0.0 for now (it would expose remote code" >&2
-    echo "execution to the network); bind a specific address instead, e.g." >&2
-    echo "DSH_HOST=<your LAN IP> dsh-ctl start" >&2
+  if [ "$HOST" = "0.0.0.0" ] && ! patch_applied; then
+    echo "dsh still refuses --host 0.0.0.0 (the web app would expose remote" >&2
+    echo "code execution to the network). Run 'dsh-ctl patch' to apply the" >&2
+    echo "one-line patch, or bind 127.0.0.1 instead." >&2
     exit 1
   fi
   if pid="$(running_pid)"; then
@@ -217,8 +300,10 @@ start)
   fi
   # Non-loopback bind hosts are passed as --trusted-host (IP literal and its
   # :PORT form) so the /api trusted-host fence accepts browser requests to them.
+  # For 0.0.0.0 dsh derives the LAN IPs it trusts from the interfaces itself,
+  # so no trusted-host flags are needed there.
   trusted_flags=""
-  if [ "$HOST" != "127.0.0.1" ]; then
+  if [ "$HOST" != "127.0.0.1" ] && [ "$HOST" != "0.0.0.0" ]; then
     trusted_flags="--trusted-host $HOST --trusted-host $HOST:$PORT"
   fi
   app_args="web"
@@ -226,7 +311,7 @@ start)
     app_args="--profile $profile"
   fi
   echo "starting dsh $profile on http://$(health_host):$PORT ..."
-  nohup "$NODE_BIN" --expose-internals "$(entry)" $app_args --host "$HOST" --port "$PORT" $trusted_flags > "$LOG" 2>&1 &
+  nohup "$NODE_BIN" --expose-internals "$(entry)" $app_args --host "$HOST" --port "$PORT" $trusted_flags "${extra_args[@]}" > "$LOG" 2>&1 &
   local_pid=$!
   echo "$local_pid" > "$PIDFILE"
   for _ in $(seq 1 30); do
@@ -252,16 +337,20 @@ status)
     read -r HOST PORT < "$STATE" || true
     URL="http://$(health_host):$PORT"
   fi
+  # Collect the URL list before testing it: `show_urls | grep -q .` would
+  # close the pipe after the first match, SIGPIPE the remaining curls, and
+  # fail the whole pipeline under set -o pipefail.
+  urls="$(show_urls)" || true
   if pid="$(running_pid)"; then
     echo "dsh web: running (pid $pid)"
-    if show_urls | grep -q .; then
-      show_urls
+    if [ -n "$urls" ]; then
+      printf '%s\n' "$urls"
     else
       echo "  process alive but not answering on port $PORT"
     fi
-  elif show_urls | grep -q .; then
+  elif [ -n "$urls" ]; then
     echo "dsh web: answering on port $PORT but not tracked by dsh-ctl (orphan, not started via dsh-ctl start)"
-    show_urls
+    printf '%s\n' "$urls"
   else
     echo "dsh web: not running"
   fi
@@ -294,7 +383,7 @@ exec)
   exec "$NODE_BIN" --expose-internals "$(entry)" "$@"
   ;;
 *)
-  echo "usage: dsh-ctl {install|start [--profile NAME] [--port PORT]|status|stop|exec ARGS...}" >&2
+  echo "usage: dsh-ctl {install|patch|start [--profile NAME] [dsh web flags...]|status|stop|exec ARGS...}" >&2
   exit 1
   ;;
 esac
