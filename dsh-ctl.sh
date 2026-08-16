@@ -122,24 +122,32 @@ web_startup_file() {
   ' "file://$(realpath "$pkg_dir/package.json")"
 }
 
+# The rejection line carries the actual check `options.host === "0.0.0.0"`;
+# keying on that (not on the error message text) survives message rewording.
+PATCH_MARKER='options.host === "0.0.0.0"'
+
 # Idempotently apply the LAN patch: delete the startup line that rejects
 # --host 0.0.0.0. The installed files are hard links into pnpm's
-# content-addressed store, so the patched copy is written over a fresh inode
-# (unlink + write), leaving the store entry pristine.
+# content-addressed store, so the patched copy is written to a temp file and
+# renamed over the original (atomic; leaves the store entry pristine).
 patch_dsh() {
   local f
   f="$(web_startup_file)" || return 1
-  "$NODE_BIN" -e '
+  PATCH_MARKER="$PATCH_MARKER" "$NODE_BIN" -e '
     const fs = require("node:fs");
     const file = process.argv[1];
     const src = fs.readFileSync(file, "utf8");
-    const line = src.match(/^[^\n]*intentionally not supported[^\n]*\n?/m);
-    if (!line) {
+    const marker = process.env.PATCH_MARKER;
+    const idx = src.indexOf(marker);
+    if (idx === -1) {
       console.log(`dsh-ctl: ${file} has no 0.0.0.0 rejection line, nothing to patch`);
       process.exit(0);
     }
-    fs.unlinkSync(file);
-    fs.writeFileSync(file, src.replace(line[0], ""));
+    const lineStart = src.lastIndexOf("\n", idx - 1) + 1;
+    let lineEnd = src.indexOf("\n", idx);
+    if (lineEnd === -1) lineEnd = src.length;
+    fs.writeFileSync(`${file}.tmp`, src.slice(0, lineStart) + src.slice(lineEnd));
+    fs.renameSync(`${file}.tmp`, file);
     console.log(`dsh-ctl: patched ${file}: --host 0.0.0.0 now allowed`);
   ' "$f"
 }
@@ -148,7 +156,7 @@ patch_dsh() {
 patch_applied() {
   local f
   f="$(web_startup_file)" || return 1
-  "$NODE_BIN" -e 'process.exit(require("node:fs").readFileSync(process.argv[1], "utf8").includes("intentionally not supported") ? 1 : 0)' "$f"
+  PATCH_MARKER="$PATCH_MARKER" "$NODE_BIN" -e 'process.exit(require("node:fs").readFileSync(process.argv[1], "utf8").includes(process.env.PATCH_MARKER) ? 1 : 0)' "$f"
 }
 
 running_pid() {
@@ -202,7 +210,10 @@ patch)
     echo "not installed yet, run: dsh-ctl install" >&2
     exit 1
   }
-  patch_dsh
+  if ! patch_dsh; then
+    echo "dsh-ctl: could not locate @deepseek-ai/dsh-web-app/lib/startup.js in $ROOT (is it installed?)" >&2
+    exit 1
+  fi
   ;;
 start)
   [ -f "$(entry)" ] || {
@@ -253,9 +264,13 @@ start)
       shift
       ;;
     --help|-h)
-      # dsh-ctl start --help is dsh web --help: print the app's usage and
+      # dsh-ctl start --help is the profile app's --help: print its usage and
       # exit instead of backgrounding a process that exits immediately.
-      exec "$NODE_BIN" --expose-internals "$(entry)" web "$@"
+      if [ "$profile" = "web" ]; then
+        exec "$NODE_BIN" --expose-internals "$(entry)" web "$@"
+      else
+        exec "$NODE_BIN" --expose-internals "$(entry)" --profile "$profile" "$@"
+      fi
       ;;
     *)
       # Everything else is a `dsh web` flag (--trusted-host, ...); forward it
