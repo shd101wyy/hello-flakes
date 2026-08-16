@@ -237,6 +237,13 @@ Other devices can then open `http://<this machine's LAN IP>:3080`, e.g.
 interfaces itself, and dsh-ctl's `status` prints every URL that actually
 answers.
 
+The patch also injects a `crypto.randomUUID` polyfill into the served
+`index.html`: dsh's browser half calls `crypto.randomUUID()`, which browsers
+only expose in *secure contexts*. `http://127.0.0.1` counts as secure
+(loopback), but plain-HTTP LAN origins do not, so without the polyfill the
+settings/workspace dialogs crash with `crypto.randomUUID is not a function`
+on LAN devices (iPhone Safari/Brave enforce this strictly).
+
 > **Security warning:** dsh's Web UI has **no authentication layer** — anyone
 > who can reach the port gets full remote code execution through the harness.
 > The `/api` trust fence only blocks *other* hostnames (DNS-rebinding), not

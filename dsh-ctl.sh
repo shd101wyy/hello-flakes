@@ -9,7 +9,11 @@
 #
 # Usage:
 #   dsh-ctl install              Install (or update to) the latest @deepseek-ai/dsh
-#   dsh-ctl patch                Re-apply the LAN patch (allows --host 0.0.0.0)
+#   dsh-ctl patch                Re-apply the LAN patches: allows --host 0.0.0.0
+#                                 and injects a crypto.randomUUID polyfill into
+#                                 the web UI (its browser half calls
+#                                 randomUUID, which insecure HTTP LAN origins
+#                                 lack), so LAN devices work over plain HTTP
 #   dsh-ctl start [web flags...] Start the server in the background. Every
 #                                 flag after the dsh-ctl ones is passed
 #                                 verbatim to `dsh web`, so
@@ -162,6 +166,65 @@ patch_applied() {
   PATCH_MARKER="$PATCH_MARKER" "$NODE_BIN" -e 'process.exit(require("node:fs").readFileSync(process.argv[1], "utf8").includes(process.env.PATCH_MARKER) ? 1 : 0)' "$f"
 }
 
+# The browser half of dsh-client-connection calls crypto.randomUUID(), which
+# browsers only expose in secure contexts. http://127.0.0.1 counts as secure
+# (loopback), but a plain-HTTP LAN origin like http://192.168.3.243:3080 does
+# not, so settings/workspace dialogs crash with "crypto.randomUUID is not a
+# function" (iPhone Safari/Brave enforce this strictly). Inject a
+# getRandomValues-based UUIDv4 polyfill into the served index.html so the UI
+# works from the LAN over plain HTTP too.
+frontend_index_file() {
+  local pkg_dir
+  pkg_dir="$(dirname "$(entry)")"
+  "$NODE_BIN" -e '
+    const { createRequire } = require("node:module");
+    const req = createRequire(process.argv[1]);
+    process.stdout.write(req.resolve("@deepseek-ai/dsh-web-frontend/dist/index.html"));
+  ' "file://$(realpath "$pkg_dir/package.json")"
+}
+
+patch_frontend() {
+  local f
+  f="$(frontend_index_file)" || return 1
+  FRONTEND_POLYFILL="$(cat <<'HTML'
+    <script>
+      window.crypto.randomUUID || (window.crypto.randomUUID = function () {
+        const b = crypto.getRandomValues(new Uint8Array(16));
+        b[6] = b[6] & 0x0f | 0x40;
+        b[8] = b[8] & 0x3f | 0x80;
+        let s = "";
+        for (let i = 0; i < 16; i++) {
+          if (i === 4 || i === 6 || i === 8 || i === 10) s += "-";
+          s += b[i].toString(16).padStart(2, "0");
+        }
+        return s;
+      });
+    </script>
+HTML
+)"
+  FRONTEND_POLYFILL="$FRONTEND_POLYFILL" "$NODE_BIN" -e '
+    const fs = require("node:fs");
+    const file = process.argv[1];
+    const src = fs.readFileSync(file, "utf8");
+    const marker = "dsh-ctl: crypto.randomUUID polyfill";
+    if (src.includes(marker)) {
+      console.log(`dsh-ctl: ${file} already has the randomUUID polyfill`);
+      process.exit(0);
+    }
+    const insertAt = src.indexOf("<script type=\"module\"");
+    if (insertAt === -1) {
+      console.error(`dsh-ctl: no module script tag in ${file}, cannot inject the polyfill`);
+      process.exit(1);
+    }
+    const patched = src.slice(0, insertAt)
+      + `    <!-- ${marker} -->\n${process.env.FRONTEND_POLYFILL}\n`
+      + src.slice(insertAt);
+    fs.writeFileSync(`${file}.tmp`, patched);
+    fs.renameSync(`${file}.tmp`, file);
+    console.log(`dsh-ctl: patched ${file}: crypto.randomUUID polyfill injected`);
+  ' "$f"
+}
+
 # Instance bookkeeping is keyed by port: each running instance owns
 # dsh.pid.<port> / dsh.state.<port> / dsh.log.<port>, so several dsh web
 # servers can run side by side. An empty port maps to the legacy unsuffixed
@@ -247,6 +310,7 @@ install)
   fi
   echo "installed: $(entry)"
   patch_dsh || echo "dsh-ctl: warning: could not apply the LAN patch (run 'dsh-ctl patch' later)" >&2
+  patch_frontend || echo "dsh-ctl: warning: could not apply the randomUUID polyfill (run 'dsh-ctl patch' later)" >&2
   ;;
 patch)
   [ -f "$(entry)" ] || {
@@ -255,6 +319,10 @@ patch)
   }
   if ! patch_dsh; then
     echo "dsh-ctl: could not locate @deepseek-ai/dsh-web-app/lib/startup.js in $ROOT (is it installed?)" >&2
+    exit 1
+  fi
+  if ! patch_frontend; then
+    echo "dsh-ctl: could not locate @deepseek-ai/dsh-web-frontend/dist/index.html in $ROOT (is it installed?)" >&2
     exit 1
   fi
   ;;
