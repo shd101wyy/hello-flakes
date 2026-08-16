@@ -194,8 +194,9 @@ hangs at 100% CPU building the ideal tree for it, e.g. on Steam Deck).
 dsh-ctl install                     # install (or update to) the latest @deepseek-ai/dsh
 dsh-ctl patch                       # re-apply the LAN patch (allows --host 0.0.0.0)
 dsh-ctl start [dsh web flags...]    # start in the background
-dsh-ctl status                      # running? (pid + every URL that actually answers)
-dsh-ctl stop                        # stop it
+dsh-ctl status                      # every running instance (pid + URLs)
+dsh-ctl stop                        # stop every instance
+dsh-ctl stop --port PORT            # stop just the instance on PORT
 dsh-ctl exec --help                 # pass args through to the dsh CLI itself
 dsh-tui --help                      # same as: dsh-ctl exec --profile cc-tui --help
 dsh-tui update                      # update the dsh-cc-tui plugin to its latest version
@@ -215,6 +216,12 @@ without starting anything. The current flags are `--host`, `--port`, and the
 repeatable `--trusted-host`; `--host`/`--port` are also used by dsh-ctl for
 its health checks and status output (e.g. `dsh-ctl start --host 0.0.0.0 --port
 5000`). `--profile NAME` stays a dsh-ctl-only flag for non-web profiles.
+
+Each port runs its own independent instance (one instance per port), tracked
+in `dsh.pid.<port>` / `dsh.state.<port>` / `dsh.log.<port>` under `DSH_ROOT`.
+Start a second one on another port while the first is running; `status` lists
+every instance, `stop` stops all of them, and `stop --port 3081` stops just
+that one.
 
 To expose the Web UI to other devices on the LAN, allow all-interfaces binding
 first (`dsh-ctl install` applies this patch automatically, `dsh-ctl patch`

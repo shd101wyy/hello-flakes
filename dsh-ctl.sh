@@ -15,10 +15,13 @@
 #                                 verbatim to `dsh web`, so
 #                                 `dsh-ctl start ARGS...` == `dsh web ARGS...`
 #                                 (--host/--port are also read by dsh-ctl for
-#                                 its health checks and status output).
-#   dsh-ctl status               Show whether the server is running (pid +
-#                                 all reachable URLs, incl. LAN addresses)
-#   dsh-ctl stop                 Stop the background server
+#                                 its health checks and status output). Each
+#                                 port runs its own instance: start again with
+#                                 --port to run several servers side by side.
+#   dsh-ctl status               Show every running instance (pid + all
+#                                 reachable URLs, incl. LAN addresses)
+#   dsh-ctl stop                 Stop every running instance
+#   dsh-ctl stop --port PORT     Stop just the instance on PORT
 #   dsh-ctl exec ARGS...         Run the dsh CLI itself, e.g. dsh-ctl exec --help
 #
 # Named dsh-ctl (not dsh) because `dsh` is the DeepSeek Harness binary itself.
@@ -159,12 +162,52 @@ patch_applied() {
   PATCH_MARKER="$PATCH_MARKER" "$NODE_BIN" -e 'process.exit(require("node:fs").readFileSync(process.argv[1], "utf8").includes(process.env.PATCH_MARKER) ? 1 : 0)' "$f"
 }
 
+# Instance bookkeeping is keyed by port: each running instance owns
+# dsh.pid.<port> / dsh.state.<port> / dsh.log.<port>, so several dsh web
+# servers can run side by side. An empty port maps to the legacy unsuffixed
+# names, so instances tracked by older dsh-ctl versions keep working.
+pidfile_of_port() {
+  [ -n "$1" ] && echo "$PIDFILE.$1" || echo "$PIDFILE"
+}
+port_of_pidfile() {
+  local n
+  n="$(basename "$1")"
+  n="${n#dsh.pid}"
+  n="${n#.}"
+  echo "$n"
+}
+state_of_pidfile() {
+  local p
+  p="$(port_of_pidfile "$1")"
+  [ -n "$p" ] && echo "$STATE.$p" || echo "$STATE"
+}
+log_of_pidfile() {
+  local p
+  p="$(port_of_pidfile "$1")"
+  [ -n "$p" ] && echo "$LOG.$p" || echo "$LOG"
+}
+tracked_pidfiles() {
+  ls -1 "$PIDFILE"* 2>/dev/null || true
+}
+
+# Report the tracked server pid only when it is actually ours. After a reboot
+# the pidfile survives but the process does not, and the OS may reuse the
+# stale number for an unrelated process: status/start would then lie and stop
+# would kill an innocent. On Linux, verify the process's argv names our dsh
+# bin; fall back to kill -0 alone where /proc is unavailable.
 running_pid() {
-  [ -f "$PIDFILE" ] || return 1
-  local pid
-  pid="$(cat "$PIDFILE")"
+  local pidf="$1" pid cmdline
+  [ -f "$pidf" ] || return 1
+  pid="$(cat "$pidf")"
   [ -n "$pid" ] || return 1
   kill -0 "$pid" 2>/dev/null || return 1
+  if [ -r "/proc/$pid/cmdline" ]; then
+    cmdline="$(tr '\0' ' ' < "/proc/$pid/cmdline" 2>/dev/null)" || return 1
+    case "$cmdline" in
+    *"$(entry)"*) ;;
+    *) return 1 ;;
+    esac
+  fi
   echo "$pid"
 }
 
@@ -295,22 +338,27 @@ start)
   PORT="$local_port"
   HOST="$local_host"
   URL="http://$(health_host):$PORT"
+  pidfile="$(pidfile_of_port "$PORT")"
+  state="$(state_of_pidfile "$pidfile")"
+  log="$(log_of_pidfile "$pidfile")"
   if [ "$HOST" = "0.0.0.0" ] && ! patch_applied; then
     echo "dsh still refuses --host 0.0.0.0 (the web app would expose remote" >&2
     echo "code execution to the network). Run 'dsh-ctl patch' to apply the" >&2
     echo "one-line patch, or bind 127.0.0.1 instead." >&2
     exit 1
   fi
-  if pid="$(running_pid)"; then
-    if [ -f "$STATE" ]; then
-      read -r HOST PORT < "$STATE" || true
+  if pid="$(running_pid "$pidfile")"; then
+    if [ -f "$state" ]; then
+      read -r HOST PORT < "$state" || true
     fi
     echo "already running (pid $pid) http://$(health_host):$PORT"
     exit 0
   fi
   if port_in_use; then
     echo "port $PORT is already answered by a dsh not started by dsh-ctl (orphan)" >&2
-    echo "stop it first, e.g. pkill -f 'dsh.*lib/bin.js'" >&2
+    # The [d]sh bracket keeps the pkill pattern from matching the shell that
+    # runs it (its own command line contains the literal pattern).
+    echo "stop it first, e.g. pkill -f '[d]sh.*lib/bin.js'" >&2
     exit 1
   fi
   # Non-loopback bind hosts are passed as --trusted-host (IP literal and its
@@ -326,67 +374,126 @@ start)
     app_args="--profile $profile"
   fi
   echo "starting dsh $profile on http://$(health_host):$PORT ..."
-  nohup "$NODE_BIN" --expose-internals "$(entry)" $app_args --host "$HOST" --port "$PORT" $trusted_flags "${extra_args[@]}" > "$LOG" 2>&1 &
+  nohup "$NODE_BIN" --expose-internals "$(entry)" $app_args --host "$HOST" --port "$PORT" $trusted_flags "${extra_args[@]}" > "$log" 2>&1 &
   local_pid=$!
-  echo "$local_pid" > "$PIDFILE"
+  echo "$local_pid" > "$pidfile"
   for _ in $(seq 1 30); do
     if ! kill -0 "$local_pid" 2>/dev/null; then
-      echo "dsh web exited during startup, tail of $LOG:" >&2
-      tail -20 "$LOG" >&2
-      rm -f "$PIDFILE"
+      echo "dsh web exited during startup, tail of $log:" >&2
+      tail -20 "$log" >&2
+      rm -f "$pidfile"
       exit 1
     fi
     if port_in_use; then
-      printf '%s %s\n' "$HOST" "$PORT" > "$STATE"
+      printf '%s %s\n' "$HOST" "$PORT" > "$state"
       echo "dsh web started (pid $local_pid):"
       show_urls
       exit 0
     fi
     sleep 1
   done
-  echo "server did not become healthy within 30s, see $LOG" >&2
+  echo "server did not become healthy within 30s, see $log" >&2
   exit 1
   ;;
 status)
-  if [ -f "$STATE" ]; then
-    read -r HOST PORT < "$STATE" || true
-    URL="http://$(health_host):$PORT"
-  fi
-  # Collect the URL list before testing it: `show_urls | grep -q .` would
-  # close the pipe after the first match, SIGPIPE the remaining curls, and
-  # fail the whole pipeline under set -o pipefail.
-  urls="$(show_urls)" || true
-  if pid="$(running_pid)"; then
-    echo "dsh web: running (pid $pid)"
-    if [ -n "$urls" ]; then
-      printf '%s\n' "$urls"
-    else
-      echo "  process alive but not answering on port $PORT"
+  found=0
+  for pidfile in $(tracked_pidfiles); do
+    state="$(state_of_pidfile "$pidfile")"
+    # Each instance carries its own bind host/port in its state file.
+    HOST="127.0.0.1"
+    PORT="$(port_of_pidfile "$pidfile")"
+    [ -n "$PORT" ] || PORT="${DSH_PORT:-3080}"
+    if [ -f "$state" ]; then
+      read -r HOST PORT < "$state" || true
     fi
-  elif [ -n "$urls" ]; then
-    echo "dsh web: answering on port $PORT but not tracked by dsh-ctl (orphan, not started via dsh-ctl start)"
-    printf '%s\n' "$urls"
-  else
+    URL="http://$(health_host):$PORT"
+    # Collect the URL list before testing it: `show_urls | grep -q .` would
+    # close the pipe after the first match, SIGPIPE the remaining curls, and
+    # fail the whole pipeline under set -o pipefail.
+    urls="$(show_urls)" || true
+    if pid="$(running_pid "$pidfile")"; then
+      found=1
+      echo "dsh web: running (pid $pid):"
+      if [ -n "$urls" ]; then
+        printf '%s\n' "$urls" | sed 's/^/  /'
+      else
+        echo "  process alive but not answering on port $PORT"
+      fi
+    elif [ -n "$urls" ]; then
+      found=1
+      echo "dsh web: answering on port $PORT but not tracked by dsh-ctl (orphan, not started via dsh-ctl start):"
+      printf '%s\n' "$urls" | sed 's/^/  /'
+    else
+      # Stale tracking files for a dead instance; nothing answers, clean up.
+      rm -f "$pidfile" "$state"
+    fi
+  done
+  if [ "$found" = 0 ]; then
     echo "dsh web: not running"
   fi
   ;;
 stop)
-  if pid="$(running_pid)"; then
-    echo "stopping dsh web (pid $pid)"
-    kill "$pid"
-    for _ in $(seq 1 10); do
-      kill -0 "$pid" 2>/dev/null || break
-      sleep 0.5
-    done
-    if kill -0 "$pid" 2>/dev/null; then
-      echo "still alive after 5s, sending SIGKILL"
-      kill -9 "$pid"
+  stop_port=""
+  shift || true
+  while [ $# -gt 0 ]; do
+    case "$1" in
+    --port)
+      [ $# -ge 2 ] || {
+        echo "usage: dsh-ctl stop [--port PORT]" >&2
+        exit 1
+      }
+      stop_port="$2"
+      shift 2
+      ;;
+    --port=*)
+      stop_port="${1#--port=}"
+      shift
+      ;;
+    *)
+      echo "unknown option: $1" >&2
+      echo "usage: dsh-ctl stop [--port PORT]" >&2
+      exit 1
+      ;;
+    esac
+  done
+  if [ -n "$stop_port" ]; then
+    case "$stop_port" in
+    (*[!0-9]*)
+      echo "invalid port: $stop_port" >&2
+      exit 1
+      ;;
+    esac
+  fi
+  # Stop one instance (--port PORT) or every tracked instance.
+  matched=0
+  for pidfile in $(tracked_pidfiles); do
+    if [ -n "$stop_port" ] && [ "$(port_of_pidfile "$pidfile")" != "$stop_port" ]; then
+      continue
     fi
-    rm -f "$PIDFILE" "$STATE"
-    echo "stopped"
-  else
-    echo "dsh web: not running"
-    rm -f "$PIDFILE" "$STATE"
+    matched=1
+    state="$(state_of_pidfile "$pidfile")"
+    if pid="$(running_pid "$pidfile")"; then
+      echo "stopping dsh web (pid $pid)"
+      kill "$pid"
+      for _ in $(seq 1 10); do
+        kill -0 "$pid" 2>/dev/null || break
+        sleep 0.5
+      done
+      if kill -0 "$pid" 2>/dev/null; then
+        echo "still alive after 5s, sending SIGKILL"
+        kill -9 "$pid"
+      fi
+    else
+      echo "dsh web: not running (stale tracking files for $(port_of_pidfile "$pidfile") removed)"
+    fi
+    rm -f "$pidfile" "$state"
+  done
+  if [ "$matched" = 0 ]; then
+    if [ -n "$stop_port" ]; then
+      echo "dsh web: no instance tracked on port $stop_port"
+    else
+      echo "dsh web: not running"
+    fi
   fi
   ;;
 exec)
@@ -398,7 +505,7 @@ exec)
   exec "$NODE_BIN" --expose-internals "$(entry)" "$@"
   ;;
 *)
-  echo "usage: dsh-ctl {install|patch|start [--profile NAME] [dsh web flags...]|status|stop|exec ARGS...}" >&2
+  echo "usage: dsh-ctl {install|patch|start [--profile NAME] [dsh web flags...]|status|stop [--port PORT]|exec ARGS...}" >&2
   exit 1
   ;;
 esac
