@@ -272,6 +272,12 @@
     };
   };
 
+  # Front-end to your dev env
+  programs.mise = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
   # dsh-ctl: control helper for the DeepSeek Harness (dsh) Web UI. Installs
   # the package into ~/.local/share/dsh (the npm global prefix on Nix is a
   # read-only Nix store) and launches it with node --expose-internals, which
