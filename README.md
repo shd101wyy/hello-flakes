@@ -271,6 +271,50 @@ untrusted `Host` header still gets 403).
 > has an authentication layer", hence the patch. `dsh-ctl install` re-applies
 > it after each update.
 
+## claude-hud statusline
+
+[claude-hud](https://github.com/jarrodwatts/claude-hud) is a Claude Code plugin
+that renders the statusline. It is installed per config dir by Claude Code
+itself (`claude plugin install claude-hud@claude-hud`), not by Nix — only the
+launcher is managed here, as `~/.local/bin/claude-hud-statusline` via
+`home/common.nix`.
+
+Point `statusLine.command` at it in `$CLAUDE_CONFIG_DIR/settings.json` (that
+file is rewritten by Claude Code at runtime, so it is deliberately *not*
+Nix-managed):
+
+```json
+"statusLine": {
+  "type": "command",
+  "command": "bash /Users/yiyiwang/.local/bin/claude-hud-statusline"
+}
+```
+
+The launcher resolves the newest installed plugin under
+`$CLAUDE_CONFIG_DIR/plugins/cache/*/claude-hud/*/` and a `node` binary at run
+time. **Never pin a `/nix/store` path in the statusline command.** The previous
+version inlined `/nix/store/...-bun-1.3.3/bin/bun`; bun is not declared in this
+repo, and that path was only kept alive by devenv shells in other projects
+(`tetris_yo`, `markdown_yo`, ...). When one of them bumped bun to 1.3.9 the GC
+collected 1.3.3 and the statusline silently went blank. claude-hud ships a
+prebuilt `dist/index.js` that needs only `node >= 18`, which `home/packages.nix`
+already provides.
+
+Troubleshooting — the launcher prints a diagnostic instead of nothing, so run it
+by hand:
+
+```bash
+echo '{"model":{"display_name":"Opus"},"workspace":{"current_dir":"'$PWD'"},"transcript_path":"/dev/null"}' \
+  | CLAUDE_CONFIG_DIR=$HOME/.claude-rv bash ~/.local/bin/claude-hud-statusline
+```
+
+If it reports the plugin is missing, reinstall it with
+`CLAUDE_CONFIG_DIR=$HOME/.claude-rv claude plugin update claude-hud@claude-hud`.
+Note that Claude Code records `installPath` / `installLocation` in
+`$CLAUDE_CONFIG_DIR/plugins/*.json` using the default `~/.claude` prefix even
+when `CLAUDE_CONFIG_DIR` is set; if those paths go stale the plugin fails to
+load with `cache-miss` and they need rewriting to the real config dir.
+
 ## Install wechat
 
 > https://github.com/NixOS/nixpkgs/issues/349245

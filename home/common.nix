@@ -294,6 +294,18 @@
     executable = true;
   };
 
+  # claude-hud statusline launcher, wired up via statusLine.command in
+  # $CLAUDE_CONFIG_DIR/settings.json. Resolves the newest installed claude-hud
+  # and a node binary at runtime — do NOT pin a /nix/store path here. The
+  # previous inline command pinned bun 1.3.3, which was only ever rooted by
+  # devenv shells in other projects; one of them bumped bun and the GC took
+  # 1.3.3 with it, silently blanking the statusline. claude-hud ships a
+  # prebuilt dist/index.js needing only node >= 18, which packages.nix owns.
+  home.file.".local/bin/claude-hud-statusline" = {
+    source = ../claude-hud-statusline.sh;
+    executable = true;
+  };
+
   # Install Yo syntax and filetype detection for Neovim
   home.file = {
     ".config/nvim/syntax/yo.vim".text = builtins.readFile ../nvim/syntax/yo.vim;
