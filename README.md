@@ -261,6 +261,16 @@ also lifts that: the privileged gate honors the same `trustedHosts` the rest
 of `/api` already uses, so those dialogs work from LAN browsers too (an
 untrusted `Host` header still gets 403).
 
+That server-side lift alone is not enough for the settings pages: the
+browser half of the settings UI also keys off the page origin and only runs
+with "host" persistence on loopback. On a LAN address its describe mirror
+never reads `settings.describe` at all, so the models settings page fails
+with `加载提供方目录失败: settings are unavailable in this browser` and every
+scoped settings row reports unavailable. `dsh-ctl patch` therefore also
+forces the client settings mirror/scope persistence to "host", which makes
+the settings and credentials pages load and write from trusted LAN browsers
+(loopback behavior is unchanged).
+
 > **Security warning:** dsh's Web UI has **no authentication layer** — anyone
 > who can reach the port gets full remote code execution through the harness.
 > The `/api` trust fence only blocks *other* hostnames (DNS-rebinding), not

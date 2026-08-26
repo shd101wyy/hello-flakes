@@ -12,9 +12,12 @@
 #   dsh-ctl patch                Re-apply the LAN patches: allows --host 0.0.0.0,
 #                                 injects a crypto.randomUUID polyfill into the
 #                                 web UI (its browser half calls randomUUID,
-#                                 which insecure HTTP LAN origins lack), and
-#                                 lets the settings/credentials API methods
-#                                 honor trusted hosts instead of loopback only
+#                                 which insecure HTTP LAN origins lack), lets
+#                                 the settings/credentials API methods honor
+#                                 trusted hosts instead of loopback only, and
+#                                 forces the client settings mirror/scope
+#                                 persistence to host so the settings pages
+#                                 load from LAN browsers too
 #   dsh-ctl start [web flags...] Start the server in the background. Every
 #                                 flag after the dsh-ctl ones is passed
 #                                 verbatim to `dsh web`, so
@@ -269,6 +272,45 @@ patch_privileged_gate() {
   ' "$f"
 }
 
+# The browser half of the settings UI keys its persistence off the page
+# origin, not the server's trust list: dsh-client-ui-settings builds the
+# describe mirror and every per-namespace scope with "host" persistence on
+# loopback and "memory" (process-local, never touches the wire) anywhere
+# else. So even with the privileged gate lifted above, a LAN browser's
+# settings pages read no settings at all: the models page fails with
+# "settings are unavailable in this browser" and scoped rows report
+# unavailable. Force the host persistence the layouts were built for -- the
+# gate patch above already made those RPCs answer for trusted hosts.
+settings_mirror_file() {
+  local pkg_dir
+  pkg_dir="$(dirname "$(entry)")"
+  "$NODE_BIN" -e '
+    const { createRequire } = require("node:module");
+    const req = createRequire(process.argv[1]);
+    process.stdout.write(req.resolve("@deepseek-ai/dsh-client-ui-settings/client"));
+  ' "file://$(realpath "$pkg_dir/package.json")"
+}
+
+patch_settings_mirror() {
+  local f
+  f="$(settings_mirror_file)" || return 1
+  SETTINGS_MIRROR_MARKER='connection.isLoopback ? "host" : "memory"' "$NODE_BIN" -e '
+    const fs = require("node:fs");
+    const file = process.argv[1];
+    const src = fs.readFileSync(file, "utf8");
+    const marker = process.env.SETTINGS_MIRROR_MARKER;
+    const sites = src.split(marker).length - 1;
+    if (sites === 0) {
+      console.log(`dsh-ctl: ${file} already has the settings persistence lifted`);
+      process.exit(0);
+    }
+    const patched = src.split(marker).join("\"host\"");
+    fs.writeFileSync(`${file}.tmp`, patched);
+    fs.renameSync(`${file}.tmp`, file);
+    console.log(`dsh-ctl: patched ${file}: settings mirror/scope persistence forced to host (${sites} sites)`);
+  ' "$f"
+}
+
 # Instance bookkeeping is keyed by port: each running instance owns
 # dsh.pid.<port> / dsh.state.<port> / dsh.log.<port>, so several dsh web
 # servers can run side by side. An empty port maps to the legacy unsuffixed
@@ -429,6 +471,7 @@ install)
   patch_dsh || echo "dsh-ctl: warning: could not apply the LAN patch (run 'dsh-ctl patch' later)" >&2
   patch_frontend || echo "dsh-ctl: warning: could not apply the randomUUID polyfill (run 'dsh-ctl patch' later)" >&2
   patch_privileged_gate || echo "dsh-ctl: warning: could not lift the privileged-method loopback gate (run 'dsh-ctl patch' later)" >&2
+  patch_settings_mirror || echo "dsh-ctl: warning: could not lift the client settings persistence gate (run 'dsh-ctl patch' later)" >&2
   ;;
 patch)
   [ -f "$(entry)" ] || {
@@ -445,6 +488,10 @@ patch)
   fi
   if ! patch_privileged_gate; then
     echo "dsh-ctl: could not locate @deepseek-ai/dsh-client-connection/lib/index.js in $ROOT (is it installed?)" >&2
+    exit 1
+  fi
+  if ! patch_settings_mirror; then
+    echo "dsh-ctl: could not locate @deepseek-ai/dsh-client-ui-settings/lib/client.js in $ROOT (is it installed?)" >&2
     exit 1
   fi
   ;;
