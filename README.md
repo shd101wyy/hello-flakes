@@ -281,6 +281,30 @@ the settings and credentials pages load and write from trusted LAN browsers
 > has an authentication layer", hence the patch. `dsh-ctl install` re-applies
 > it after each update.
 
+### Keeping dsh web alive: `systemd.user.services.dsh-web`
+
+A `dsh-ctl start` launched from an SSH session dies silently the moment that
+SSH session closes: this machine's
+`/etc/systemd/logind.conf.d/killuserprocesses.conf` sets
+`KillUserProcesses=True`, so systemd-logind SIGTERM/SIGKILLs every process of
+a session's cgroup when the session ends — `nohup` only blocks SIGHUP and
+cannot help. Symptoms: the log holds only the startup banner (no crash
+trace), the kernel log has no OOM kill, and `dsh-ctl status` reports
+`dsh web: down (port 3080)` on the next login.
+
+The flake therefore declares `home.yiyiwang-steamdeck-home.nix`'s
+`systemd.user.services.dsh-web` (same pattern as the mihomo service): it runs
+`dsh web --host 0.0.0.0 --port 3080` under the user manager, which survives
+session ends, starts at boot via linger, and `Restart = "on-failure"` revives
+it after a crash. Apply with `./build-home.sh --flake yiyiwang-steamdeck-home`.
+
+After switching, stop the old session-launched instance — either
+`dsh-ctl stop --port 3080` (kills that instance, including any GUI attached
+to it) or just close the SSH session it was started from; the service retries
+binding every 5s until the port frees. Afterwards `dsh-ctl status` shows the
+service instance as an untracked "orphan" — that is expected; check it with
+`systemctl --user status dsh-web` instead.
+
 ## claude-hud statusline
 
 [claude-hud](https://github.com/jarrodwatts/claude-hud) is a Claude Code plugin

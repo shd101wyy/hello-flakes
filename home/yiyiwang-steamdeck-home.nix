@@ -80,6 +80,36 @@
     };
   };
 
+  # DeepSeek Harness Web UI. Runs as a user service for the same reason as
+  # mihomo: this machine's /etc/systemd/logind.conf.d/killuserprocesses.conf
+  # sets KillUserProcesses=True, so when an SSH session ends, systemd-logind
+  # kills EVERY process of that session's scope -- a `dsh-ctl start` launched
+  # from SSH dies silently the moment the SSH connection closes (nohup only
+  # blocks SIGHUP, not a cgroup kill), and `dsh-ctl status` reports
+  # "dsh web: down (port 3080)". As a user service it survives session ends,
+  # starts at boot via linger (already enabled), and Restart=on-failure
+  # revives it after a crash.
+  # NOTE: stop the old instance first (`dsh-ctl stop --port 3080`) or let it
+  # die with its SSH session; the service owns port 3080 afterwards.
+  systemd.user.services.dsh-web = {
+    Unit = {
+      Description = "DeepSeek Harness Web UI (dsh web)";
+      Wants = [ "network-online.target" ];
+      After = [ "network-online.target" ];
+    };
+    Service = {
+      # The dsh-ctl LAN patches are already applied to this install, so
+      # --host 0.0.0.0 is allowed and dsh derives the trusted LAN list from
+      # the interfaces itself. --no-open: headless, nothing to open.
+      ExecStart = "${pkgs.nodejs}/bin/node --expose-internals %h/.local/share/dsh/node_modules/@deepseek-ai/dsh/lib/bin.js web --host 0.0.0.0 --port 3080 --no-open";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
+  };
+
   systemd.user.startServices = true;
 
   # CLI control helper for the mihomo service (refresh subscription, pick node,
