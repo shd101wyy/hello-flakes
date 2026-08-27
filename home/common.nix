@@ -47,6 +47,11 @@
           export PATH="$PATH:$HOME/.opencode/bin"
         fi
 
+        # Add ~/.minimax-code/bin to PATH if it exists (for `mcode` command)
+        if [ -d "$HOME/.minimax-code/bin" ]; then
+          export PATH="$PATH:$HOME/.minimax-code/bin"
+        fi
+
         # Add /opt/tailscale to PATH if it exists
         if [ -d "/opt/tailscale" ]; then
           export PATH="$PATH:/opt/tailscale"
