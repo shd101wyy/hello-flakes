@@ -81,7 +81,7 @@ URL="http://$(health_host):${PORT}"
 # Non-loopback IPv4 addresses of this machine (used to print reachable URLs).
 lan_ips() {
   if command -v hostname >/dev/null 2>&1 && hostname -I >/dev/null 2>&1; then
-    hostname -I | tr ' ' '\n' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | grep -v '^127\.' || true
+    hostname -I | tr ' ' '\n' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | grep -v -e '^127\.' -e '^169\.254\.' || true
   elif command -v python3 >/dev/null 2>&1; then
     python3 - <<'PY' 2>/dev/null || true
 import socket
@@ -109,7 +109,7 @@ show_urls() {
     case " $seen " in
     *" $u "*) continue ;;
     esac
-    if curl -sf --max-time 3 -o /dev/null "$u"; then
+    if curl -s --max-time 3 -o /dev/null "$u"; then
       echo "$u"
       seen="$seen $u"
     fi
@@ -360,8 +360,11 @@ running_pid() {
   echo "$pid"
 }
 
+# Any HTTP answer counts as "answering" -- deliberately no -f: dsh replies
+# 401 to a token-less / (the per-session token rides in the URL dsh prints),
+# and -f turns that 401 into curl exit 22, making a healthy server look down.
 port_in_use() {
-  curl -sf --max-time 3 -o /dev/null "$URL"
+  curl -s --max-time 3 -o /dev/null "$URL"
 }
 
 # Launch one tracked instance on host:port and wait until it answers HTTP.

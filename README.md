@@ -185,6 +185,17 @@ don't work. `dsh-ctl` (installed to `~/.local/bin` by `home/common.nix`)
 works around both: it installs the package into the user-writable
 `~/.local/share/dsh` and launches it directly with `node --expose-internals`.
 
+Even on machines with a writable npm prefix, bare `npx @deepseek-ai/dsh web`
+or a pnpm-global `dsh web` still crashes right after the URL prints: the web
+profile boots with live patch-reload, which loads the cordis HMR plugin, and
+that plugin refuses to run unless `--expose-internals` was passed to node
+itself (it must appear in `process.execArgv`, which `NODE_OPTIONS` never
+feeds — and Node rejects the flag there anyway). The published `dsh` bin
+never re-execs with the flag, so launch through `dsh-ctl`: `dsh-ctl start`
+for the background server, or `dsh-ctl exec web` to run it in the foreground.
+Pointing node at the pnpm shim (`node --expose-internals "$(which dsh)"`)
+fails too — the shim is a shell script, not JavaScript.
+
 `dsh-ctl install` resolves the registry's `latest` version with `npm view`
 and installs it with **pnpm** when available. pnpm is required on machines
 where npm's resolver spins forever on the dsh peer-dependency graph (npm 11
