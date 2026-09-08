@@ -3,3 +3,8 @@ result
 .vscode
 db
 secrets
+
+# zcode
+.mimosa
+.v2c
+.video_agent
