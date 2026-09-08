@@ -22,6 +22,9 @@
     ../../services/postgresql.nix
   ];
 
+  # Move the system PostgreSQL off the default port, on THIS host only.
+  services.postgresql.settings.port = 5433;
+
   wsl.enable = true;
   wsl.defaultUser = "yiyiwang";
   
