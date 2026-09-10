@@ -12,6 +12,11 @@
   ...
 }:
 
+# Optional local proxy port, e.g. "8889" on machines that run a proxy
+# (mihomo / Clash). Leave empty for direct connections.
+let
+  proxyPort = "8889";
+in
 {
   imports = [
     # include NixOS-WSL modules
@@ -154,18 +159,18 @@
           # "https://hub.littlediary.cn"
           "https://docker.1ms.run"
         ];
-        "proxies" = {
-          "http-proxy" = "http://127.0.0.1:8889";
-          "https-proxy" = "http://127.0.0.1:8889";
+        "proxies" = lib.optionalAttrs (proxyPort != "") {
+          "http-proxy" = "http://127.0.0.1:${proxyPort}";
+          "https-proxy" = "http://127.0.0.1:${proxyPort}";
         };
       };
     };
     # lxd = { enable = true; };
   };
 
-  systemd.services.nix-daemon.environment = {
-    http_proxy = "http://127.0.0.1:8889";
-    https_proxy = "http://127.0.0.1:8889";
+  systemd.services.nix-daemon.environment = lib.optionalAttrs (proxyPort != "") {
+    http_proxy = "http://127.0.0.1:${proxyPort}";
+    https_proxy = "http://127.0.0.1:${proxyPort}";
   };
 
   nix.settings = {

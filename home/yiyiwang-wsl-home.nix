@@ -1,4 +1,4 @@
-{ pkgs, pkgsUnstable, ... }:
+{ lib, pkgs, pkgsUnstable, ... }:
 # This is the home configuration for yiyiwang's WSL setup.
 # NOTE: home-manager installs zsh but cannot change your login shell.
 # On stock Ubuntu WSL (not NixOS-WSL), run these once to switch to zsh:
@@ -10,6 +10,14 @@
   home.homeDirectory = "/home/yiyiwang";
 
   manual.manpages.enable = false;
+
+  # oh-my-zsh's compaudit flags the multi-user /nix/store as insecure because
+  # it is group-writable by the nixbld build users. Store paths are immutable
+  # and content-addressed, so skip the check. mkOrder 550 puts this before
+  # oh-my-zsh is sourced in the generated .zshrc.
+  programs.zsh.initContent = lib.mkOrder 550 ''
+    export ZSH_DISABLE_COMPFIX=true
+  '';
 
   home.packages =
     with pkgs;

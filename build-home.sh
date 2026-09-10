@@ -17,7 +17,11 @@ echo ""
 # Options
 # --flake yiyiwang-thinkpad-home
 # --flake yiyiwang-steamdeck-home
+# --proxy-port 8889 (optional; route downloads through a local HTTP proxy;
+#                    falls back to the PROXY_PORT env var)
 HOME_CONFIG=""
+# Proxy port comes from --proxy-port, falling back to PROXY_PORT env var
+PROXY_PORT="${PROXY_PORT:-}"
 
 print_help() {
   echo "Usage: $0 [options]"
@@ -27,6 +31,10 @@ print_help() {
   echo "                         --flake yiyiwang-steamdeck-home"
   echo "                         --flake yiyiwang-wsl-home"
   echo "                         --flake yiyiwang-mac-home"
+  echo "                         --flake yiyiwang-noproxy-home"
+  echo "  --proxy-port <port>    Optional; route downloads through a local"
+  echo "                         HTTP proxy at 127.0.0.1:<port> (e.g. 8889)."
+  echo "                         Falls back to the PROXY_PORT env var"
   echo "  --help, -h             Show this help"
 }
 
@@ -35,6 +43,10 @@ while [ $# -gt 0 ]; do
   case "$1" in
   --flake)
     HOME_CONFIG="$2"
+    shift 2
+    ;;
+  --proxy-port)
+    PROXY_PORT="$2"
     shift 2
     ;;
   --help | -h)
@@ -51,18 +63,22 @@ done
 if [ "$HOME_CONFIG" != "yiyiwang-thinkpad-home" ] && 
    [ "$HOME_CONFIG" != "yiyiwang-steamdeck-home" ] && 
    [ "$HOME_CONFIG" != "yiyiwang-wsl-home" ] &&
-   [ "$HOME_CONFIG" != "yiyiwang-mac-home" ]; then
+   [ "$HOME_CONFIG" != "yiyiwang-mac-home" ] &&
+   [ "$HOME_CONFIG" != "yiyiwang-noproxy-home" ]; then
   echo "Unknown home config: $HOME_CONFIG" >&2
   print_help
   exit 1
 fi
 
-# All my machines are running proxy at port 8889
-export HTTP_PROXY=http://127.0.0.1:8889
-export HTTPS_PROXY=http://127.0.0.1:8889
-export http_proxy=http://127.0.0.1:8889
-export https_proxy=http://127.0.0.1:8889
-export NIX_CURL_FLAGS="-x $http_proxy -x $https_proxy"
+# Route downloads through a local HTTP proxy only when --proxy-port (or the
+# PROXY_PORT env var) is given
+if [ -n "$PROXY_PORT" ]; then
+  export HTTP_PROXY=http://127.0.0.1:$PROXY_PORT
+  export HTTPS_PROXY=http://127.0.0.1:$PROXY_PORT
+  export http_proxy=http://127.0.0.1:$PROXY_PORT
+  export https_proxy=http://127.0.0.1:$PROXY_PORT
+  export NIX_CURL_FLAGS="-x $http_proxy -x $https_proxy"
+fi
 
 export NIXPKGS_ALLOW_UNFREE=1
 # export NIXPKGS_ALLOW_INSECURE=1

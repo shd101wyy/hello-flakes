@@ -174,9 +174,29 @@
 
           # Optionally use extraSpecialArgs
           # to pass through arguments to home.nix
-          extraSpecialArgs = { 
-            pkgsUnstable = pkgsLinuxUnstable; 
+          extraSpecialArgs = {
+            pkgsUnstable = pkgsLinuxUnstable;
             proxyPort = "8889";
+          };
+        };
+
+        # Same home setup as yiyiwang-wsl-home (same module files), for
+        # machines that share it but connect directly without a proxy.
+        homeConfigurations.yiyiwang-noproxy-home = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgsLinux;
+          modules = [
+            nix-doom-emacs.hmModule
+            ./home/yiyiwang-wsl-home.nix
+            ./home/common.nix
+          ];
+
+          # Optionally use extraSpecialArgs
+          # to pass through arguments to home.nix
+          extraSpecialArgs = {
+            pkgsUnstable = pkgsLinuxUnstable;
+
+            # No proxy on these machines
+            proxyPort = "";
           };
         };
 

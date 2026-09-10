@@ -54,6 +54,83 @@ Added 1 variables.
 nix-repl> pkgs = flake.inputs.nixpkgs.legacyPackages.x86_64-linux
 ```
 
+## Proxy configuration (PROXY_PORT)
+
+All proxy settings in this repo are opt-in through a single knob: the
+`PROXY_PORT` environment variable. It holds just the port number of a local
+mixed HTTP/SOCKS proxy (e.g. mihomo / Clash on `8889`). When `PROXY_PORT` is
+not set, everything connects directly and no proxy variable is exported
+anywhere.
+
+### 1. Shell (direnv / `.envrc`)
+
+`direnv` is hooked into zsh by `home/common.nix`. When you `cd` into this
+repo, `.envrc` checks `PROXY_PORT`:
+
+```bash
+# machines with a proxy: export it once in ~/.zshrc
+export PROXY_PORT=8889
+
+# machines without a proxy: leave it unset, nothing happens
+```
+
+With `PROXY_PORT` set, entering the repo exports
+`HTTP_PROXY`/`HTTPS_PROXY`/`http_proxy`/`https_proxy`
+(`http://127.0.0.1:$PROXY_PORT`) in your shell, and direnv unloads them again
+when you leave the directory. The first time (and after every `.envrc`
+change) you need to allow it:
+
+```bash
+direnv allow
+```
+
+### 2. Build (`build-home.sh`)
+
+The build script routes Nix downloads through the proxy when either is given:
+
+```bash
+# env var (recommended; same knob as the shell above)
+PROXY_PORT=8889 ./build-home.sh --flake yiyiwang-wsl-home
+
+# or the flag (wins over the env var)
+./build-home.sh --flake yiyiwang-wsl-home --proxy-port 8889
+```
+
+The proxy exports only live for the duration of the build. With neither set,
+no proxy variables are exported and downloads go direct.
+
+### 3. Declarative machine configs (`proxyPort`)
+
+The two opt-ins above are per-session. The proxy variables that
+`home/common.nix` writes into zsh are controlled per machine by `proxyPort`
+in `flake.nix` (empty string = off). Each `homeConfiguration` passes its own
+value, so a machine that runs the proxy keeps `"8889"` while a machine
+without one uses `""`:
+
+```nix
+extraSpecialArgs = {
+  pkgsUnstable = pkgsLinuxUnstable;
+  proxyPort = "8889"; # or "" on machines without a proxy
+};
+```
+
+`yiyiwang-noproxy-home` is the concrete example: it imports the exact same
+modules as `yiyiwang-wsl-home` (`home/yiyiwang-wsl-home.nix` +
+`home/common.nix`) but passes `proxyPort = ""` — build it on machines that
+share the WSL home setup yet connect directly:
+
+```bash
+./build-home.sh --flake yiyiwang-noproxy-home
+```
+
+Note: `proxyPort` must always be passed (possibly `""`) — the nixpkgs module
+system resolves module arguments via `_module.args` even when they have a
+default, so omitting the argument breaks evaluation.
+
+The same pattern exists in `nixos/yiyiwang-wsl/configuration.nix`
+(`let proxyPort = "8889";` near the top) for the docker daemon proxy and the
+nix-daemon environment, guarded with `lib.optionalAttrs (proxyPort != "")`.
+
 ## Set Proxy for Nix on macOS
 
 If you need a proxy (e.g., Clash) to speed up Nix downloads, run:
