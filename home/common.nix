@@ -299,6 +299,16 @@
     executable = true;
   };
 
+  # claude-glm: run Claude Code against Zhipu GLM's Anthropic-compatible
+  # endpoint (open.bigmodel.cn) with its own config dir ~/.claude-glm, like
+  # the claude-rv/claude-sk aliases above but needing a per-user secret, so
+  # it is a wrapper script instead. Secrets/overrides are sourced from
+  # ~/.claude-glm.env — see README.md "claude-glm (Claude Code on GLM)".
+  home.file.".local/bin/claude-glm" = {
+    source = ../claude-glm.sh;
+    executable = true;
+  };
+
   # claude-hud statusline launcher, wired up via statusLine.command in
   # $CLAUDE_CONFIG_DIR/settings.json. Resolves the newest installed claude-hud
   # and a node binary at runtime — do NOT pin a /nix/store path here. The

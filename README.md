@@ -437,6 +437,36 @@ Note that Claude Code records `installPath` / `installLocation` in
 when `CLAUDE_CONFIG_DIR` is set; if those paths go stale the plugin fails to
 load with `cache-miss` and they need rewriting to the real config dir.
 
+## claude-glm (Claude Code on GLM)
+
+`claude-glm` runs Claude Code against Zhipu GLM's Anthropic-compatible API
+(`https://open.bigmodel.cn/api/anthropic`) with its own config dir
+`~/.claude-glm`, following the same pattern as the `claude-rv` / `claude-sk`
+aliases in `home/common.nix`. Because it needs a per-user secret it is a
+wrapper script (`claude-glm.sh`, installed to `~/.local/bin` by
+`home/common.nix`) instead of an alias.
+
+Secrets and overrides live in `~/.claude-glm.env` — a plain shell file the
+wrapper sources *before* applying its defaults, so anything set there wins.
+That file is never managed by Nix. Minimal setup:
+
+```bash
+cat > ~/.claude-glm.env <<'EOF'
+export ANTHROPIC_AUTH_TOKEN=your-zhipu-api-key
+EOF
+```
+
+Every default in `claude-glm.sh` can be overridden from that file, e.g.
+`export ANTHROPIC_DEFAULT_SONNET_MODEL=glm-5.3[1m]` to pin a different model.
+The defaults themselves (`ANTHROPIC_BASE_URL`, `ANTHROPIC_DEFAULT_HAIKU/SONNET/OPUS_MODEL`,
+`CLAUDE_CODE_AUTO_COMPACT_WINDOW`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`,
+`API_TIMEOUT_MS`) are versioned in `claude-glm.sh`. The env file is the
+*only* override point — ambient `ANTHROPIC_*` / `CLAUDE_CONFIG_DIR` in the
+calling shell are scrubbed, so a stray exported base URL can't redirect the
+Zhipu token at another host. The wrapper also `chmod 600`s the env file
+(it holds the API key) and fails fast with setup instructions when the
+file, the token, or the `claude` binary itself is missing.
+
 ## Install wechat
 
 > https://github.com/NixOS/nixpkgs/issues/349245
