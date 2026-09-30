@@ -243,6 +243,12 @@
     package = pkgsUnstable.clash-verge-rev;
   };
 
+  # Enable AppImage
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+
   # Enable ZSH
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
