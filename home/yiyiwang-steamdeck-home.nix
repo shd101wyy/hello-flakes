@@ -98,10 +98,18 @@
       After = [ "network-online.target" ];
     };
     Service = {
+      # Launch through dsh-ctl exec instead of ${pkgs.nodejs} directly:
+      # dsh 0.2.0+ boots through node-addon-require-builtin, which only
+      # supports official nodejs.org node builds and dies under Nix-built
+      # node with "Unsupported/no-getter". dsh-ctl probes that and runs dsh
+      # with the official node it fetched into ~/.local/share/dsh/toolchain
+      # (run 'dsh-ctl install' from an interactive shell once, so the
+      # download has happened and this unit needs no network PATH tools).
       # The dsh-ctl LAN patches are already applied to this install, so
       # --host 0.0.0.0 is allowed and dsh derives the trusted LAN list from
       # the interfaces itself. --no-open: headless, nothing to open.
-      ExecStart = "${pkgs.nodejs}/bin/node --expose-internals %h/.local/share/dsh/node_modules/@deepseek-ai/dsh/lib/bin.js web --host 0.0.0.0 --port 3080 --no-open";
+      Environment = [ "PATH=${pkgs.nodejs}/bin:/usr/local/bin:/usr/bin:/bin" ];
+      ExecStart = "%h/.local/bin/dsh-ctl exec web --host 0.0.0.0 --port 3080 --no-open";
       Restart = "on-failure";
       RestartSec = 5;
     };

@@ -5,7 +5,11 @@
 # installed into a user-writable prefix (~/.local/share/dsh) and the server is
 # launched directly with node --expose-internals.  Install uses pnpm when
 # available: npm 11's resolver spins forever on the dsh peer-dependency
-# graph. See README.md "dsh-ctl".
+# graph. dsh 0.2.0+ additionally boots through node-addon-require-builtin,
+# which only supports official nodejs.org node builds -- Nix-built node fails
+# its binary scan with "Unsupported/no-getter" -- so dsh-ctl probes that addon
+# and, when needed, launches dsh with a matching official node fetched into
+# ~/.local/share/dsh/toolchain. See README.md "dsh-ctl".
 #
 # Usage:
 #   dsh-ctl install              Install (or update to) the latest @deepseek-ai/dsh
@@ -109,7 +113,10 @@ show_urls() {
     case " $seen " in
     *" $u "*) continue ;;
     esac
-    if curl -s --max-time 3 -o /dev/null "$u"; then
+    # --noproxy: these are loopback/LAN URLs; with http_proxy set and a
+    # glob-style no_proxy ("127.*", which curl does not honor) the health
+    # check would ask the proxy instead and read its 502 as an answer.
+    if curl -s --noproxy '*' --max-time 3 -o /dev/null "$u"; then
       echo "$u"
       seen="$seen $u"
     fi
@@ -134,6 +141,73 @@ web_startup_file() {
     const req = createRequire(process.argv[1]);
     process.stdout.write(req.resolve("@deepseek-ai/dsh-web-app/startup"));
   ' "file://$(realpath "$pkg_dir/package.json")"
+}
+
+# dsh 0.2.0+ boots through node-addon-require-builtin, a native addon that
+# pattern-scans the running node binary's machine code to reach
+# internal/modules/esm/loader. It only recognizes official nodejs.org builds:
+# Nix-built node (nixpkgs gcc toolchain) lays the accessor out differently,
+# and boot dies with "Unsupported/no-getter". So before launching dsh, probe
+# the addon under the configured node; when it fails, fetch the matching
+# official build into $ROOT/toolchain and run dsh with that (install itself
+# still uses the configured node for pnpm/npm).
+require_builtin_ok() {
+  (cd "$ROOT" && "$1" --expose-internals -e \
+    "require('node-addon-require-builtin').requireBuiltin('internal/modules/esm/loader')" \
+    >/dev/null 2>&1)
+}
+
+# False for dsh releases that predate the require-builtin addon (0.1.x).
+dsh_uses_require_builtin() {
+  [ -d "$ROOT/node_modules/node-addon-require-builtin" ]
+}
+
+# Print the node binary dsh should be launched with, memoized. Same as
+# $NODE_BIN when it runs the addon fine (or dsh has no addon); otherwise the
+# official nodejs.org build of the same version, downloaded on first use.
+LAUNCH_NODE=""
+launch_node() {
+  if [ -n "$LAUNCH_NODE" ]; then
+    printf '%s\n' "$LAUNCH_NODE"
+    return 0
+  fi
+  LAUNCH_NODE="$NODE_BIN"
+  if dsh_uses_require_builtin && ! require_builtin_ok "$NODE_BIN"; then
+    local ver os arch dir ext
+    ver="$("$NODE_BIN" --version)"
+    case "$(uname -s) $(uname -m)" in
+    "Linux x86_64") os=linux arch=x64 ext=tar.xz ;;
+    "Linux aarch64") os=linux arch=arm64 ext=tar.xz ;;
+    "Darwin x86_64") os=darwin arch=x64 ext=tar.gz ;;
+    "Darwin arm64") os=darwin arch=arm64 ext=tar.gz ;;
+    *)
+      echo "dsh-ctl: warning: $NODE_BIN cannot run dsh's require-builtin addon and $(uname -s)-$(uname -m) has no nodejs.org fallback; dsh will likely fail to boot" >&2
+      printf '%s\n' "$LAUNCH_NODE"
+      return 0
+      ;;
+    esac
+    dir="$ROOT/toolchain/node-$ver-$os-$arch"
+    # Re-probe an already-downloaded build too: a run killed between extract
+    # and probe could have left a broken one behind.
+    if [ ! -x "$dir/bin/node" ] || ! require_builtin_ok "$dir/bin/node"; then
+      echo "dsh-ctl: $NODE_BIN (Nix-built?) fails dsh's require-builtin addon, fetching official $ver ..." >&2
+      mkdir -p "$ROOT/toolchain"
+      if curl -fsSL --retry 2 --max-time 300 -o "$dir.$ext" \
+        "https://nodejs.org/dist/$ver/node-$ver-$os-$arch.$ext" \
+        && tar -xf "$dir.$ext" -C "$ROOT/toolchain" \
+        && require_builtin_ok "$dir/bin/node"; then
+        rm -f "$dir.$ext"
+      else
+        rm -rf "$dir" "$dir.$ext"
+        echo "dsh-ctl: warning: could not fetch a working official node from nodejs.org (on NixOS, enable programs.nix-ld so the unpacked official build can run); dsh will likely fail to boot under $NODE_BIN" >&2
+        printf '%s\n' "$LAUNCH_NODE"
+        return 0
+      fi
+    fi
+    LAUNCH_NODE="$dir/bin/node"
+    echo "dsh-ctl: launching dsh with official node $LAUNCH_NODE" >&2
+  fi
+  printf '%s\n' "$LAUNCH_NODE"
 }
 
 # The rejection line carries the actual check `options.host === "0.0.0.0"`;
@@ -363,8 +437,11 @@ running_pid() {
 # Any HTTP answer counts as "answering" -- deliberately no -f: dsh replies
 # 401 to a token-less / (the per-session token rides in the URL dsh prints),
 # and -f turns that 401 into curl exit 22, making a healthy server look down.
+# --noproxy: never health-check through http_proxy (glob-style no_proxy
+# entries like "127.*" do not stop curl, and a 502 from the proxy would read
+# as a live server here).
 port_in_use() {
-  curl -s --max-time 3 -o /dev/null "$URL"
+  curl -s --noproxy '*' --max-time 3 -o /dev/null "$URL"
 }
 
 # Launch one tracked instance on host:port and wait until it answers HTTP.
@@ -414,7 +491,7 @@ start_instance() {
     app_args="--profile $start_profile"
   fi
   echo "starting dsh $start_profile on http://$(health_host):$PORT ..."
-  nohup "$NODE_BIN" --expose-internals "$(entry)" $app_args --host "$HOST" --port "$PORT" $trusted_flags "$@" > "$log" 2>&1 &
+  nohup "$(launch_node)" --expose-internals "$(entry)" $app_args --host "$HOST" --port "$PORT" $trusted_flags "$@" > "$log" 2>&1 &
   local_pid=$!
   echo "$local_pid" > "$pidfile"
   for _ in $(seq 1 30); do
@@ -475,6 +552,9 @@ install)
   patch_frontend || echo "dsh-ctl: warning: could not apply the randomUUID polyfill (run 'dsh-ctl patch' later)" >&2
   patch_privileged_gate || echo "dsh-ctl: warning: could not lift the privileged-method loopback gate (run 'dsh-ctl patch' later)" >&2
   patch_settings_mirror || echo "dsh-ctl: warning: could not lift the client settings persistence gate (run 'dsh-ctl patch' later)" >&2
+  # Resolve (and prefetch) the node dsh will launch under now, so a needed
+  # official-build download happens at install time, not at first start.
+  launch_node > /dev/null
   ;;
 patch)
   [ -f "$(entry)" ] || {
@@ -550,9 +630,9 @@ start)
       # dsh-ctl start --help is the profile app's --help: print its usage and
       # exit instead of backgrounding a process that exits immediately.
       if [ "$profile" = "web" ]; then
-        exec "$NODE_BIN" --expose-internals "$(entry)" web "$@"
+        exec "$(launch_node)" --expose-internals "$(entry)" web "$@"
       else
-        exec "$NODE_BIN" --expose-internals "$(entry)" --profile "$profile" "$@"
+        exec "$(launch_node)" --expose-internals "$(entry)" --profile "$profile" "$@"
       fi
       ;;
     *)
@@ -769,7 +849,7 @@ exec)
     exit 1
   }
   shift
-  exec "$NODE_BIN" --expose-internals "$(entry)" "$@"
+  exec "$(launch_node)" --expose-internals "$(entry)" "$@"
   ;;
 *)
   echo "usage: dsh-ctl {install|patch|start [--profile NAME] [dsh web flags...]|status|stop [--port PORT]|restart [--port PORT]|exec ARGS...}" >&2

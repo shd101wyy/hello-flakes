@@ -278,6 +278,20 @@ and installs it with **pnpm** when available. pnpm is required on machines
 where npm's resolver spins forever on the dsh peer-dependency graph (npm 11
 hangs at 100% CPU building the ideal tree for it, e.g. on Steam Deck).
 
+dsh 0.2.0+ boots through `node-addon-require-builtin`, a native addon that
+pattern-scans the running node binary's machine code to reach Node's
+ESM-loader internals. That scan only recognizes **official nodejs.org
+builds**: Nix-built node (gcc + Nix toolchain) lays the accessor out
+differently, and `dsh web` dies during startup with
+`Unsupported/no-getter (x64 sysv getter is not a recognized this->field
+accessor)`. dsh-ctl therefore probes the addon under the configured node
+before launching dsh and, when the probe fails, fetches the matching
+official build from nodejs.org into `~/.local/share/dsh/toolchain/` and
+launches dsh with that instead (same version, e.g. official 24.19.0 next to
+Nix 24.19.0). `dsh-ctl install` pre-downloads it; `DSH_NODE` overrides
+which node is probed. `install` itself still runs pnpm/npm under the
+configured (Nix) node.
+
 ```bash
 dsh-ctl install                     # install (or update to) the latest @deepseek-ai/dsh
 dsh-ctl patch                       # re-apply the LAN patch (allows --host 0.0.0.0)
