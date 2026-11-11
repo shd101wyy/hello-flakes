@@ -36,6 +36,7 @@ let
     jdk
     jq # A lightweight and flexible command-line JSON processor
     lazygit # Simple terminal UI for git commands
+    lean4 # Lean 4 theorem prover and programming language
     lsof
     lua
     lzip
