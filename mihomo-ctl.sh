@@ -10,7 +10,9 @@
 #   mihomo-ctl current            Show which node the PROXY group is using now
 #   mihomo-ctl test               Live latency of every node (5s timeout each)
 #   mihomo-ctl set-node "NAME"    Manually pick a node for the PROXY group
-#   mihomo-ctl refresh            Force a subscription refresh now
+#   mihomo-ctl stop               Stop using nodes (PROXY group -> DIRECT)
+#   mihomo-ctl refresh            Force a subscription refresh now; on failure
+#                                 retries once via DIRECT (see refresh_provider)
 #   mihomo-ctl refresh-if-dead    Refresh only when every node is dead and the last
 #                                 refresh is older than 1h (used by the systemd timer)
 #
@@ -31,6 +33,41 @@ API="${MIHOMO_API:-http://127.0.0.1:9090}"
 GROUP="${MIHOMO_GROUP:-PROXY}"
 PROVIDER="${MIHOMO_PROVIDER:-}"
 PY="$(command -v python3 || echo /usr/bin/python3)"
+
+# Every curl below talks only to the local mihomo API. Never let
+# http(s)_proxy env vars (exported by this repo's shells for mihomo's own
+# mixed port) loop the control channel through mihomo itself -- same reason
+# the python snippets use ProxyHandler({}).
+CURL=(curl -sSf --noproxy '*')
+
+# Point the PROXY group at $1 (a node name, AUTO or DIRECT).
+select_group() {
+  "${CURL[@]}" -X PUT "$API/proxies/$GROUP" \
+    -H "Content-Type: application/json" -d "{\"name\":\"$1\"}"
+}
+
+# Refresh one subscription provider. mihomo downloads subscriptions through
+# the rule engine, so with a dead node selected in the PROXY group the
+# download itself fails (controller answers 503) -- the outage blocks its
+# own fix. On failure: switch the group to DIRECT, retry once, then hand the
+# group to AUTO so url-test uses the fresh nodes.
+refresh_provider() {
+  name="$1"
+  echo "refreshing $name"
+  if "${CURL[@]}" -X PUT "$API/providers/proxies/$name" -w "  HTTP %{http_code}\n"; then
+    return 0
+  fi
+  echo "  refresh failed, switching $GROUP to DIRECT and retrying" >&2
+  select_group DIRECT >/dev/null 2>&1 || true
+  if "${CURL[@]}" -X PUT "$API/providers/proxies/$name" -w "  HTTP %{http_code}\n"; then
+    if select_group AUTO >/dev/null 2>&1; then
+      echo "  $GROUP switched to AUTO (fastest alive node)"
+    fi
+    return 0
+  fi
+  echo "  refresh still failing after DIRECT retry" >&2
+  return 1
+}
 
 case "${1:-}" in
 providers)
@@ -135,10 +172,19 @@ set-node)
     echo "usage: mihomo-ctl set-node \"NODE NAME\"" >&2
     exit 1
   fi
-  curl -sf -X PUT "$API/proxies/$GROUP" -H "Content-Type: application/json" -d "{\"name\":\"$node\"}" -w "set-node: HTTP %{http_code}\n"
+  "${CURL[@]}" -X PUT "$API/proxies/$GROUP" -H "Content-Type: application/json" -d "{\"name\":\"$node\"}" -w "set-node: HTTP %{http_code}\n"
+  ;;
+stop)
+  # Stop using nodes: the PROXY group selects DIRECT. mihomo itself keeps
+  # running (local/CN traffic unaffected); apps using the proxy connect
+  # directly until set-node "AUTO" or set-node "NAME" is run again.
+  select_group DIRECT
+  echo "$GROUP -> DIRECT (stopped using node)"
   ;;
 refresh)
-  "$PY" - "$API" "$PROVIDER" <<'PY' | while IFS= read -r name; do
+  # Provider names are sanitized to [a-zA-Z0-9_-] by the activation hook,
+  # so plain word splitting over $names is safe.
+  names="$("$PY" - "$API" "$PROVIDER" <<'PY'
 import json, sys, urllib.request
 api, only = sys.argv[1], sys.argv[2] or None
 opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
@@ -151,9 +197,12 @@ for name in sorted(provs):
         continue
     print(name)
 PY
-    echo "refreshing $name"
-    curl -sf -X PUT "$API/providers/proxies/$name" -w "  HTTP %{http_code}\n"
+)"
+  rc=0
+  for name in $names; do
+    refresh_provider "$name" || rc=1
   done
+  exit $rc
   ;;
 refresh-if-dead)
   stale="$("$PY" - "$API" "$PROVIDER" <<'PY'
@@ -181,16 +230,18 @@ for name in sorted(provs):
 PY
   )"
   if [ -n "$stale" ]; then
+    rc=0
     for name in $stale; do
       echo "all nodes dead for provider '$name' and last refresh older than 1h, refreshing subscription"
-      curl -sf -X PUT "$API/providers/proxies/$name" -w "  HTTP %{http_code}\n" || true
+      refresh_provider "$name" || rc=1
     done
+    exit $rc
   else
     echo "no refresh needed"
   fi
   ;;
 *)
-  echo "usage: mihomo-ctl {status|providers|nodes|current|test|set-node \"NAME\"|refresh|refresh-if-dead}" >&2
+  echo "usage: mihomo-ctl {status|providers|nodes|current|test|set-node \"NAME\"|stop|refresh|refresh-if-dead}" >&2
   exit 1
   ;;
 esac

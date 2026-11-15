@@ -222,6 +222,13 @@
             lines.append(f"  {name}:")
             lines.append("    type: http")
             lines.append(f'    url: "{url}"')
+            # Download subscriptions DIRECT, never through the proxy's own
+            # nodes: mihomo fetches providers through the rule engine, so
+            # with every node dead the refresh itself would fail (HTTP 503
+            # from the controller) and the stale subscription could never
+            # recover. mihomo-ctl refresh also has a DIRECT-retry fallback
+            # for configs generated before this.
+            lines.append("    proxy: DIRECT")
             lines.append("    interval: 86400")
             lines.append(f"    path: ./providers/{name}.yaml")
             lines.append("    health-check:")

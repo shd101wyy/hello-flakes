@@ -216,13 +216,20 @@ systemctl --user restart mihomo
 
 - **Automatic every 24h** — `interval: 86400` on the `jms` provider in the
   config template. mihomo re-fetches the subscription in the background.
+- **Subscription downloads go DIRECT** — the generated providers set
+  `proxy: DIRECT`: mihomo fetches subscriptions through the rule engine, so
+  routing them through the proxy's own nodes would let a total node outage
+  block its own refresh (HTTP 503, stale subscription that can never recover).
 - **Health checks every 5min** — `interval: 300`; the `AUTO` group always uses
   the fastest alive node, so dead nodes are skipped automatically.
 - **On all-nodes-failure** — the `mihomo-refresh.timer` (every 15min) runs
   `mihomo-ctl refresh-if-dead`, which force-refreshes the subscription only when
   every node is dead AND the last refresh is older than 1h.
 - **Manual** — `mihomo-ctl refresh`, or:
-  `curl -X PUT http://127.0.0.1:9090/providers/proxies/jms`
+  `curl -X PUT http://127.0.0.1:9090/providers/proxies/jms`.
+  If a refresh fails (e.g. a dead node is still selected in `PROXY`), the
+  command switches `PROXY` to DIRECT, retries once, and re-selects `AUTO`
+  afterwards; `refresh-if-dead` uses the same fallback.
 
 ### Pick a node manually
 
@@ -232,6 +239,7 @@ mihomo-ctl status                         # provider summary + UP/DOWN + last de
 mihomo-ctl test                           # live latency of every node
 mihomo-ctl set-node "YOUR-NODE-NAME"      # pick a node (use a name from `mihomo-ctl test`)
 mihomo-ctl set-node "AUTO"                # back to auto-selecting the fastest alive node
+mihomo-ctl stop                           # stop using nodes (PROXY group -> DIRECT)
 ```
 
 or via the API:
