@@ -255,13 +255,18 @@
 
     plugins = with pkgs; [
       tmuxPlugins.better-mouse-mode
-      tmuxPlugins.catppuccin
-      tmuxPlugins.cpu
-      tmuxPlugins.battery
-      tmuxPlugins.tmux-which-key
     ];
 
-    extraConfig = builtins.readFile ../tmux/.tmux.conf;
+    # tmux-which-key is loaded manually (not via plugins) because its loader
+    # autobuilds into its own directory, which is read-only in the nix store.
+    # XDG mode redirects that to ~/.config and ~/.local/share; the option must
+    # be set BEFORE the plugin script runs, hence this ordering. The script
+    # also copies its example files with the store's read-only mode, so the
+    # first pass may fail before a chmod; run it twice to self-heal.
+    extraConfig = builtins.readFile ../tmux/.tmux.conf + ''
+      set -g @tmux-which-key-xdg-enable 1
+      run-shell "${pkgs.tmuxPlugins.tmux-which-key}/share/tmux-plugins/tmux-which-key/plugin.sh.tmux; chmod -R -f u+w ~/.config/tmux/plugins/tmux-which-key ~/.local/share/tmux/plugins/tmux-which-key 2>/dev/null; ${pkgs.tmuxPlugins.tmux-which-key}/share/tmux-plugins/tmux-which-key/plugin.sh.tmux"
+    '';
   };
 
   # zellij configuration
