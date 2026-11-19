@@ -123,6 +123,7 @@
 
         alias claude-rv='CLAUDE_CONFIG_DIR="$HOME/.claude-rv" claude'
         alias claude-sk='CLAUDE_CONFIG_DIR="$HOME/.claude-sk" claude'
+        alias claude-ic='CLAUDE_CONFIG_DIR="$HOME/.claude-ic" claude'
     '';
 
     oh-my-zsh = {
