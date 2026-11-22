@@ -18,6 +18,7 @@ let
     bind
     browsh # fully-modern text-based browser
     buildah # Tool which facilitates building OCI images
+    bubblewrap # Unprivileged sandboxing tool
     docker-compose
     flex # Fast lexical analyser generator
     bison # Yacc-compatible parser generator
