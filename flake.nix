@@ -46,6 +46,12 @@
     nix-doom-emacs = {
       url = "github:nix-community/nix-doom-emacs";
     };
+    agenix = {
+      url = "github:ryantm/agenix/0.18.0";
+      # Reuse the pinned nixpkgs instead of fetching another copy.
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
   outputs =
@@ -58,6 +64,7 @@
       nur,
       home-manager,
       nix-doom-emacs,
+      agenix,
     }@attrs:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -93,9 +100,9 @@
           if currentSystem == "aarch64-darwin" || currentSystem == "x86_64-darwin"
           then currentSystem
           else "aarch64-darwin";
-        pkgsLinux = nixpkgs.legacyPackages.${linuxSystem};
+        pkgsLinux = nixpkgs.legacyPackages.${linuxSystem}.extend agenix.overlays.default;
         pkgsLinuxUnstable = nixpkgs-unstable.legacyPackages.${linuxSystem};
-        pkgsDarwin = nixpkgs.legacyPackages.${darwinSystem};
+        pkgsDarwin = nixpkgs.legacyPackages.${darwinSystem}.extend agenix.overlays.default;
         pkgsDarwinUnstable = nixpkgs-unstable.legacyPackages.${darwinSystem};
       in
       {

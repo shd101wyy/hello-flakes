@@ -13,6 +13,7 @@ let
   packages = with pkgs; [
     # Apps
     age # Modern encryption tool with small explicit keys
+    agenix # age-encrypted secrets for NixOS (ryantm/agenix)
     awscli2
     azure-cli # Next generation multi-platform command line experience for Azure
     bind
@@ -36,6 +37,7 @@ let
     imagemagick # Image manipulation tools
     jdk
     jq # A lightweight and flexible command-line JSON processor
+    kanidm_1_11 # Identity management platform (CLI + server); nixpkgs 26.05 has no bare `kanidm` alias
     lazygit # Simple terminal UI for git commands
     # lean4 # Lean 4 theorem prover and programming language
     lsof
